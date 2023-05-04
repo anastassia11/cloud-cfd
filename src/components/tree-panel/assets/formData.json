@@ -36,5 +36,34 @@
       "value": "100",
       "unit": "1/s"
     }
+  },
+  "simulationControlForm" : {
+    "end-time": {
+      "name": "End time",
+      "value": "2000",
+      "unit": "s"
+    },
+    "delta-t": {
+      "name": "Delta t",
+      "value": "1",
+      "unit": "s"
+    }, 
+    "white-control": {
+      "name": "White control",
+      "select": true,
+      "options": ["Time step", "Clock time", "Runtime", "CPU time", "Adjustable runtime"],
+      "value": "",
+      "unit": ""
+    }, 
+    "white-interval": {
+      "name": "White interval",
+      "value": "1000",
+      "unit": ""
+    }, 
+    "max-runtime": {
+      "name": "Maximum runtime",
+      "value": "20000",
+      "unit": "s"
+    }
   }
 }

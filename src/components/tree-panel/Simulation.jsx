@@ -52,7 +52,7 @@ export default function Simulation({ name, onDeleteClick, id }) {
                     <div className={`hover:bg-gray-100 py-1 cursor-pointer ${groupItem ? 'pl-[75px]' : 'pl-14'} `}
                         onClick={() => handleItemClick(formName)}>{name}</div>
                     <div className={`absolute top-3 left-[410px] ${selectedItem === formName ? '' : 'invisible'}`}>
-                        <FormGenerator value={inputs} formName={formName} formTitle={name} setUserValue={(updatedValue) => onFormChange(formName, updatedValue)} />
+                        <FormGenerator value={inputs} formTitle={name} setUserValue={(updatedValue) => onFormChange(formName, updatedValue)} />
                     </div>
                 </>
         )
@@ -81,6 +81,10 @@ export default function Simulation({ name, onDeleteClick, id }) {
                     <Setting name='(k) Turb. kinetic energy' groupItem='true' formName='turbKineticForm' inputs={userValue.turbKineticForm} onFormChange={handleFormChange} />
                     <Setting name='(ω) Specific dissipation rate' groupItem='true' formName='dissipationForm' inputs={userValue.dissipationForm} onFormChange={handleFormChange} />
                 </Setting>
+                <Setting groupName='Advanced concept'>
+                    <Setting name='Simulation control' groupItem='true' formName='simulationControlForm' inputs={userValue.simulationControlForm} onFormChange={handleFormChange} />
+                </Setting>
+
                 <button onClick={handleRunClick}
                     className='flex justify-center items-center mx-[10px] mb-3 mt-1 h-8 bg-gray-200 rounded text-gray-600 hover:text-gray-800 hover:shadow hover:bg-gray-300 active:shadow-inner'>simulation run</button>
             </div >}
