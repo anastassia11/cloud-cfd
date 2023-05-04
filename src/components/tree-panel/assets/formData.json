@@ -1,0 +1,40 @@
+{
+  "gaudePressureForm": {
+    "pressure": {
+      "name": "Global",
+      "defaultValue": "1",
+      "unit": "Pa"
+    }
+  },
+  "velocityForm": {
+    "velocity-x": {
+      "name": "Ux",
+      "defaultValue": "100",
+      "unit": "m/s"
+    },
+    "velocity-y": {
+      "name": "Uy",
+      "defaultValue": "100",
+      "unit": "m/s"
+    },
+    "velocity-z": {
+      "name": "Uz",
+      "defaultValue": "100",
+      "unit": "m/s"
+    }
+  },
+  "turbKineticForm": {
+    "turb-kinetic-energy": {
+      "name": "Global",
+      "defaultValue": "100",
+      "unit": "m2/s2"
+    }
+  },
+  "dissipationForm": {
+    "specific-dissipation-rate": {
+      "name": "Global",
+      "defaultValue": "100",
+      "unit": "1/s"
+    }
+  }
+}
