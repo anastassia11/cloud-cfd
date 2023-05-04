@@ -3,11 +3,33 @@ import SvgSelector from '../SvgSelector'
 import FormGenerator from './FormGenerator'
 import formData from './assets/formData.json'
 
-export default function Simulation({ name, onDeleteClick }) {
+export default function Simulation({ name, onDeleteClick, id }) {
     const [showSimulation, setShowSimulation] = useState(true)
     const [selectedItem, setSelectedItem] = useState(null)
+    const [userValue, setUserValue] = useState(formData)
 
-    const Setting = ({ id, name, groupName, groupItem, children, inputs = {} }) => {
+    const handleRunClick = async () => {
+        console.log(userValue)
+        const request_body = {
+            id, userValue
+        }
+        try {
+            const response = await fetch(`https://644a81a3a8370fb32150ac69.mockapi.io/simulations`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(request_body)
+            })
+            const data = await response.json()
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const handleFormChange = (formName, updatedValue) => {
+        setUserValue(prev => ({ ...prev, [formName]: updatedValue }));
+    }
+
+    const Setting = ({ formName, name, groupName, groupItem, children, inputs = {}, onFormChange }) => {
         const [showChildren, setShowChildren] = useState(true)
 
         const handleItemClick = (id) => {
@@ -28,9 +50,9 @@ export default function Simulation({ name, onDeleteClick }) {
                 :
                 <>
                     <div className={`hover:bg-gray-100 py-1 cursor-pointer ${groupItem ? 'pl-[75px]' : 'pl-14'} `}
-                        onClick={() => handleItemClick(id)}>{name}</div>
-                    <div className={`absolute top-3 left-[410px] ${selectedItem === id ? '' : 'invisible'}`}>
-                        <FormGenerator value={inputs} formName={name} />
+                        onClick={() => handleItemClick(formName)}>{name}</div>
+                    <div className={`absolute top-3 left-[410px] ${selectedItem === formName ? '' : 'invisible'}`}>
+                        <FormGenerator value={inputs} formName={formName} formTitle={name} setUserValue={(updatedValue) => onFormChange(formName, updatedValue)} />
                     </div>
                 </>
         )
@@ -54,11 +76,13 @@ export default function Simulation({ name, onDeleteClick }) {
                 <Setting name='Geomerty' />
                 <Setting name='Materials' />
                 <Setting groupName='Initial conditions'>
-                    <Setting name='(P) Gaude pressure' groupItem='true' id='gaudePressure' inputs={formData.gaudePressureForm} />
-                    <Setting name='(U) Velocity' groupItem='true' id='velocity' inputs={formData.velocityForm} />
-                    <Setting name='(k) Turb. kinetic energy' groupItem='true' id='turbKinetic' inputs={formData.turbKineticForm} />
-                    <Setting name='(ω) Specific dissipation rate' groupItem='true' id='dissipation' inputs={formData.dissipationForm} />
+                    <Setting name='(P) Gaude pressure' groupItem='true' formName='gaudePressureForm' inputs={userValue.gaudePressureForm} onFormChange={handleFormChange} />
+                    <Setting name='(U) Velocity' groupItem='true' formName='velocityForm' inputs={userValue.velocityForm} onFormChange={handleFormChange} />
+                    <Setting name='(k) Turb. kinetic energy' groupItem='true' formName='turbKineticForm' inputs={userValue.turbKineticForm} onFormChange={handleFormChange} />
+                    <Setting name='(ω) Specific dissipation rate' groupItem='true' formName='dissipationForm' inputs={userValue.dissipationForm} onFormChange={handleFormChange} />
                 </Setting>
+                <button onClick={handleRunClick}
+                    className='flex justify-center items-center mx-[10px] mb-3 mt-1 h-8 bg-gray-200 rounded text-gray-600 hover:text-gray-800 hover:shadow hover:bg-gray-300 active:shadow-inner'>simulation run</button>
             </div >}
         </div >
     )

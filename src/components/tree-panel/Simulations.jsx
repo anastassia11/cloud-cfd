@@ -10,7 +10,7 @@ export default function Simulations() {
     const handleAddClick = () => {
         setShow(true)
         const sim_id = uuid()
-        setSimulations(prev => [...prev, { sim: <Simulation name={`Simulation ${simulations.length}`} onDeleteClick={() => handleDeleteClick(sim_id)} />, id: sim_id }])
+        setSimulations(prev => [...prev, { sim: <Simulation name={`Simulation ${simulations.length}`} onDeleteClick={() => handleDeleteClick(sim_id)} id={sim_id} />, id: sim_id }])
     }
     const handleShowClick = () => {
         setShow(!show)
