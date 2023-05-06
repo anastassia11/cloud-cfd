@@ -1,18 +1,30 @@
 import { useState } from 'react'
 import SvgSelector from '../SvgSelector'
 import FormGenerator from './FormGenerator'
-import formData from './assets/formData.json'
+import formDefault from './assets/formData.json'
 
 export default function Simulation({ name, onDeleteClick, id }) {
     const [showSimulation, setShowSimulation] = useState(true)
     const [selectedItem, setSelectedItem] = useState(null)
-    const [userValue, setUserValue] = useState(formData)
+    const [userValue, setUserValue] = useState(formDefault)
+    const [formData, setFormData] = useState(new FormData())
 
     const handleRunClick = async () => {
-        console.log(userValue)
+        // mockapi не понимает FormData
+
+        // Object.keys(userValue).map((key) => {
+        //     const array = userValue[key]
+        //     Object.keys(array).map((key) => {
+        //         formData.set(`${key}`, array[key].value)
+        //     })
+        // })
+        // console.log([...formData.entries()]);
+
+
         const request_body = {
             id, userValue
         }
+
         try {
             const response = await fetch(`https://644a81a3a8370fb32150ac69.mockapi.io/simulations`, {
                 method: "POST",
@@ -26,7 +38,7 @@ export default function Simulation({ name, onDeleteClick, id }) {
     }
 
     const handleFormChange = (formName, updatedValue) => {
-        setUserValue(prev => ({ ...prev, [formName]: updatedValue }));
+        setUserValue(prev => ({ ...prev, [formName]: updatedValue }))
     }
 
     const Setting = ({ formName, name, groupName, groupItem, children, inputs = {}, onFormChange }) => {
@@ -37,22 +49,24 @@ export default function Simulation({ name, onDeleteClick, id }) {
         }
 
         return (
-            children ? <>
-                <div className='pl-8 py-1 space-x-2 flex flex-row items-center hover:bg-gray-100'>
-                    <button onClick={() => setShowChildren(!showChildren)}
-                        className='flex justify-center items-center w-4 h-4 border-solid border-[1.5px] border-gray-400 hover:border-gray-600'>
-                        {showChildren ? <SvgSelector id='minus' /> : <SvgSelector id='plus' />}
-                    </button>
-                    <span>{groupName}</span>
-                </div>
-                {showChildren && <div>{children}</div>}
-            </>
-                :
-                <>
-                    <div className={`hover:bg-gray-100 py-1 cursor-pointer ${groupItem ? 'pl-[75px]' : 'pl-14'} `}
+            children
+                ? <>
+                    <div className='pl-8 py-1 space-x-2 flex flex-row items-center hover:bg-gray-100'>
+                        <button onClick={() => setShowChildren(!showChildren)}
+                            className='flex justify-center items-center w-4 h-4 border-solid border-[1.5px] border-gray-400 hover:border-gray-600'>
+                            {showChildren ? <SvgSelector id='minus' /> : <SvgSelector id='plus' />}
+                        </button>
+                        <span>{groupName}</span>
+                    </div>
+                    {showChildren && <div>{children}</div>}
+                </>
+                : <>
+                    <div className={`hover:bg-gray-100 active:shadow-inner py-1 cursor-pointer
+                    ${groupItem ? 'pl-[75px]' : 'pl-14'} ${selectedItem === formName && 'bg-slate-200'}`}
                         onClick={() => handleItemClick(formName)}>{name}</div>
                     <div className={`absolute top-3 left-[410px] ${selectedItem === formName ? '' : 'invisible'}`}>
-                        <FormGenerator value={inputs} formTitle={name} setUserValue={(updatedValue) => onFormChange(formName, updatedValue)} />
+                        <FormGenerator value={inputs} formTitle={name} setUserValue={(updatedValue) => onFormChange(formName, updatedValue)}
+                            onItemClick={() => handleItemClick(formName)} />
                     </div>
                 </>
         )
@@ -73,8 +87,8 @@ export default function Simulation({ name, onDeleteClick, id }) {
                 </button>
             </div>
             {showSimulation && <div className='flex flex-col'>
-                <Setting name='Geomerty' />
-                <Setting name='Materials' />
+                <Setting name='Geomerty' formName='geomerty' />
+                <Setting name='Materials' formName='materials' />
                 <Setting groupName='Initial conditions'>
                     <Setting name='(P) Gaude pressure' groupItem='true' formName='gaudePressureForm' inputs={userValue.gaudePressureForm} onFormChange={handleFormChange} />
                     <Setting name='(U) Velocity' groupItem='true' formName='velocityForm' inputs={userValue.velocityForm} onFormChange={handleFormChange} />
@@ -86,7 +100,7 @@ export default function Simulation({ name, onDeleteClick, id }) {
                 </Setting>
 
                 <button onClick={handleRunClick}
-                    className='flex justify-center items-center mx-[10px] mb-3 mt-1 h-8 bg-gray-200 rounded text-gray-600 hover:text-gray-800 hover:shadow hover:bg-gray-300 active:shadow-inner'>simulation run</button>
+                    className='flex justify-center items-center mx-[10px] mb-2 mt-2 h-8 bg-gray-200 rounded text-gray-600 hover:text-gray-800 hover:shadow hover:bg-gray-300 active:shadow-inner'>simulation run</button>
             </div >}
         </div >
     )
