@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import SvgSelector from '../SvgSelector'
 import FormGenerator from './FormGenerator'
+import GeometryForm from './GeometryForm'
 import formDefault from './assets/formData.json'
 
 export default function Simulation({ name, onDeleteClick, id }) {
     const [showSimulation, setShowSimulation] = useState(true)
     const [selectedItem, setSelectedItem] = useState(null)
     const [userValue, setUserValue] = useState(formDefault)
-    const [formData, setFormData] = useState(new FormData())
+    // const [formData, setFormData] = useState(new FormData())
 
     const handleRunClick = async () => {
         // mockapi не понимает FormData
@@ -19,8 +20,6 @@ export default function Simulation({ name, onDeleteClick, id }) {
         //     })
         // })
         // console.log([...formData.entries()]);
-
-
         const request_body = {
             id, userValue
         }
@@ -48,10 +47,20 @@ export default function Simulation({ name, onDeleteClick, id }) {
             setSelectedItem((prev) => (prev === id ? null : id));
         }
 
+        const Form = ({ formName }) => {
+            if (formName == 'geomerty') {
+                return <GeometryForm onItemClick={() => handleItemClick(formName)} />
+
+            } else {
+                return <FormGenerator value={inputs} formTitle={name} setUserValue={(updatedValue) => onFormChange(formName, updatedValue)}
+                    onItemClick={() => handleItemClick(formName)} />
+            }
+        }
+
         return (
             children
                 ? <>
-                    <div className='pl-8 py-1 space-x-2 flex flex-row items-center hover:bg-gray-100'>
+                    <div className='pl-8 py-1 space-x-2 flex flex-row items-center '>
                         <button onClick={() => setShowChildren(!showChildren)}
                             className='flex justify-center items-center w-4 h-4 border-solid border-[1.5px] border-gray-400 hover:border-gray-600'>
                             {showChildren ? <SvgSelector id='minus' /> : <SvgSelector id='plus' />}
@@ -65,8 +74,7 @@ export default function Simulation({ name, onDeleteClick, id }) {
                     ${groupItem ? 'pl-[75px]' : 'pl-14'} ${selectedItem === formName && 'bg-slate-200'}`}
                         onClick={() => handleItemClick(formName)}>{name}</div>
                     <div className={`absolute top-3 left-[410px] ${selectedItem === formName ? '' : 'invisible'}`}>
-                        <FormGenerator value={inputs} formTitle={name} setUserValue={(updatedValue) => onFormChange(formName, updatedValue)}
-                            onItemClick={() => handleItemClick(formName)} />
+                        <Form formName={formName} />
                     </div>
                 </>
         )

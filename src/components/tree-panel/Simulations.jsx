@@ -20,7 +20,7 @@ export default function Simulations() {
     }
 
     return (
-        <>
+        < div className='flex-flex-col'>
             <div className='flex flex-row justify-between items-center px-2 py-1'>
                 <div className='flex flex-row cursor-pointer items-center' onClick={handleShowClick}>
                     {show ? <SvgSelector id='collapse' /> : <SvgSelector id='expand' />}
@@ -36,6 +36,6 @@ export default function Simulations() {
                         {simulation.sim}
                     </li>)}
             </ul>}
-        </>
+        </div>
     )
 }

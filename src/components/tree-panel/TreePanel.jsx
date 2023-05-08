@@ -1,7 +1,6 @@
-import { useState } from "react";
-import FormGenerator from "./FormGenerator";
-import Geometries from "./Geometries";
-import Simulations from "./Simulations";
+import { useState } from "react"
+import Geometries from "./Geometries"
+import Simulations from "./Simulations"
 
 export default function TreePanel() {
 
