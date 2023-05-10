@@ -25,16 +25,16 @@ export default function FormGenerator({ formTitle, value, setUserValue, onItemCl
         const input = isSelect
             ? <select value={selectedOption[key] || formValues[key].value} onChange={(e) => handleSelectChange(e, key)}
                 className="p-0 h-8 w-full rounded-sm border-2 border-gray-100 focus:outline-[0]">
-                {formValues[key].options.map((item) => <option value={item}>{item}</option>)}
+                {formValues[key].options.map((item) => <option value={item} key={item}>{item}</option>)}
             </select >
             : <div className="flex flex-row items-center">
-                <input key={key} type="number" name={key} value={formValues[key].value} onChange={handleInputChange}
+                <input type="number" name={key} value={formValues[key].value} onChange={handleInputChange}
                     className='h-8 w-3/4 rounded-sm border-2 border-gray-100 p-2 focus:outline-[0]' >
                 </input>
                 <span className=" px-2 w-1/4 text-center">{formValues[key].unit}</span>
             </div>
         return (
-            <div className='flex flex-row items-end mt-2'>
+            <div key={key} className='flex flex-row items-end mt-2'>
                 <label htmlFor={key}
                     className='w-1/2'>{formValues[key].name}</label>
                 <div className='w-1/2'>

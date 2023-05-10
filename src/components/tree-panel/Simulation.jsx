@@ -25,12 +25,12 @@ export default function Simulation({ name, onDeleteClick, id }) {
         }
 
         try {
-            const response = await fetch(`https://644a81a3a8370fb32150ac69.mockapi.io/simulations`, {
+            await fetch(`https://644a81a3a8370fb32150ac69.mockapi.io/simulations`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(request_body)
             })
-            const data = await response.json()
+            //const data = await response.json()
         } catch (error) {
             console.error(error)
         }
