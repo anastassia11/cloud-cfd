@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import axios from 'axios'
+import clsx from 'clsx'
 import SvgSelector from '../SvgSelector'
 import FormGenerator from './FormGenerator'
 import GeometryForm from './GeometryForm'
@@ -8,32 +10,37 @@ export default function Simulation({ name, onDeleteClick, id }) {
     const [showSimulation, setShowSimulation] = useState(true)
     const [selectedItem, setSelectedItem] = useState(null)
     const [userValue, setUserValue] = useState(formDefault)
-    // const [formData, setFormData] = useState(new FormData())
+    const formData = new FormData()
 
     const handleRunClick = async () => {
-        // mockapi не понимает FormData
-
-        // Object.keys(userValue).map((key) => {
-        //     const array = userValue[key]
-        //     Object.keys(array).map((key) => {
-        //         formData.set(`${key}`, array[key].value)
-        //     })
-        // })
-        // console.log([...formData.entries()]);
-        const request_body = {
-            id, userValue
-        }
+        Object.keys(userValue).map((key) => {
+            const array = userValue[key]
+            Object.keys(array).map((key) => {
+                formData.set(`${key}`, array[key].value)
+            })
+        })
+        console.log([...formData.entries()])
 
         try {
-            await fetch(`https://644a81a3a8370fb32150ac69.mockapi.io/simulations`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(request_body)
-            })
-            //const data = await response.json()
+            const response = await axios.post('url', { id, formData })
+            console.log(response.data)
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
+
+        // const request_body = {
+        //     id, userValue
+        // }
+        // try {
+        //     await fetch(`https://644a81a3a8370fb32150ac69.mockapi.io/simulations`, {
+        //         method: "POST",
+        //         headers: { "Content-Type": "application/json" },
+        //         body: JSON.stringify(request_body)
+        //     })
+        //     //const data = await response.json()
+        // } catch (error) {
+        //     console.error(error)
+        // }
     }
 
     const handleFormChange = (formName, updatedValue) => {
@@ -70,10 +77,16 @@ export default function Simulation({ name, onDeleteClick, id }) {
                     {showChildren && <div>{children}</div>}
                 </>
                 : <>
-                    <div className={`hover:bg-gray-100 active:shadow-inner py-1 cursor-pointer
-                    ${groupItem ? 'pl-[75px]' : 'pl-14'} ${selectedItem === formName && 'bg-slate-200'}`}
-                        onClick={() => handleItemClick(formName)}>{name}</div>
-                    <div className={`absolute top-3 left-[410px] ${selectedItem === formName ? '' : 'invisible'}`}>
+                    <div className={clsx('hover:bg-gray-100 active:shadow-inner py-1 cursor-pointer', {
+                        'pl-[75px]': groupItem,
+                        'pl-14': !groupItem,
+                        'bg-slate-200': selectedItem === formName
+                    })} onClick={() => handleItemClick(formName)}>
+                        {name}
+                    </div>
+                    <div className={clsx('absolute top-3 left-[410px]', {
+                        'invisible': selectedItem !== formName
+                    })}>
                         <Form formName={formName} />
                     </div>
                 </>
