@@ -1,13 +1,13 @@
 import TreePanel from "@/components/tree-panel/TreePanel"
-import { useRouter } from 'next/router'
-import { useEffect } from 'react';
+// import { useRouter } from 'next/router'
+// import { useEffect } from 'react';
 
 export default function HomePage() {
-  const router = useRouter()
+  // const router = useRouter()
 
-  useEffect(() => {
-    router.push('/login')
-  }, [])
+  // useEffect(() => {
+  //   router.push('/login')
+  // }, [])
 
   return (
     <TreePanel />
