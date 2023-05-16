@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { deleteSimulationClick, showSimulationClick } from '../../store/simulationSlice'
+import { deleteSimulationClick, showSimulationClick } from '@/store/slices/simulationSlice'
 import axios from 'axios'
 import SvgSelector from '../SvgSelector'
 import Setting from './Setting'

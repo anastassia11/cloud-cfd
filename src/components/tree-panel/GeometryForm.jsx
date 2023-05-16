@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useDispatch } from 'react-redux'
-import { settingClick } from '../../store/simulationSlice'
+import { settingClick } from '@/store/slices/simulationSlice'
 import SvgSelector from "../SvgSelector"
 
 export default function GeometryForm({ formName, formTitle }) {

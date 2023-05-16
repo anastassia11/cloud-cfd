@@ -1,14 +1,18 @@
-import Layout from '@/components/Layout'
 import { Provider } from 'react-redux'
+import { Inter } from 'next/font/google'
 import store from '../store'
+import '../firebase'
 import '@/styles/globals.css'
 
+const inter = Inter({ subsets: ['latin'] })
+
 export default function App({ Component, pageProps }) {
+
   return (
     <Provider store={store}>
-      <Layout >
+      <main className={`${inter.className}`}>
         <Component {...pageProps} />
-      </Layout >
+      </main>
     </Provider>
   )
 

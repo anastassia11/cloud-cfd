@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { settingClick } from '../../store/simulationSlice'
+import { settingClick } from '@/store/slices/simulationSlice'
 import clsx from 'clsx'
 import SvgSelector from '../SvgSelector'
 import FormGenerator from './FormGenerator'

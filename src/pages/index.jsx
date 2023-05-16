@@ -1,15 +1,25 @@
+import Header from '@/components/header/Header'
 import TreePanel from "@/components/tree-panel/TreePanel"
-// import { useRouter } from 'next/router'
-// import { useEffect } from 'react';
+import { useAuth } from '@/hooks/use-auth'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 export default function HomePage() {
-  // const router = useRouter()
+  const router = useRouter()
+  const { isAuth } = useAuth()
 
-  // useEffect(() => {
-  //   router.push('/login')
-  // }, [])
+  useEffect(() => {
+    if (!isAuth) {
+      router.push('/login');
+    }
+  }, [isAuth, router])
 
   return (
-    <TreePanel />
+    <div className='w-screen h-screen bg-gray-100'>
+      <Header />
+      <div className="p-3">
+        <TreePanel />
+      </div>
+    </div>
   )
 }

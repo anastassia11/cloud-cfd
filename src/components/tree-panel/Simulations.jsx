@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addSimulationClick, showSimulationsClick } from '../../store/simulationSlice'
+import { addSimulationClick, showSimulationsClick } from '@/store/slices/simulationSlice'
 import uuid from 'react-uuid'
 import SvgSelector from '../SvgSelector'
 

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useDispatch } from 'react-redux'
-import { formValuesChange, settingClick } from '../../store/simulationSlice'
+import { formValuesChange, settingClick } from '@/store/slices/simulationSlice'
 import SvgSelector from "../SvgSelector"
 
 export default function FormGenerator({ formTitle, value, formName }) {
