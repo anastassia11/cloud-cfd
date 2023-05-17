@@ -1,16 +1,19 @@
-import { useSelector, useDispatch } from 'react-redux'
-import { deleteSimulationClick, showSimulationClick } from '@/store/slices/simulationSlice'
+import { useSelector } from 'react-redux'
 import axios from 'axios'
 import SvgSelector from '../SvgSelector'
 import Setting from './Setting'
+import { useState } from 'react'
 
+export default function Simulation({ id, name, onDeleteClick }) {
+    const [showSimulation, setShowSimulation] = useState(true)
+    const [selectedSetting, setSelectedSetting] = useState(null)
 
-export default function Simulation({ name, id }) {
-    const showSimulation = useSelector(state => state.simulations.showSimulation)
     const userParams = useSelector(state => state.simulations.userParams)
-    const dispatch = useDispatch()
     const formData = new FormData()
 
+    const handleSettingClick = (formName) => {
+        setSelectedSetting((prev) => (prev === formName ? null : formName))
+    }
     const handleRunClick = async () => {
         Object.keys(userParams).map((key) => {
             const array = userParams[key]
@@ -31,13 +34,13 @@ export default function Simulation({ name, id }) {
         <div>
             <div className='flex flex-row justify-between items-center px-2 py-1 hover:bg-gray-100'>
                 <div className='flex flex-row items-center space-x-2'>
-                    <button onClick={() => dispatch(showSimulationClick())}
+                    <button onClick={() => setShowSimulation(!showSimulation)}
                         className='flex justify-center items-center w-4 h-4 border-solid border-[1.5px] border-gray-400 hover:border-gray-600'>
                         {showSimulation ? <SvgSelector id='minus' /> : <SvgSelector id='plus' />}
                     </button>
                     <span>{name}</span>
                 </div>
-                <button onClick={() => dispatch(deleteSimulationClick({ id }))}>
+                <button onClick={onDeleteClick}>
                     <SvgSelector id='delete' />
                 </button>
             </div>
@@ -45,13 +48,13 @@ export default function Simulation({ name, id }) {
                 <Setting name='Geomerty' formName='geomerty' />
                 <Setting name='Materials' formName='materials' />
                 <Setting groupName='Initial conditions'>
-                    <Setting name='(P) Gaude pressure' groupItem='true' formName='gaudePressureForm' inputs={userParams.gaudePressureForm} />
-                    <Setting name='(U) Velocity' groupItem='true' formName='velocityForm' inputs={userParams.velocityForm} />
-                    <Setting name='(k) Turb. kinetic energy' groupItem='true' formName='turbKineticForm' inputs={userParams.turbKineticForm} />
-                    <Setting name='(ω) Specific dissipation rate' groupItem='true' formName='dissipationForm' inputs={userParams.dissipationForm} />
+                    <Setting name='(P) Gaude pressure' groupItem='true' formName='gaudePressureForm' inputs={userParams.gaudePressureForm} onSettingClick={(formName) => handleSettingClick(formName)} />
+                    <Setting name='(U) Velocity' groupItem='true' formName='velocityForm' inputs={userParams.velocityForm} onSettingClick={(formName) => handleSettingClick(formName)} />
+                    <Setting name='(k) Turb. kinetic energy' groupItem='true' formName='turbKineticForm' inputs={userParams.turbKineticForm} onSettingClick={(formName) => handleSettingClick(formName)} />
+                    <Setting name='(ω) Specific dissipation rate' groupItem='true' formName='dissipationForm' inputs={userParams.dissipationForm} onSettingClick={(formName) => handleSettingClick(formName)} />
                 </Setting>
                 <Setting groupName='Advanced concept'>
-                    <Setting name='Simulation control' groupItem='true' formName='simulationControlForm' inputs={userParams.simulationControlForm} />
+                    <Setting name='Simulation control' groupItem='true' formName='simulationControlForm' inputs={userParams.simulationControlForm} onSettingClick={(formName) => handleSettingClick(formName)} />
                 </Setting>
 
                 <button onClick={handleRunClick}

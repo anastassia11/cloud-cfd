@@ -1,15 +1,11 @@
 import { useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { settingClick } from '@/store/slices/simulationSlice'
 import clsx from 'clsx'
 import SvgSelector from '../SvgSelector'
 import FormGenerator from './FormGenerator'
 import GeometryForm from './GeometryForm'
 
-export default function Setting({ name, formName, groupItem, groupName, children, inputs = {} }) {
+export default function Setting({ simulationId, name, formName, groupItem, groupName, children, inputs = {}, openSetting, onSettingClick }) {
     const [showChildren, setShowChildren] = useState(true)
-    const selectedSetting = useSelector(state => state.simulations.selectedSetting)
-    const dispatch = useDispatch()
 
     return (
         children
@@ -26,13 +22,16 @@ export default function Setting({ name, formName, groupItem, groupName, children
             : <>
                 <div className={clsx('hover:bg-gray-100 active:shadow-inner py-1 cursor-pointer',
                     {
-                        'pl-[75px]': groupItem, 'pl-14': !groupItem, 'bg-slate-200': selectedSetting === formName
+                        'pl-[75px]': groupItem, 'pl-14': !groupItem, 'bg-slate-200': openSetting === simulationId + formName
                     })}
-                    onClick={() => dispatch(settingClick({ formName }))}>
+                    onClick={() => {
+                        console.log(openSetting)
+                        onSettingClick(formName)
+                    }}>
                     {name}
                 </div>
-                <div className={clsx('absolute top-3 left-[410px]', {
-                    'invisible': selectedSetting !== formName
+                <div className={clsx('absolute top-[60px] left-[410px]', {
+                    'invisible': openSetting !== simulationId + formName
                 })}>
                     {formName == 'geomerty' ? <GeometryForm formTitle={name} formName={formName} /> : <FormGenerator value={inputs} formName={formName} formTitle={name} />}
                 </div>
