@@ -5,13 +5,6 @@ import { useRouter } from 'next/router'
 import React from 'react'
 
 export default function LoginPage() {
-    const router = useRouter()
-    const { isAuth } = useAuth()
-
-    if (isAuth) {
-        router.push('/');
-        return null;
-    }
     return (
         <div className='w-96 h-96 m-auto mt-20'>
             <h1 className='text-2xl mb-4 font-medium'>CloudCFD Log in</h1>

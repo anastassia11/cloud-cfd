@@ -12,6 +12,5 @@ export default function RegisterPage() {
             </div>
             <Register />
         </div>
-
     )
 }

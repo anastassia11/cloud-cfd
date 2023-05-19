@@ -1,19 +1,16 @@
 import { useState } from "react"
-import { useDispatch } from 'react-redux'
-import { settingClick } from '@/store/slices/simulationSlice'
 import SvgSelector from "../SvgSelector"
 
-export default function GeometryForm({ formName, formTitle }) {
+export default function GeometryForm({ onItemClick }) {
     const [drag, setDrag] = useState(false)
     const [showFileInfo, setShowFileInfo] = useState(false)
     const [file, setFile] = useState()
-
-    const dispatch = useDispatch()
-    // const geometryData = new FormData()
+    const geometryData = new FormData()
 
     const handleGeometrySubmit = (e) => {
         e.preventDefault()
-        dispatch(settingClick({ formName }))
+        onItemClick()
+        geometryData.append('geomerty', file)
         //здесь фечится geometryData или стейт file
     }
     const handleDragStart = (e) => {
@@ -28,10 +25,11 @@ export default function GeometryForm({ formName, formTitle }) {
         e.preventDefault()
         let file = e.dataTransfer.files
         setDrag(false)
-        // cтейт заменить на FormData()
-        // geometryData.append('geomerty', file[0])
+        geometryData.append('geomerty', file[0])
         setFile(file[0])
         setShowFileInfo(true)
+        console.log(geometryData)
+
     }
     let upload = ''
     if (showFileInfo) {
@@ -67,7 +65,7 @@ export default function GeometryForm({ formName, formTitle }) {
     return (
         <form onSubmit={handleGeometrySubmit} className='flex flex-col bg-white w-96 p-3 shadow'>
             <div className='flex flex-row justify-between items-center border-b-2 pb-2'>
-                <p className='self-end font-semibold'>{formTitle}</p>
+                <p className='self-end font-semibold'>Geomerty</p>
                 <button type="submit"
                     className='flex items-center self-end justify-center w-8 h-8 bg-gray-200 rounded hover:shadow hover:bg-gray-300 active:shadow-inner'>
                     <SvgSelector id='check' />

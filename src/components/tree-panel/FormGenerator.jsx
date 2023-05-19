@@ -1,13 +1,9 @@
 import { useState } from "react"
-import { useDispatch } from 'react-redux'
-import { formValuesChange, settingClick } from '@/store/slices/simulationSlice'
 import SvgSelector from "../SvgSelector"
 
-export default function FormGenerator({ formTitle, value, formName }) {
+export default function FormGenerator({ formTitle, value, setUserValue, onItemClick }) {
     const [formValues, setFormValues] = useState(value)
-    const [selectedOption, setSelectedOption] = useState({})
-
-    const dispatch = useDispatch()
+    const [selectedOption, setSelectedOption] = useState({});
 
     const handleInputChange = (e) => {
         const { name, value } = e.target
@@ -20,8 +16,8 @@ export default function FormGenerator({ formTitle, value, formName }) {
     }
     const handleFormSubmit = (e) => {
         e.preventDefault()
-        dispatch(formValuesChange({ formName, updatedValue: formValues }))
-        dispatch(settingClick({ formName }))
+        setUserValue(formValues)
+        onItemClick()
     }
 
     const inputs = Object.keys(formValues).map((key) => {

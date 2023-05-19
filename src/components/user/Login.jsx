@@ -1,23 +1,28 @@
 import { useDispatch } from 'react-redux'
-import { setUser } from '../../store/slices/userSlice'
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
+import { setUser } from '@/store/slices/userSlice'
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth"
+import { auth } from '@/firebase'
 import Form from './Form'
-import { useRouter } from 'next/router'
 
 export default function Login() {
-    const router = useRouter()
     const dispatch = useDispatch()
 
+    onAuthStateChanged(auth, (currentUser) => {
+        dispatch(setUser({
+            email: currentUser?.email,
+            id: currentUser?.uid,
+            token: currentUser?.accessToken,
+        }))
+    })
+
     const handleLogin = (email, password) => {
-        const auth = getAuth()
         signInWithEmailAndPassword(auth, email, password)
             .then(({ user }) => {
-                dispatch(setUser({
-                    email: user.email,
-                    id: user.uid,
-                    token: user.accessToken,
-                }))
-                router.push('/')
+                // dispatch(setUser({
+                //     email: user.email,
+                //     id: user.uid,
+                //     token: user.accessToken,
+                // }))
             })
             .catch(() => alert('invalid user'))
     }

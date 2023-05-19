@@ -1,33 +1,83 @@
-import { useSelector } from 'react-redux'
-import axios from 'axios'
-import SvgSelector from '../SvgSelector'
-import Setting from './Setting'
 import { useState } from 'react'
+import SvgSelector from '../SvgSelector'
+import FormGenerator from './FormGenerator'
+import GeometryForm from './GeometryForm'
+import formDefault from './assets/formData.json'
 
-export default function Simulation({ id, name, onDeleteClick }) {
+export default function Simulation({ name, onDeleteClick, id }) {
     const [showSimulation, setShowSimulation] = useState(true)
-    const [selectedSetting, setSelectedSetting] = useState(null)
+    const [selectedItem, setSelectedItem] = useState(null)
+    const [userValue, setUserValue] = useState(formDefault)
+    // const [formData, setFormData] = useState(new FormData())
 
-    const userParams = useSelector(state => state.simulations.userParams)
-    const formData = new FormData()
-
-    const handleSettingClick = (formName) => {
-        setSelectedSetting((prev) => (prev === formName ? null : formName))
-    }
     const handleRunClick = async () => {
-        Object.keys(userParams).map((key) => {
-            const array = userParams[key]
-            Object.keys(array).map((key) => {
-                formData.set(`${key}`, array[key].value)
-            })
-        })
-        console.log([...formData.entries()])
-        try {
-            const response = await axios.post('url', { id, formData })
-            console.log(response.data)
-        } catch (error) {
-            console.error(error);
+        // mockapi не понимает FormData
+
+        // Object.keys(userValue).map((key) => {
+        //     const array = userValue[key]
+        //     Object.keys(array).map((key) => {
+        //         formData.set(`${key}`, array[key].value)
+        //     })
+        // })
+        // console.log([...formData.entries()]);
+        const request_body = {
+            id, userValue
         }
+
+        try {
+            await fetch(`https://644a81a3a8370fb32150ac69.mockapi.io/simulations`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(request_body)
+            })
+            //const data = await response.json()
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const handleFormChange = (formName, updatedValue) => {
+        setUserValue(prev => ({ ...prev, [formName]: updatedValue }))
+    }
+
+    const Setting = ({ formName, name, groupName, groupItem, children, inputs = {}, onFormChange }) => {
+        const [showChildren, setShowChildren] = useState(true)
+
+        const handleItemClick = (id) => {
+            setSelectedItem((prev) => (prev === id ? null : id));
+        }
+
+        const Form = ({ formName }) => {
+            if (formName == 'geomerty') {
+                return <GeometryForm onItemClick={() => handleItemClick(formName)} />
+
+            } else {
+                return <FormGenerator value={inputs} formTitle={name} setUserValue={(updatedValue) => onFormChange(formName, updatedValue)}
+                    onItemClick={() => handleItemClick(formName)} />
+            }
+        }
+
+        return (
+            children
+                ? <>
+                    <div className='pl-8 py-1 space-x-2 flex flex-row items-center '>
+                        <button onClick={() => setShowChildren(!showChildren)}
+                            className='flex justify-center items-center w-4 h-4 border-solid border-[1.5px] border-gray-400 hover:border-gray-600'>
+                            {showChildren ? <SvgSelector id='minus' /> : <SvgSelector id='plus' />}
+                        </button>
+                        <span>{groupName}</span>
+                    </div>
+                    {showChildren && <div>{children}</div>}
+                </>
+                : <>
+                    <div className={`hover:bg-gray-100 active:shadow-inner py-1 cursor-pointer
+                    ${groupItem ? 'pl-[75px]' : 'pl-14'} ${selectedItem === formName && 'bg-slate-200'}`}
+                        onClick={() => handleItemClick(formName)}>{name}</div>
+                    <div className={`absolute top-[60px] left-[410px] ${selectedItem === formName ? '' : 'invisible'}`}>
+                        <Form formName={formName} />
+                    </div>
+                </>
+        )
     }
 
     return (
@@ -48,13 +98,13 @@ export default function Simulation({ id, name, onDeleteClick }) {
                 <Setting name='Geomerty' formName='geomerty' />
                 <Setting name='Materials' formName='materials' />
                 <Setting groupName='Initial conditions'>
-                    <Setting name='(P) Gaude pressure' groupItem='true' formName='gaudePressureForm' inputs={userParams.gaudePressureForm} onSettingClick={(formName) => handleSettingClick(formName)} />
-                    <Setting name='(U) Velocity' groupItem='true' formName='velocityForm' inputs={userParams.velocityForm} onSettingClick={(formName) => handleSettingClick(formName)} />
-                    <Setting name='(k) Turb. kinetic energy' groupItem='true' formName='turbKineticForm' inputs={userParams.turbKineticForm} onSettingClick={(formName) => handleSettingClick(formName)} />
-                    <Setting name='(ω) Specific dissipation rate' groupItem='true' formName='dissipationForm' inputs={userParams.dissipationForm} onSettingClick={(formName) => handleSettingClick(formName)} />
+                    <Setting name='(P) Gaude pressure' groupItem='true' formName='gaudePressureForm' inputs={userValue.gaudePressureForm} onFormChange={handleFormChange} />
+                    <Setting name='(U) Velocity' groupItem='true' formName='velocityForm' inputs={userValue.velocityForm} onFormChange={handleFormChange} />
+                    <Setting name='(k) Turb. kinetic energy' groupItem='true' formName='turbKineticForm' inputs={userValue.turbKineticForm} onFormChange={handleFormChange} />
+                    <Setting name='(ω) Specific dissipation rate' groupItem='true' formName='dissipationForm' inputs={userValue.dissipationForm} onFormChange={handleFormChange} />
                 </Setting>
                 <Setting groupName='Advanced concept'>
-                    <Setting name='Simulation control' groupItem='true' formName='simulationControlForm' inputs={userParams.simulationControlForm} onSettingClick={(formName) => handleSettingClick(formName)} />
+                    <Setting name='Simulation control' groupItem='true' formName='simulationControlForm' inputs={userValue.simulationControlForm} onFormChange={handleFormChange} />
                 </Setting>
 
                 <button onClick={handleRunClick}
