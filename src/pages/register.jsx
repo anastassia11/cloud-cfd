@@ -4,13 +4,18 @@ import React from 'react'
 
 export default function RegisterPage() {
     return (
-        <div className='w-96 h-96 m-auto mt-20'>
-            <h1 className='text-2xl mb-4 font-medium'>Sign up for CloudCFD</h1>
-            <div className='flex flex-row space-x-1 mb-4'>
-                <p>Already have an account?</p>
-                <Link href="/login" className='text-sky-700 underline'>Sign in</Link>
+        <main className="w-full h-screen flex flex-col items-center justify-center bg-gray-50 sm:px-4">
+            <div className="space-y-6 text-gray-600 w-96">
+                <div className="text-center">
+                    <div className="mt-5 space-y-2">
+                        <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl">Sign up for CloudCFD</h3>
+                        <p className="">Already have an account?
+                            <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500 pl-1">Sign up</Link>
+                        </p>
+                    </div>
+                </div>
+                <Register />
             </div>
-            <Register />
-        </div>
+        </main>
     )
 }

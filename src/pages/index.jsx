@@ -14,7 +14,7 @@ export default function HomePage() {
   return (
     <div className='w-screen h-screen bg-gray-100'>
       <Header />
-      <div className="p-3">
+      <div className="p-2">
         <TreePanel />
       </div>
     </div>

@@ -6,13 +6,18 @@ import React from 'react'
 
 export default function LoginPage() {
     return (
-        <div className='w-96 h-96 m-auto mt-20'>
-            <h1 className='text-2xl mb-4 font-medium'>CloudCFD Log in</h1>
-            <div className='flex flex-row space-x-1 mb-4' >
-                <p>Don&apos;t have an account?</p>
-                <Link href="/register" className='text-sky-700 underline'>Sign up</Link>
-            </div >
-            <Login />
-        </div >
+        <main className="w-full h-screen flex flex-col items-center justify-center bg-gray-50 sm:px-4">
+            <div className="space-y-6 text-gray-600 w-96">
+                <div className="text-center">
+                    <div className="mt-5 space-y-2">
+                        <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl">CloudCFD Log in</h3>
+                        <p className="">Don&apos;t have an account?
+                            <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500 pl-1">Sign up</Link>
+                        </p>
+                    </div>
+                </div>
+                <Login />
+            </div>
+        </main>
     )
 }

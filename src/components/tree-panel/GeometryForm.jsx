@@ -25,11 +25,8 @@ export default function GeometryForm({ onItemClick }) {
         e.preventDefault()
         let file = e.dataTransfer.files
         setDrag(false)
-        geometryData.append('geomerty', file[0])
         setFile(file[0])
         setShowFileInfo(true)
-        console.log(geometryData)
-
     }
     let upload = ''
     if (showFileInfo) {
@@ -38,9 +35,7 @@ export default function GeometryForm({ onItemClick }) {
                 <div className="bg-gray-100 flex flex-col text-gray-700 justify-center items-start p-2 mt-3 h-9 rounded border border-gray-300">
                     {file.name}
                 </div>
-                {/* <button onClick={}>delete</button> */}
             </div>
-
     } else {
         upload = <div>
             {drag
@@ -63,11 +58,10 @@ export default function GeometryForm({ onItemClick }) {
         </div>
     }
     return (
-        <form onSubmit={handleGeometrySubmit} className='flex flex-col bg-white w-96 p-3 shadow'>
-            <div className='flex flex-row justify-between items-center border-b-2 pb-2'>
+        <form onSubmit={handleGeometrySubmit} className='flex flex-col bg-white w-96 p-3 shadow rounded-lg'>
+            <div className='flex flex-row justify-between items-center border-b pb-2'>
                 <p className='self-end font-semibold'>Geomerty</p>
-                <button type="submit"
-                    className='flex items-center self-end justify-center w-8 h-8 bg-gray-200 rounded hover:shadow hover:bg-gray-300 active:shadow-inner'>
+                <button type="submit" className='flex items-center self-end justify-center w-8 h-8 bg-gray-100 rounded hover:bg-gray-200 active:bg-gray-300'>
                     <SvgSelector id='check' />
                 </button>
             </div>
