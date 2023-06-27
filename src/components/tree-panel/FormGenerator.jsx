@@ -1,5 +1,5 @@
 import { useState } from "react"
-import SvgSelector from "../SvgSelector"
+import SvgSelector from "../svg/SvgSelector"
 
 export default function FormGenerator({ formTitle, value, setUserValue, onItemClick }) {
     const [formValues, setFormValues] = useState(value)
@@ -24,12 +24,12 @@ export default function FormGenerator({ formTitle, value, setUserValue, onItemCl
         const isSelect = formValues[key].select
         const input = isSelect
             ? <select value={selectedOption[key] || formValues[key].value} onChange={(e) => handleSelectChange(e, key)}
-                className="p-0 h-8 w-full rounded-md border border-gray-100 focus:outline-[0] focus:border-indigo-200 duration-150">
+                className="p-0 h-8 w-full rounded-md border border-gray-100 focus:outline-[0] focus:border-[#f9a86267] duration-150">
                 {formValues[key].options.map((item) => <option value={item} key={item}>{item}</option>)}
             </select >
             : <div className="flex flex-row items-center">
                 <input type="number" name={key} value={formValues[key].value} onChange={handleInputChange}
-                    className='h-8 w-3/4 rounded-md border border-gray-100 p-2 focus:outline-[0] focus:border-indigo-200 duration-150' >
+                    className='h-8 w-3/4 rounded-md border border-gray-100 p-2 focus:outline-[0] focus:border-[#f9a86267] duration-150' >
                 </input>
                 <span className="px-2 w-1/4 text-center cursor-default">{formValues[key].unit}</span>
             </div>

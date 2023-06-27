@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import SvgSelector from '../SvgSelector'
+import SvgSelector from '../svg/SvgSelector'
 import FormGenerator from './FormGenerator'
 import GeometryForm from './GeometryForm'
 import formDefault from './assets/formData.json'
@@ -86,7 +86,7 @@ export default function Simulation({ name, onDeleteClick, id }) {
         return (
             <>
                 <div className='w-full h-full' onClick={() => handleItemClick(formName)}>{name}</div>
-                <div className={`absolute top-[56px] left-[400px] ${selectedItem === formName ? '' : 'invisible'}`}>
+                <div className={`absolute top-[62px] left-[400px] ${selectedItem === formName ? '' : 'invisible'}`}>
                     <Form formName={formName} />
                 </div>
             </>
@@ -130,7 +130,7 @@ export default function Simulation({ name, onDeleteClick, id }) {
                     {
                         isActive ? (
                             <div ref={contextmenuRef} className="fixed z-10 opacity-0 w-28 rounded-lg bg-white shadow-md border text-gray-800" style={{ top: `${position.y}px`, left: `${position.x}px` }}>
-                                <button className="flex w-full items-center gap-2 rounded-lg px-4 py-2 text-base text-red-700 hover:bg-red-50"
+                                <button className="flex w-full items-center gap-2 rounded-lg py-2 text-base text-red-700 hover:bg-red-50 px-2"
                                     onClick={onDeleteClick}>
                                     <SvgSelector id='delete' />
                                     Delete
@@ -148,13 +148,13 @@ export default function Simulation({ name, onDeleteClick, id }) {
                     <div className="overflow-auto border-l ml-[17px]">
                         <ul className="text-base font-normal flex-1 ml-3">
                             {settings.map((item) => {
-                                return item.child ? <li>{item.setting}</li> :
-                                    <li key={''} className="flex items-center gap-x-2 text-gray-600 p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 duration-150">
+                                return item.child ? <li className=''>{item.setting}</li> :
+                                    <li key={''} className='flex items-center gap-x-2 cursor-pointer text-gray-600 p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 duration-150'>
                                         {item.setting}
                                     </li>
                             }
                             )}
-                            <button className="flex w-full items-center gap-2 rounded-lg p-2 text-base font-normal text-green-700 hover:bg-green-50 active:bg-green-100 duration-150"
+                            <button className="flex w-full items-center gap-2 rounded-lg p-2 text-base font-normal text-[#f98a2a] hover:bg-gray-100 active:bg-gray-200 duration-150"
                                 onClick={handleRunClick}>
                                 <SvgSelector id='run' />
                                 Simulation Run

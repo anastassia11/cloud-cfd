@@ -1,5 +1,5 @@
 import { useState } from "react"
-import SvgSelector from "../SvgSelector"
+import SvgSelector from "../svg/SvgSelector"
 
 export default function GeometryForm({ onItemClick }) {
     const [drag, setDrag] = useState(false)

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SvgSelector from '../SvgSelector';
+import SvgSelector from '../svg/SvgSelector';
 import Simulation from './Simulation';
 import uuid from 'react-uuid';
 
@@ -14,7 +14,7 @@ export default function TreePanel() {
     }
     return (
         <nav className="h-full max-h-[calc(100vh-72px)] border-r rounded-lg bg-white space-y-8 w-96 overflow-y-auto shadow pb-2">
-            <div class="flex flex-col h-full px-2">
+            <div className="flex flex-col h-full px-2">
                 <div className="w-full flex items-center gap-x-1 border-b pt-3 pb-2 pl-[6px] pr-[1px]">
                     <SvgSelector id='simulations' />
                     <span className="block text-gray-700 text-base font-semibold">SIMULATIONS {`(${simulations.length})`}</span>
