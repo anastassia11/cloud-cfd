@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SvgSelector from '../svg/SvgSelector';
+import SvgSelector from '../SvgSelector';
 import Simulation from './Simulation';
 import uuid from 'react-uuid';
 
@@ -13,13 +13,13 @@ export default function TreePanel() {
         setSimulations(prev => [...prev, { sim: <Simulation name={`Simulation ${simulations.length}`} onDeleteClick={() => handleDeleteClick(sim_id)} id={sim_id} />, id: sim_id }])
     }
     return (
-        <nav className="h-full max-h-[calc(100vh-72px)] border-r rounded-lg bg-white space-y-8 w-96 overflow-y-auto shadow pb-2">
-            <div className="flex flex-col h-full px-2">
-                <div className="w-full flex items-center gap-x-1 border-b pt-3 pb-2 pl-[6px] pr-[1px]">
+        <nav className="max-h-[calc(100vh-73px)] bg-day-00 space-y-8 w-[335px] overflow-y-auto pb-2 m-2 rounded-md shadow">
+            <div className="flex flex-col h-full px-2 ">
+                <div className="text-day-350 w-full flex items-center gap-x-1 border-b pt-3 pb-2 pl-[6px] pr-[1px]">
                     <SvgSelector id='simulations' />
-                    <span className="block text-gray-700 text-base font-semibold">SIMULATIONS {`(${simulations.length})`}</span>
+                    <span className="block text-base font-semibold ">SIMULATIONS {`(${simulations.length})`}</span>
                     <div className="relative flex-1 text-right">
-                        <button className="p-2 rounded-md text-gray-500 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 duration-150"
+                        <button className="p-2 rounded-md text-day-350 hover:bg-day-150 active:bg-day-200 duration-300"
                             onClick={handleAddClick} >
                             <SvgSelector id='plus' />
                         </button>

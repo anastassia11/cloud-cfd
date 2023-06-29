@@ -27,7 +27,7 @@
     "turb-kinetic-energy": {
       "name": "Global",
       "value": "100",
-      "unit": "m2/s2"
+      "unit": "m/s"
     }
   },
   "dissipationForm": {
@@ -37,7 +37,7 @@
       "unit": "1/s"
     }
   },
-  "simulationControlForm" : {
+  "simulationControlForm": {
     "end-time": {
       "name": "End time",
       "value": "2000",
@@ -47,19 +47,25 @@
       "name": "Delta t",
       "value": "1",
       "unit": "s"
-    }, 
+    },
     "white-control": {
       "name": "White control",
       "select": true,
-      "options": ["Time step", "Clock time", "Runtime", "CPU time", "Adjustable runtime"],
+      "options": [
+        "Time step",
+        "Clock time",
+        "Runtime",
+        "CPU time",
+        "Adjustable runtime"
+      ],
       "value": "",
       "unit": ""
-    }, 
+    },
     "white-interval": {
       "name": "White interval",
       "value": "1000",
       "unit": ""
-    }, 
+    },
     "max-runtime": {
       "name": "Maximum runtime",
       "value": "20000",
