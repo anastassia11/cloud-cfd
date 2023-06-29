@@ -4,12 +4,15 @@ import { useDispatch } from 'react-redux'
 import { setUser } from '@/store/slices/userSlice'
 import auth from '@/pages/api/auth'
 import Link from 'next/link'
+import { useState } from 'react'
 
 export default function Login() {
     const router = useRouter()
     const dispatch = useDispatch()
+    const [loading, setLoading] = useState(false)
 
     const handleLogin = async (email, password) => {
+        setLoading(true)
         const result = await auth('Login', email, password)
 
         if (result.success) {
@@ -30,7 +33,7 @@ export default function Login() {
                     </p>
                 </div>
             </div>
-            <Form title='Log in' handleClick={handleLogin} />
+            <Form title='Log in' handleClick={handleLogin} loading={loading} />
         </div>
     )
 }
