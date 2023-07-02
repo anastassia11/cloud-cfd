@@ -72,6 +72,7 @@ export default function Simulation({ name, onDeleteClick, id }) {
     const handleDeleteClick = (event) => {
         event.stopPropagation()
         onDeleteClick()
+        setIsActive(false)
     }
     const Setting = ({ formName, name, inputs = {}, onFormChange, simulation_name }) => {
         const handleItemClick = (id) => {

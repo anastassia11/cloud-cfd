@@ -27,7 +27,8 @@ export default function Header() {
                     onClick={() => router.push('/dashboard')}>
                     Dashboard
                 </Link>
-                <button className='text-day-350 hover:bg-day-50 flex items-center hover:border-b-2 hover:border-orange-100 duration-100 h-[56px] px-3' onClick={() => setUserOpen(!userOpen)}>
+                <button className='text-day-350 hover:bg-day-50 flex items-center hover:border-b-2 hover:border-orange-100 duration-100 h-[56px] px-3'
+                    onClick={() => setUserOpen(!userOpen)}>
                     <div className='w-8 h-8 mr-2 rounded-full bg-day-250 flex items-center justify-center' >
                         <p className='text-white uppercase text-[22px]  font-medium '>
                             {email && email[0]}

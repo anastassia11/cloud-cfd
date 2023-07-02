@@ -3,10 +3,14 @@ import axios from 'axios'
 
 export default async function auth(url, email, password) {
     try {
-        const response = await axios.post(`${BASE_SERVER_URL}/api/Auth/${url}`, {
-            email,
-            password
-        })
+        const response = await axios.post(`${BASE_SERVER_URL}/api/Auth/${url}`,
+            { email, password },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
 
         if (response.status === 200) {
             const token = response.data
