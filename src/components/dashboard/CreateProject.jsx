@@ -1,18 +1,19 @@
 import { useState } from 'react'
 import SvgSelector from '../SvgSelector'
-import create_project from '@/pages/api/project'
+import createProject from '@/pages/api/create_project'
 import { Oval } from 'react-loader-spinner'
 
-export default function CreateModal({ onCloseClick }) {
+export default function CreateProject({ onCloseClick, onCreate }) {
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [loading, setLoading] = useState(false)
 
     const handleCreateClick = async (projectName) => {
         setLoading(true)
-        const result = await create_project(projectName)
+        const result = await createProject(projectName)
         if (result.success) {
             console.log(`Project created: ${projectName}`)
+            onCreate(result.data)
         } else {
             alert(result.message)
         }
@@ -53,7 +54,8 @@ export default function CreateModal({ onCloseClick }) {
                     </div>
                     <div className="flex items-center p-4 justify-end mt-3">
                         <button className="w-36 disabled:bg-orange-disabled px-4 h-9 text-base font-medium text-white bg-orange-100 hover:bg-orange-150 active:bg-orange-200 rounded-lg duration-300 flex items-center justify-center"
-                            onClick={() => handleCreateClick(`title:${title} description:${description}`)}>
+                            onClick={() => handleCreateClick(`title:${title} description:${description}`)}
+                            disabled={loading}>
                             {loading ?
                                 <Oval
                                     height={20}

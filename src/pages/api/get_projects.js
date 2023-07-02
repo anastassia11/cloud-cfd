@@ -1,24 +1,19 @@
 import { BASE_SERVER_URL } from '@/utils/constants'
 import axios from 'axios'
 
-export default async function create_project(projectName) {
+export default async function getProjects() {
     try {
-        const response = await axios.post(`${BASE_SERVER_URL}/api/Project/Create`,
-            projectName,
+        const response = await axios.get(`${BASE_SERVER_URL}/api/User/Get_Projects`,
             {
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             })
-
         if (response.status === 200) {
-            console.log(response.data)
-            return { success: true }
+            return { success: true, data: response.data }
         } else {
-            throw new Error('Error creating project')
+            throw new Error('Error getting list of user projects')
         }
-
     } catch (error) {
         return { success: false, message: error.message }
     }

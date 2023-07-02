@@ -1,51 +1,19 @@
-import Image from 'next/image'
 import SvgSelector from '../SvgSelector'
-import geom_preview from '@/../public/geom_preview.jpg'
-import ProjectCard from './ProjectCard'
-import create_project from '@/pages/api/project'
 import { useState } from 'react'
-import CreateModal from './CreateModal'
+import Projects from './Projects'
+import CreateProject from './CreateProject'
 
 export default function Dashboard() {
     const [modal, setModal] = useState(false)
+    const [projects, setProjects] = useState([])
 
-    const projects = [
-        {
-            title: "Project name",
-            desc: "Sed mollis interdum nisi eu porttitor. Sed lacus magna, venenatis at congue in, dictum ut arcu.",
-            img: <Image src={geom_preview} width={500} height={500} alt={geom_preview}
-                className='w-full h-48 rounded-t-md' />,
-            date: "Jan 4 2022"
-        },
-        {
-            title: "Project name",
-            desc: "Sed mollis interdum nisi eu porttitor. Sed lacus magna, venenatis at congue in, dictum ut arcu.",
-            img: <Image src={geom_preview} width={500} height={500} alt={geom_preview}
-                className='w-full h-48 rounded-t-md' />,
-            date: "Jan 4 2022"
-        },
-        {
-            title: "Project name",
-            desc: "Sed mollis interdum nisi eu porttitor. Sed lacus magna, venenatis at congue in, dictum ut arcu.",
-            img: <Image src={geom_preview} width={500} height={500} alt={geom_preview}
-                className='w-full h-48 rounded-t-md' />,
-            date: "Jan 4 2022"
-        },
-        {
-            title: "Project name",
-            desc: "Sed mollis interdum nisi eu porttitor. Sed lacus magna, venenatis at congue in, dictum ut arcu.",
-            img: <Image src={geom_preview} width={500} height={500} alt={geom_preview}
-                className='w-full h-48 rounded-t-md' />,
-            date: "Jan 4 2022"
-        },
-        {
-            title: "Project name",
-            desc: "Sed mollis interdum nisi eu porttitor. Sed lacus magna, venenatis at congue in, dictum ut arcu.",
-            img: <Image src={geom_preview} width={500} height={500} alt={geom_preview}
-                className='w-full h-48 rounded-t-md' />,
-            date: "Jan 4 2022"
-        }
-    ]
+    const handleProjectCreate = (project) => {
+        setProjects([...projects, project])
+    }
+
+    const handleProjectsUpdate = (projects) => {
+        setProjects(projects)
+    }
 
     return (
         <>
@@ -65,16 +33,10 @@ export default function Dashboard() {
                         </button>
                     </div>
                 </div>
-
-                <div className="flex flex-row flex-wrap justify-start gap-[20px] mt-3">
-                    {
-                        projects.map((item, key) => (
-                            <ProjectCard item={item} key={key} />
-                        ))
-                    }
-                </div>
+                <Projects items={projects} onUpdate={handleProjectsUpdate} />
             </div>
-            {modal ? <CreateModal onCloseClick={() => setModal(false)} /> : ''}
+            {modal ? <CreateProject onCloseClick={() => setModal(false)}
+                onCreate={(proejct) => handleProjectCreate(proejct)} /> : ''}
         </>
     )
 }
