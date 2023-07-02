@@ -18,37 +18,37 @@ export default function Projects({ items, onUpdate }) {
         fetchProjects()
     }, [onUpdate])
 
-    const rojects = [
+    const projects = [
         {
-            title: "Project name",
+            title: "Lacus",
             desc: "Sed mollis interdum nisi eu porttitor. Sed lacus magna, venenatis at congue in, dictum ut arcu.",
             img: <Image src={geom_preview} width={500} height={500} alt={geom_preview}
                 className='w-full h-48 rounded-t-md' />,
             date: "Jan 4 2022"
         },
         {
-            title: "Project name",
+            title: "Porttitor",
             desc: "Sed mollis interdum nisi eu porttitor. Sed lacus magna, venenatis at congue in, dictum ut arcu.",
             img: <Image src={geom_preview} width={500} height={500} alt={geom_preview}
                 className='w-full h-48 rounded-t-md' />,
             date: "Jan 4 2022"
         },
         {
-            title: "Project name",
+            title: "Project",
             desc: "Sed mollis interdum nisi eu porttitor. Sed lacus magna, venenatis at congue in, dictum ut arcu.",
             img: <Image src={geom_preview} width={500} height={500} alt={geom_preview}
                 className='w-full h-48 rounded-t-md' />,
             date: "Jan 4 2022"
         },
         {
-            title: "Project name",
+            title: "Mollis",
             desc: "Sed mollis interdum nisi eu porttitor. Sed lacus magna, venenatis at congue in, dictum ut arcu.",
             img: <Image src={geom_preview} width={500} height={500} alt={geom_preview}
                 className='w-full h-48 rounded-t-md' />,
             date: "Jan 4 2022"
         },
         {
-            title: "Project name",
+            title: "Magna",
             desc: "Sed mollis interdum nisi eu porttitor. Sed lacus magna, venenatis at congue in, dictum ut arcu.",
             img: <Image src={geom_preview} width={500} height={500} alt={geom_preview}
                 className='w-full h-48 rounded-t-md' />,
@@ -56,18 +56,14 @@ export default function Projects({ items, onUpdate }) {
         }
     ]
 
-    const handleGet = async () => {
-        console.log(items)
-    }
-
     return (
-        <div className="flex flex-row flex-wrap justify-start gap-[20px] mt-3">
+        // <div className="flex flex-row flex-wrap justify-start gap-[20px] mt-3">
+        <div className='mt-3 project-grid'>
             {
-                rojects.map((item, key) => ( //потом мапить items
+                projects.map((item, key) => ( //потом мапить items
                     <ProjectCard item={item} key={key} />
                 ))
             }
-            <button className='bg-orange-800' onClick={() => handleGet()}>Get</button>
         </div>
     )
 }

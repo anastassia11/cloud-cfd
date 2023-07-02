@@ -2,7 +2,7 @@
 
 export default function ProjectCard({ key, item = {} }) {
     return (
-        <article className="max-w-md w-64 bg-day-00 border rounded-lg duration-300 hover:shadow-md hover:bg-day-150 cursor-pointer"
+        <article className="bg-day-00 border rounded-lg duration-300 hover:shadow-md hover:bg-day-150 cursor-pointer"
             key={key}>
             <a href={item.href}>
                 {item.img}
