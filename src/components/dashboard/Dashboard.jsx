@@ -16,9 +16,9 @@ export default function Dashboard() {
         setProjects(projects)
     }
 
-    const filteredProjects = projects.filter((project) =>
-        project.name.toLowerCase().includes(filterName.toLowerCase())
-    )
+    // const filteredProjects = projects.filter((project) =>
+    //     project.name.toLowerCase().includes(filterName.toLowerCase())
+    // )
 
     return (
         <>

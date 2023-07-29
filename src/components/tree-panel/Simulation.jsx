@@ -93,7 +93,7 @@ export default function Simulation({ name, onDeleteClick, id }) {
             <>
                 <div className='w-full flex items-center rounded-md px-2 cursor-pointer text-day-350 h-9 hover:bg-day-150 active:bg-day-200 duration-300'
                     onClick={() => handleItemClick(formName)}>{name}</div>
-                <div className={`absolute top-[63px] left-[350px] ${selectedItem === (formName) ? '' : 'invisible'}`}>
+                <div className={`absolute top-2 left-[350px] ${selectedItem === (formName) ? '' : 'invisible'}`}>
                     <Form formName={formName} />
                 </div>
             </>
@@ -131,9 +131,16 @@ export default function Simulation({ name, onDeleteClick, id }) {
     ]
     const settings = [
         { setting: <Setting name='Geomerty' formName='geomerty' />, child: false },
+        { setting: <Setting name='Materials' formName='geomerty' />, child: false },
         {
             setting: <DropdownSettings items={initialChildren}>
                 Initial conditions
+            </DropdownSettings>,
+            child: true
+        },
+        {
+            setting: <DropdownSettings items={initialChildren}>
+                Boundary conditions
             </DropdownSettings>,
             child: true
         },

@@ -1,13 +1,12 @@
 import Header from '@/components/header/Header'
-import Layout from '@/components/layouts/Layout'
-import TreePanel from "@/components/tree-panel/TreePanel"
+import Scena from '@/components/scena/Scena'
 
 export default function HomePage() {
 
   return (
-    <div className='w-screen h-screen bg-day-150'>
+    <div className=''>
       <Header />
-      <TreePanel />
+      <Scena />
     </div>
   )
 }

@@ -40,7 +40,7 @@ export default function Header() {
                     </svg>
                 </button>
 
-                {userOpen && <div className='flex flex-col py-2 bg-white rounded-lg shadow absolute top-[58px] border border-day-200 right-3 w-44 text-base z-10'>
+                {userOpen && <div className='flex flex-col py-2 bg-white rounded-lg shadow absolute top-[58px] border border-day-200 right-3 w-44 text-base z-20'>
                     <Link href="/dashboard"
                         className='text-day-350 hover:bg-day-100 p-1.5 pl-3 mx-2 rounded-md'>
                         Dashboard

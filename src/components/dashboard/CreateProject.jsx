@@ -25,7 +25,7 @@ export default function CreateProject({ onCloseClick, onCreate }) {
             <div className="fixed inset-0 w-full h-full bg-black opacity-40" onClick={() => onCloseClick()}></div>
             <div className="flex items-center min-h-screen px-4 py-8">
                 <div className="relative w-full max-w-lg mx-auto bg-white rounded-md shadow-lg">
-                    <div className="flex items-center justify-between py-2 px-4 border-b">
+                    <div className="flex items-center justify-between py-2 pl-4 pr-2 border-b">
                         <h4 className="text-base font-medium text-day-350">
                             Create new project
                         </h4>
