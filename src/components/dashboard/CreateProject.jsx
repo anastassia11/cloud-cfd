@@ -4,18 +4,19 @@ import createProject from '@/pages/api/create_project'
 import { Oval } from 'react-loader-spinner'
 
 export default function CreateProject({ onCloseClick, onCreate }) {
-    const [title, setTitle] = useState('')
+    const [name, setName] = useState('')
     const [description, setDescription] = useState('')
     const [loading, setLoading] = useState(false)
 
-    const handleCreateClick = async (projectName) => {
+    const handleCreateClick = async (name, description) => {
         setLoading(true)
-        const result = await createProject(projectName)
+        const result = await createProject(name, description)
         if (result.success) {
-            console.log(`Project created: ${projectName}`)
+            console.log(`Project created`)
             onCreate(result.data)
         } else {
             alert(result.message)
+            console.log(name)
         }
         onCloseClick()
     }
@@ -40,7 +41,7 @@ export default function CreateProject({ onCloseClick, onCreate }) {
                                 <label className="font-medium text-day-350">
                                     Project title
                                 </label>
-                                <input type="text" placeholder="Enter a title..." value={title} onChange={(e) => setTitle(e.target.value)}
+                                <input type="text" placeholder="Enter a title..." value={name} onChange={(e) => setName(e.target.value)}
                                     className="w-60 mt-2 px-4 h-9 focus:outline-[0] text-day-350 border-b outline-none bg-day-00 border-day-100 focus:border-day-250 " />
                             </div>
                             <div className='flex items-end justify-between'>
@@ -54,7 +55,7 @@ export default function CreateProject({ onCloseClick, onCreate }) {
                     </div>
                     <div className="flex items-center p-4 justify-end mt-3">
                         <button className="w-36 disabled:bg-orange-disabled px-4 h-9 text-base font-medium text-white bg-orange-100 hover:bg-orange-150 active:bg-orange-200 rounded-lg duration-300 flex items-center justify-center"
-                            onClick={() => handleCreateClick(`title:${title} description:${description}`)}
+                            onClick={() => handleCreateClick(name, description)}
                             disabled={loading}>
                             {loading ?
                                 <Oval

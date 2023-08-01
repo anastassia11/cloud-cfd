@@ -10,7 +10,7 @@ export default async function auth(url, email, password) {
                     'Content-Type': 'application/json'
                 }
             }
-        );
+        )
 
         if (response.status === 200) {
             const token = response.data

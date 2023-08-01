@@ -1,24 +1,34 @@
 import SvgSelector from '../SvgSelector'
-import { useState } from 'react'
-import Projects from './Projects'
+import { useCallback, useEffect, useState } from 'react'
 import CreateProject from './CreateProject'
+import getProjects from '@/pages/api/get_projects'
+import ProjectCard from './ProjectCard'
 
 export default function Dashboard() {
     const [modal, setModal] = useState(false)
     const [projects, setProjects] = useState([])
     const [filterName, setFilterName] = useState('')
 
+    useEffect(() => {
+        fetchProjects()
+    }, [])
+
+    const fetchProjects = async () => {
+        const result = await getProjects()
+        if (result.success) {
+            setProjects(result.data)
+        } else {
+            alert(result.message)
+        }
+    }
+
     const handleProjectCreate = (project) => {
-        setProjects([...projects, project])
+        setProjects(prevProjects => [...prevProjects, project])
     }
 
-    const handleProjectsUpdate = (projects) => {
-        setProjects(projects)
-    }
-
-    // const filteredProjects = projects.filter((project) =>
-    //     project.name.toLowerCase().includes(filterName.toLowerCase())
-    // )
+    const filteredProjects = projects.filter((project) =>
+        project.name.toLowerCase().includes(filterName.toLowerCase())
+    )
 
     return (
         <>
@@ -40,8 +50,13 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {/* Потом передавать filteredProjects */}
-                <Projects items={projects} onUpdate={handleProjectsUpdate} />
+                <div className='mt-3 project-grid'>
+                    {
+                        filteredProjects.map((project) => (
+                            <ProjectCard item={project} key={project.uid} />
+                        ))
+                    }
+                </div>
             </div>
             {modal ? <CreateProject onCloseClick={() => setModal(false)}
                 onCreate={(proejct) => handleProjectCreate(proejct)} /> : ''}
