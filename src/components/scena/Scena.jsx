@@ -46,7 +46,7 @@ export default function Scena() {
     }, [inspectObjectGeometry]);
 
     const loadGeoms = async () => {
-        const idProject = 2005
+        const idProject = 1
         const result = await getGeometries(idProject)
         if (result.success) {
             loadSTL(result.data.geometryDataList)

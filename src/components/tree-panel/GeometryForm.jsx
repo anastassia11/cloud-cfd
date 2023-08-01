@@ -1,39 +1,68 @@
 import { useState } from "react"
 import SvgSelector from "../SvgSelector"
+import setGeometry from '@/pages/api/set_geometry'
 
 export default function GeometryForm({ onItemClick }) {
     const [drag, setDrag] = useState(false)
     const [showFileInfo, setShowFileInfo] = useState(false)
-    const [file, setFile] = useState()
+    const [geometry, setGeometry] = useState()
+
     const geometryData = new FormData()
 
     const handleGeometrySubmit = (e) => {
         e.preventDefault()
         onItemClick()
-        geometryData.append('geomerty', file)
-        //здесь фечится geometryData или стейт file
+        handleSetGeometry(geometryData)
     }
+
     const handleDragStart = (e) => {
         e.preventDefault()
         setDrag(true)
     }
+
     const handleDragLeave = (e) => {
         e.preventDefault()
         setDrag(false)
     }
+
     const handleDrop = (e) => {
         e.preventDefault()
-        let file = e.dataTransfer.files
         setDrag(false)
-        setFile(file[0])
+        geometryData.append('Angle', 120)
+        geometryData.append('IdProject', 1)
+        geometryData.append('File', e.dataTransfer.files[0])
+        setGeometry(e.dataTransfer.files[0].name)
         setShowFileInfo(true)
+        console.log(showFileInfo)
+        console.log(geometry)
     }
+
+    const handleSetGeometry = async (geometryData) => {
+        const result = await setGeometry(geometryData)
+        if (result.success) {
+            console.log('success')
+        } else {
+            alert(result.message)
+        }
+    }
+
+    const handleChange = (e) => {
+        e.preventDefault()
+        geometryData.append('Angle', 120)
+        geometryData.append('IdProject', 1)
+        geometryData.append('File', e.target.files[0])
+        setGeometry(e.target.files[0].name)
+        setShowFileInfo(true)
+        console.log(showFileInfo)
+        console.log(geometry)
+    }
+
     let upload = ''
     if (showFileInfo) {
         upload =
-            <div className="flex flex-row">
+            <div className="flex flex-row h-[124px]">
                 <div className="bg-day-100 flex flex-col text-day-350 justify-center items-start p-2 mt-3 h-9 rounded border border-day-200">
-                    {file.name}
+                    {'gbhnjmk,l' + geometry}
                 </div>
             </div>
     } else {
@@ -50,10 +79,21 @@ export default function GeometryForm({ onItemClick }) {
                     onDragStart={e => handleDragStart(e)}
                     onDragLeave={e => handleDragLeave(e)}
                     onDragOver={e => handleDragStart(e)}>
-                    <div className="flex flex-row justify-center items-center">
+                    <div className="flex flex-row justify-center">
                         <SvgSelector id='cloud-drag' />
-                        <p>Drag and drop</p>
+                        <p className='text-sm pt-2 pl-1'>Drag and drop<span className='italic pl-1'>or</span></p>
                     </div>
+                    <form>
+                        <div className="flex items-center">
+                            <label for='geometry_file' className='px-2 h-8 w-fit text-sm flex flex-row items-center bg-day-00 rounded border border-day-200 hover:shadow active:shadow-inner cursor-pointer'>
+                                <SvgSelector id='computer' />
+                                <p className='text-sm pl-1'>Import from Computer</p>
+                            </label>
+                            <input type="file" id='geometry_file' className="w-0"
+                                onChange={e => handleChange(e)} />
+                        </div>
+                    </form>
+
                     <p className="text-xs italic">Supported file formats: .stl</p></div>}
         </div>
     }
