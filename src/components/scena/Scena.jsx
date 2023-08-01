@@ -5,9 +5,10 @@ import { OutlinePass } from "three/addons/postprocessing/OutlinePass.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import React, { useRef, useEffect, useState } from "react";
-import ModelPart from "./ModelPart";
 import TreePanel from '../tree-panel/TreePanel';
 import { BASE_SERVER_URL } from '@/utils/constants';
+import getGeometries from '@/pages/api/get_geometries';
+import DropdownGeometry from './DropdownGeometry';
 
 export default function Scena() {
     const containerRef = useRef(null);
@@ -17,7 +18,7 @@ export default function Scena() {
     const camera = useRef(null);
     const [inspectObjectGeometry, setInspectObjectGeometry] = useState([]);
     const [selectedGeometry, setSelectedGeometry] = useState([]);
-    const [settingOpen, setSettingOpen] = useState(false);
+
     const [geoms, setGeoms] = useState([]);
     const composer = useRef(null);
     const outlinePass = useRef(null);
@@ -44,54 +45,39 @@ export default function Scena() {
         addListeners();
     }, [inspectObjectGeometry]);
 
-    async function loadGeoms() {
-        try {
-            const myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-
-            const requestOptions = {
-                method: "GET",
-                headers: myHeaders,
-            };
-
-            const idProject = 2005;
-            const response = await fetch(
-                `https://localhost:44333/api/Project/Get_Geometries/` + idProject,
-                requestOptions
-            );
-            const data = await response.json();
-            loadSTL(data.geometryDataList);
-        } catch (error) {
-            console.log("error", error);
+    const loadGeoms = async () => {
+        const idProject = 2005
+        const result = await getGeometries(idProject)
+        if (result.success) {
+            loadSTL(result.data.geometryDataList)
+        } else {
+            alert(result.message)
         }
     }
 
     function loadSTL(arr) {
-        setGeoms(arr);
+        setGeoms(arr)
         arr.forEach((el) => {
-            console.log(el);
             el.models.forEach((model) => {
-                console.log(model);
+                console.log(model)
+                model.visible = true
                 stlLoader.current.load(
-                    "https://localhost:44333/" + model.link,
+                    BASE_SERVER_URL + model.link,
                     (geometry) => {
                         const material = new THREE.MeshPhongMaterial({
                             color: 0x808080,
                             specular: 0x494949,
                             shininess: 100,
                         });
-
                         material.side = THREE.DoubleSide;
                         const mesh = new THREE.Mesh(geometry, material);
                         mesh.position.set(0, 0, 0);
                         mesh.scale.set(1, 1, 1);
                         mesh.castShadow = true;
                         mesh.receiveShadow = true;
-
                         mesh.uid = model.uid;
                         mesh.category = el.name;
                         scene.add(mesh);
-
                         setInspectObjectGeometry((prevGeoms) => [...prevGeoms, mesh]);
                     }
                 );
@@ -150,7 +136,7 @@ export default function Scena() {
 
         renderer.current.setClearColor("#f0f0f0");
 
-        renderer.current.setSize(window.innerWidth, window.innerHeight);
+        renderer.current.setSize(window.innerWidth, window.innerHeight - 56);
         document.body.appendChild(renderer.current.domElement);
 
         controls.current = new OrbitControls(
@@ -246,51 +232,27 @@ export default function Scena() {
         }
     }
 
-    function HidePartObject(model) {
-        model.visible = !model.visible;
-        console.log(model.visible);
+    function hidePartObject(model) {
+        model.visible = !model.visible
         inspectObjectGeometry.forEach((d) => {
             if (d.uid === model.uid) {
-                console.log("YEP");
                 d.visible = !d.visible;
-                d.material.visible = d.visible; // Add this line to update the visibility of the mesh
+                d.material.visible = d.visible // обновить видимость сетки
             }
         });
     }
-
 
     return (
         <div className='absolute top-14 left-0 flex justify-between w-full'>
             <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
             <div className='z-10'><TreePanel /></div>
-            <div className='z-10 max-h-[calc(100vh-73px)] bg-day-00 w-[335px] overflow-y-auto p-2 m-2 rounded-md shadow h-fit'>
+            {geoms ? <div className='z-10 max-h-[calc(100vh-73px)] bg-day-00 w-[335px] overflow-y-auto p-2 m-2 rounded-md shadow h-fit'>
                 {geoms.map((geom) => (
                     <div className="" key={geom.name}>
-                        <button className="w-full flex items-center justify-between text-day-350 px-2 h-9 rounded-lg  hover:bg-day-150 active:bg-day-200 duration-300"
-                            onClick={() => setSettingOpen(!settingOpen)}>
-                            <div className="flex items-center gap-x-2">
-                                {geom.name}
-                            </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={`w-5 h-5 duration-300 ${settingOpen ? 'rotate-180' : ''}`}>
-                                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                            </svg>
-                        </button>
-                        {
-                            settingOpen ? (
-                                <ul className="ml-4 pl-2 border-l text-base font-normal">
-                                    {
-                                        geom.models.map((model) => (
-                                            <li key={model.name}>
-                                                <ModelPart name={model.name} handleClick={() => HidePartObject(model)} onVisible={model.visible} />
-                                            </li>
-                                        ))
-                                    }
-                                </ul>
-                            ) : ""
-                        }
+                        <DropdownGeometry geom={geom} hidePartObject={(model) => hidePartObject(model)} />
                     </div>
                 ))}
-            </div>
+            </div> : ''}
         </div>
     );
 }
