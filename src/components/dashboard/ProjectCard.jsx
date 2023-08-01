@@ -1,9 +1,12 @@
 import Image from 'next/image';
 import geom_preview from '@/../public/geom_preview.jpg'
+import { useRouter } from 'next/router';
 
 export default function ProjectCard({ item = {} }) {
+    const router = useRouter()
     return (
-        <div className="bg-day-00 border rounded-lg duration-300 hover:shadow-md hover:bg-day-150 cursor-pointer">
+        <div className="bg-day-00 border rounded-lg duration-300 hover:shadow-md hover:bg-day-150 cursor-pointer"
+            onClick={() => router.push(`/workbench/${item.uid}`)}>
             <Image src={geom_preview} width={500} height={500} alt={geom_preview}
                 className='w-full h-48 rounded-t-md' />
             <div className="flex items-center mt-2 pt-3 ml-4 mr-2">

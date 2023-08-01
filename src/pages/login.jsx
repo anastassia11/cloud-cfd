@@ -6,6 +6,5 @@ export default function LoginPage() {
         <main className="w-full h-screen flex flex-col items-center pt-32 bg-day-50 sm:px-4">
             <Login />
         </main>
-
     )
 }
