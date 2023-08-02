@@ -19,7 +19,7 @@ export default function TreePanel() {
                     <SvgSelector id='simulations' />
                     <span className="block text-base font-semibold ">SIMULATIONS {`(${simulations.length})`}</span>
                     <div className="relative flex-1 text-right">
-                        <button className="p-2 rounded-md text-day-350 hover:bg-day-150 active:bg-day-200 duration-300"
+                        <button className="p-2 rounded-md text-day-350 hover:text-black hover:bg-day-100 active:bg-day-200 duration-300"
                             onClick={handleAddClick} >
                             <SvgSelector id='plus' />
                         </button>

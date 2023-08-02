@@ -61,9 +61,15 @@ export default function GeometryForm({ onItemClick }) {
     if (showFileInfo) {
         upload =
             <div className="flex flex-row h-[124px]">
-                <div className="bg-day-100 flex flex-col text-day-350 justify-center items-start p-2 mt-3 h-9 rounded border border-day-200">
-                    {'gbhnjmk,l' + geometry}
+                <div className='flex flex-row h-fit justify-between w-full items-center mt-2'>
+                    <div className="bg-day-100 flex flex-col text-day-350 justify-center items-start p-2 h-9 rounded border border-day-200">
+                        {geometry}
+                    </div>
+                    <button className="p-2 rounded-md text-day-300 hover:text-black duration-300 w-8 h-8">
+                        <SvgSelector id='close' />
+                    </button>
                 </div>
+
             </div>
     } else {
         upload = <div>
@@ -74,7 +80,7 @@ export default function GeometryForm({ onItemClick }) {
                     onDragOver={e => handleDragStart(e)}
                     onDrop={e => handleDrop(e)}>
                     <SvgSelector id='cloud-drop' />
-                    <p className="italic">Add your file</p></div>
+                    <p className="italic text-sm">Add your file</p></div>
                 : <div className="flex flex-col text-day-350 justify-center items-center space-y-2 bg-day-100 mt-3 h-28 rounded border-dashed border border-gray-300"
                     onDragStart={e => handleDragStart(e)}
                     onDragLeave={e => handleDragLeave(e)}
@@ -101,7 +107,7 @@ export default function GeometryForm({ onItemClick }) {
         <form onSubmit={handleGeometrySubmit} className='flex flex-col bg-white w-[335px] p-3 shadow rounded-md'>
             <div className='flex flex-row justify-between items-center border-b pb-2'>
                 <p className='self-end font-medium text-day-350'>Geomerty</p>
-                <button type="submit" className='flex items-center self-end justify-center w-8 h-8 bg-day-100 rounded hover:bg-day-150 active:bg-day-200'>
+                <button type="submit" className='flex items-center self-end justify-center w-8 h-8 bg-day-100 rounded hover:bg-day-150 active:bg-day-200 text-day-350 hover:text-black'>
                     <SvgSelector id='check' />
                 </button>
             </div>

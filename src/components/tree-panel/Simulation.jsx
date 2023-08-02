@@ -131,7 +131,7 @@ export default function Simulation({ name, onDeleteClick, id }) {
     ]
     const settings = [
         { setting: <Setting name='Geomerty' formName='geomerty' />, child: false },
-        { setting: <Setting name='Materials' formName='geomerty' />, child: false },
+        { setting: <Setting name='Materials' formName='materials' />, child: false },
         {
             setting: <DropdownSettings items={initialChildren}>
                 Initial conditions

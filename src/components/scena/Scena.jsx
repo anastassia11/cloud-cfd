@@ -246,7 +246,7 @@ export default function Scena() {
         <div className='absolute top-14 left-0 flex justify-between w-full'>
             <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
             <div className='z-10'><TreePanel /></div>
-            {geoms ? <div className='z-10 max-h-[calc(100vh-73px)] bg-day-00 w-[335px] overflow-y-auto p-2 m-2 rounded-md shadow h-fit'>
+            {geoms ? <div className='z-10 max-h-[calc(100vh-73px)] bg-day-00 w-[300px] overflow-y-auto p-2 m-2 rounded-md shadow h-fit hidden lg:block'>
                 {geoms.map((geom) => (
                     <div className="" key={geom.name}>
                         <DropdownGeometry geom={geom} hidePartObject={(model) => hidePartObject(model)} />
