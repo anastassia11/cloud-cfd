@@ -1,6 +1,7 @@
 import { useState } from "react"
 import SvgSelector from "../SvgSelector"
 import setGeometry from '@/pages/api/set_geometry'
+import deleteGeometry from '@/pages/api/delete_geometry'
 
 export default function GeometryForm({ onItemClick }) {
     const [drag, setDrag] = useState(false)
@@ -46,6 +47,15 @@ export default function GeometryForm({ onItemClick }) {
         }
     }
 
+    const handleDeleteClick = async (idGeometry) => {
+        const result = await deleteGeometry(idGeometry)
+        if (result.success) {
+            console.log('success')
+        } else {
+            alert(result.message)
+        }
+    }
+
     const handleChange = (e) => {
         e.preventDefault()
         geometryData.append('Angle', 120)
@@ -65,7 +75,8 @@ export default function GeometryForm({ onItemClick }) {
                     <div className="bg-day-100 flex flex-col text-day-350 justify-center items-start p-2 h-9 rounded border border-day-200">
                         {geometry}
                     </div>
-                    <button className="p-2 rounded-md text-day-300 hover:text-black duration-300 w-8 h-8">
+                    <button className="p-2 rounded-md text-day-300 hover:text-black duration-300 w-8 h-8"
+                        onClick={() => handleDeleteClick()}>
                         <SvgSelector id='close' />
                     </button>
                 </div>
