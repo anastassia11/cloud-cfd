@@ -5,7 +5,6 @@ import React from 'react'
 export default function WorkbenchPage() {
     return (
         <div className=''>
-            <Header />
             <Scena />
         </div>
     )
