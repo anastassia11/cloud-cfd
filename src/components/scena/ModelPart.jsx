@@ -13,7 +13,7 @@ export default function ModelPart({ handleClick, name, onVisible }) {
         setVisible(!visible)
     }
     return (
-        <div className="w-full flex items-center justify-between rounded-md px-2 cursor-pointer text-day-350 h-9 hover:bg-day-150 active:bg-day-200 duration-300">
+        <div className={`w-full flex items-center justify-between rounded-md px-2 cursor-pointer text-day-350 ${!visible && 'text-day-250'} h-9 ${visible && 'hover:bg-day-150'} ${visible && 'active:bg-day-200'} duration-300`}>
             {name}
             <button onClick={handleButtonClick}>
                 {visible ? <SvgSelector id='visible' /> : <SvgSelector id='unvisible' />}

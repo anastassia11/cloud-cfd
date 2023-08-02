@@ -1,5 +1,5 @@
 import SvgSelector from '../SvgSelector'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import CreateProject from './CreateProject'
 import getProjects from '@/pages/api/get_projects'
 import ProjectCard from './ProjectCard'
@@ -20,6 +20,25 @@ export default function Dashboard() {
         } else {
             alert(result.message)
         }
+    }
+
+    const deleteProject = async (idProject) => {
+        const result = await deleteProject(idProject)
+        if (result.success) {
+            console.log('success')
+        } else {
+            alert(result.message)
+        }
+    }
+
+    const handleDeleteClick = (idProject) => {
+        deleteProject(idProject)
+        projects.filter((project) =>
+            project.uid !== idProject)
+    }
+
+    const handleEditClick = () => {
+
     }
 
     const handleProjectCreate = (project) => {
@@ -53,7 +72,8 @@ export default function Dashboard() {
                 <div className='mt-3 project-grid'>
                     {
                         filteredProjects.map((project) => (
-                            <ProjectCard item={project} key={project.uid} />
+                            <ProjectCard item={project} key={project.uid} onDeleteClick={() => handleDeleteClick(project.uid)}
+                                onEditClick={() => handleEditClick()} />
                         ))
                     }
                 </div>
