@@ -5,7 +5,12 @@ export default function HomePage() {
 
   return (
     <div className=''>
-      <Scena />
+
+
+
+
+
+      {/* <Scena /> */}
     </div>
   )
 }

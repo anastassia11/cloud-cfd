@@ -12,11 +12,9 @@ export default function CreateProject({ onCloseClick, onCreate }) {
         setLoading(true)
         const result = await createProject(name, description)
         if (result.success) {
-            console.log(`Project created`)
             onCreate(result.data)
         } else {
             alert(result.message)
-            console.log(name)
         }
         onCloseClick()
     }

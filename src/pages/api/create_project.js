@@ -13,7 +13,6 @@ export default async function createProject(name, description) {
             }
         )
         if (response.status === 200) {
-            console.log(response)
             return { success: true, data: response.data }
         } else {
             throw new Error('Error creating project')

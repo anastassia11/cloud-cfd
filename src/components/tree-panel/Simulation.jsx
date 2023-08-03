@@ -69,12 +69,14 @@ export default function Simulation({ name, onDeleteClick, id }) {
     const handleFormChange = (formName, updatedValue) => {
         setUserValue(prev => ({ ...prev, [formName]: updatedValue }))
     }
+
     const handleDeleteClick = (event) => {
         event.stopPropagation()
         onDeleteClick()
         setIsActive(false)
     }
-    const Setting = ({ formName, name, inputs = {}, onFormChange, simulation_name }) => {
+
+    const Setting = ({ formName, name, inputs = {}, onFormChange }) => {
         const handleItemClick = (id) => {
             setSelectedItem((prev) => (prev === id ? null : id))
             console.log(id)

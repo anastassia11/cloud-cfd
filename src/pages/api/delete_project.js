@@ -3,8 +3,7 @@ import axios from 'axios'
 
 export default async function deleteProject(idProject) {
     try {
-        const response = await axios.delete(`${BASE_SERVER_URL}/api/Project/Delete`,
-            { idProject },
+        const response = await axios.delete(`${BASE_SERVER_URL}/api/Project/Delete/${idProject}`,
             {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
