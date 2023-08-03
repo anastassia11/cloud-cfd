@@ -9,6 +9,7 @@ import TreePanel from '../tree-panel/TreePanel';
 import { BASE_SERVER_URL } from '@/utils/constants';
 import getGeometries from '@/pages/api/get_geometries';
 import DropdownGeometry from './DropdownGeometry';
+import SvgSelector from '../SvgSelector';
 
 export default function Scena() {
     const containerRef = useRef(null);
@@ -59,7 +60,6 @@ export default function Scena() {
         setGeoms(arr)
         arr.forEach((el) => {
             el.models.forEach((model) => {
-                console.log(model)
                 model.visible = true
                 stlLoader.current.load(
                     BASE_SERVER_URL + model.link,
@@ -177,9 +177,7 @@ export default function Scena() {
 
         const raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(mouse, camera.current);
-        console.log(inspectObjectGeometry);
         const intersects = raycaster.intersectObjects(inspectObjectGeometry, true);
-        console.log(intersects.length);
         if (intersects.length > 0) {
             const object = intersects[0].object;
             console.log(object);
@@ -244,14 +242,21 @@ export default function Scena() {
 
     return (
         <div className='absolute top-14 left-0 flex justify-between w-full'>
-            <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
+            {/* <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' /> */}
             <div className='z-10'><TreePanel /></div>
-            {geoms ? <div className='z-10 max-h-[calc(100vh-73px)] bg-day-00 w-[300px] overflow-y-auto p-2 m-2 rounded-md shadow h-fit hidden lg:block'>
-                {geoms.map((geom) => (
-                    <div className="" key={geom.name}>
-                        <DropdownGeometry geom={geom} hidePartObject={(model) => hidePartObject(model)} />
-                    </div>
-                ))}
+            {geoms ? <div className='z-10 max-h-[calc(100vh-73px)] bg-day-00 w-[300px] overflow-y-auto p-2 m-2 rounded-md shadow h-fit'>
+                <div className="text-day-350 w-full flex items-center gap-x-1 border-b pb-2 pl-[6px] pr-[1px]">
+                    <SvgSelector id='geometry' />
+                    <span className="block text-base font-semibold pt-[9px] pb-1">GEOMETRY {`(${geoms.length})`}</span>
+                </div>
+                <div className='mt-2'>
+                    {geoms.map((geom) => (
+                        <div className="" key={geom.name}>
+                            <DropdownGeometry geom={geom} hidePartObject={(model) => hidePartObject(model)} />
+                        </div>
+                    ))}
+                </div>
+
             </div> : ''}
         </div>
     );

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import CreateProject from './CreateProject'
 import getProjects from '@/pages/api/get_projects'
 import ProjectCard from './ProjectCard'
+import deleteProject from '@/pages/api/delete_project'
 
 export default function Dashboard() {
     const [modal, setModal] = useState(false)
@@ -22,19 +23,18 @@ export default function Dashboard() {
         }
     }
 
-    const deleteProject = async (idProject) => {
+    const deleteUserProject = async (idProject) => {
         const result = await deleteProject(idProject)
         if (result.success) {
-            console.log('success')
+            setProjects(prevProjects => prevProjects.filter((project) => project.id !== idProject))
         } else {
             alert(result.message)
         }
     }
 
     const handleDeleteClick = (idProject) => {
-        deleteProject(idProject)
-        projects.filter((project) =>
-            project.uid !== idProject)
+        console.log('handleDeleteClick')
+        deleteUserProject(idProject)
     }
 
     const handleEditClick = () => {
@@ -59,7 +59,8 @@ export default function Dashboard() {
                     <div className='flex flex-row items-center justify-end space-x-2'>
                         <div className="relative flex items-center">
                             <SvgSelector id='search' />
-                            <input type="text" placeholder="Search" value={filterName} onChange={(e) => setFilterName(e.target.value)}
+                            <input type="text" placeholder="Search" value={filterName} onChange={(e) => setFilterName(e.target.value)
+                            }
                                 className="w-72 h-9 pl-12 pr-4 text-base text-day-350 border rounded-md outline-none bg-day-50 focus:bg-day-00 focus:border-day-200" />
                         </div>
                         <button className="w-32 px-4 h-9 text-base flex items-center font-medium text-white bg-orange-100 hover:bg-orange-150 active:bg-orange-200 rounded-lg duration-300"
@@ -72,7 +73,7 @@ export default function Dashboard() {
                 <div className='mt-3 project-grid'>
                     {
                         filteredProjects.map((project) => (
-                            <ProjectCard item={project} key={project.uid} onDeleteClick={() => handleDeleteClick(project.uid)}
+                            <ProjectCard item={project} key={project.id} onDeleteClick={() => handleDeleteClick(project.id)}
                                 onEditClick={() => handleEditClick()} />
                         ))
                     }
