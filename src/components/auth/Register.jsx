@@ -17,6 +17,7 @@ export default function Register() {
 
         if (result.success) {
             dispatch(setUser({ email }))
+            localStorage.setItem('email', email)
             router.push('/')
         } else {
             alert(result.message)

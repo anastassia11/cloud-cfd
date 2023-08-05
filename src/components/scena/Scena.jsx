@@ -8,8 +8,11 @@ import React, { useRef, useEffect, useState } from "react";
 import TreePanel from '../tree-panel/TreePanel';
 import { BASE_SERVER_URL } from '@/utils/constants';
 import getGeometries from '@/pages/api/get_geometries';
-import DropdownGeometry from './DropdownGeometry';
+import Geometry from './Geometry';
 import SvgSelector from '../SvgSelector';
+import { useRouter } from 'next/router';
+import updateGeometry from '@/pages/api/update_geom';
+import { Jost } from 'next/font/google';
 
 export default function Scena() {
     const containerRef = useRef(null);
@@ -60,7 +63,6 @@ export default function Scena() {
         setGeoms(arr)
         arr.forEach((el) => {
             el.models.forEach((model) => {
-                model.visible = true
                 stlLoader.current.load(
                     BASE_SERVER_URL + model.link,
                     (geometry) => {
@@ -180,8 +182,6 @@ export default function Scena() {
         const intersects = raycaster.intersectObjects(inspectObjectGeometry, true);
         if (intersects.length > 0) {
             const object = intersects[0].object;
-            console.log(object);
-
             const material = new THREE.MeshPhongMaterial({
                 color: 0x404080,
                 specular: 0x494949,
@@ -190,7 +190,6 @@ export default function Scena() {
             object.material = material;
 
             setSelectedGeometry((prevGeoms) => [...prevGeoms, object]);
-            console.log(selectedGeometry)
         }
     }
     function handleRightClick(event) {
@@ -203,8 +202,6 @@ export default function Scena() {
         const intersects = raycaster.intersectObjects(inspectObjectGeometry, true);
         if (intersects.length > 0) {
             const object = intersects[0].object;
-            console.log(object);
-
             const material = new THREE.MeshPhongMaterial({
                 color: 0x808080,
                 specular: 0x494949,
@@ -231,18 +228,36 @@ export default function Scena() {
     }
 
     function hidePartObject(model) {
-        model.visible = !model.visible
         inspectObjectGeometry.forEach((d) => {
             if (d.uid === model.uid) {
                 d.visible = !d.visible;
                 d.material.visible = d.visible // обновить видимость сетки
             }
-        });
+        })
+    }
+
+    const requestUpdateGeoms = async (idProject, jsonGeometry) => {
+        const result = await updateGeometry(idProject, jsonGeometry)
+        if (result.success) {
+
+        } else {
+            alert(result.message)
+        }
+    }
+
+    const updateGeoms = (updatedGeom) => {
+        const newGeoms = geoms.map((geom) => {
+            if (geom.name === updatedGeom.name) {
+                return updatedGeom
+            }
+        })
+        setGeoms(newGeoms)
+        requestUpdateGeoms(1, JSON.stringify(newGeoms))
     }
 
     return (
         <div className='absolute top-14 left-0 flex justify-between w-full'>
-            {/* <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' /> */}
+            <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
             <div className='z-10'><TreePanel /></div>
             {geoms ? <div className='z-10 max-h-[calc(100vh-73px)] bg-day-00 w-[300px] overflow-y-auto p-2 m-2 rounded-md shadow h-fit'>
                 <div className="text-day-350 w-full flex items-center gap-x-1 border-b pb-2 pl-[6px] pr-[1px]">
@@ -252,12 +267,11 @@ export default function Scena() {
                 <div className='mt-2'>
                     {geoms.map((geom) => (
                         <div className="" key={geom.name}>
-                            <DropdownGeometry geom={geom} hidePartObject={(model) => hidePartObject(model)} />
+                            <Geometry geom={geom} hidePartObject={(model) => hidePartObject(model)} updateGeomArray={(updatedGeom) => updateGeoms(updatedGeom)} />
                         </div>
                     ))}
                 </div>
-
             </div> : ''}
         </div>
-    );
+    )
 }

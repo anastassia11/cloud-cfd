@@ -39,14 +39,14 @@ export default function SvgSelector({ id = '' }) {
             )
         case 'cloud-drag':
             return (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width={1} stroke="currentColor" className="w-8 h-8">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width={1} stroke="currentColor" className="w-10 h-10">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                 </svg>
 
             )
         case 'cloud-drop':
             return (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width={0.5} stroke="currentColor" className="w-14 h-14 ">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width={1} stroke="currentColor" className="w-10 h-10">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                 </svg>
             )
@@ -96,6 +96,16 @@ export default function SvgSelector({ id = '' }) {
         case 'more':
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" fill="#000000" strokeWidth={1.3} stroke="currentColor" className='w-[18px] h-[18px]' >
+                    <g>
+                        <path d="M8,22c-4.411,0-8,3.589-8,8s3.589,8,8,8s8-3.589,8-8S12.411,22,8,22z M8,36c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S11.309,36,8,36z" />
+                        <path d="M52,22c-4.411,0-8,3.589-8,8s3.589,8,8,8s8-3.589,8-8S56.411,22,52,22z M52,36c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S55.309,36,52,36z" />
+                        <path d="M30,22c-4.411,0-8,3.589-8,8s3.589,8,8,8s8-3.589,8-8S34.411,22,30,22z M30,36c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S33.309,36,30,36z" />
+                    </g>
+                </svg>
+            )
+        case 'more-horizontal':
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" fill="#000000" strokeWidth={1.3} stroke="currentColor" className='w-[18px] h-[18px] rotate-90' >
                     <g>
                         <path d="M8,22c-4.411,0-8,3.589-8,8s3.589,8,8,8s8-3.589,8-8S12.411,22,8,22z M8,36c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S11.309,36,8,36z" />
                         <path d="M52,22c-4.411,0-8,3.589-8,8s3.589,8,8,8s8-3.589,8-8S56.411,22,52,22z M52,36c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S55.309,36,52,36z" />

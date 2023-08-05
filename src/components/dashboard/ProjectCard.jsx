@@ -88,21 +88,28 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
                     <time datetime={formettedData} className="block text-xs text-gray-500">
                         {`Last modified: ${formettedData}`}
                     </time>
-                    <p className="mt-0.5 text-lg text-gray-900">
-                        {item.name}
-                    </p>
+                    <div className='flex flex-row justify-between items-center'>
+                        <p className="mt-0.5 text-lg text-gray-900">
+                            {item.name}
+                        </p>
+                        {/* <button className='w-8 h-8 border flex flex-row items-center justify-center'>
+                            <SvgSelector id='more-horizontal' />
+                        </button> */}
+
+                    </div>
+
                     <p className="mt-2 line-clamp-3 text-sm/relaxed text-gray-500">
                         {item.description}
                     </p>
                 </div>
-                <Link href={`/workbench/${item.id}`} className="group mt-2 inline-flex items-center gap-1 text-sm font-medium text-blue-600">
+                <Link href={`/workbench/${item.id}`} className="group mt-2 inline-flex items-center gap-1 text-sm font-medium text-orange-100">
                     View in Workbench
                     <span aria-hidden="true" className="block transition-all group-hover:ms-0.5 rtl:rotate-180">&rarr;</span>
                 </Link>
             </div>
             {
                 isActive ? (
-                    <div ref={contextmenuRef} className="fixed z-10 opacity-0 max-w-[17rem] w-full rounded-md bg-white shadow border text-day-350"
+                    <div ref={contextmenuRef} className="fixed z-10 opacity-0 max-w-[200px] w-full rounded-md bg-white shadow border text-day-350"
                         style={{ top: `${position.y}px`, left: `${position.x}px` }}>
                         <div className='px-2 py-1.5'>
                             <button className="flex w-full items-center gap-2 rounded-md px-2 h-9 text-base text-day-350 hover:bg-day-150"

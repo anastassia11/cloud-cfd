@@ -1,51 +1,64 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SvgSelector from '../SvgSelector'
 
-export default function ModelPart({ handleClick, name, onVisible }) {
-    const [visible, setVisible] = useState(onVisible)
+export default function ModelPart({ model, handleHideClick, updateModelPart }) {
+    const [input, setInput] = useState(false)
+
+    const [modelPart, setModelPart] = useState(model)
 
     useEffect(() => {
-        setVisible(onVisible)
-    }, [onVisible])
+        const inputElement = document.getElementById("inputId");
+        if (inputElement) {
+            inputElement.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    handleDoneClick()
+                }
+            })
+        }
+    }, [input])
+
+    useEffect(() => {
+        updateModelPart(modelPart)
+    }, [modelPart.visible])
 
     const handleVisibleClick = () => {
-        handleClick()
-        setVisible(!visible)
+        const newVisible = !modelPart.visible
+        setModelPart(prevModelPart => ({ ...prevModelPart, visible: newVisible }))
+        handleHideClick(modelPart)
     }
 
-    const handleRenameClick = (event) => {
-        event.stopPropagation()
-        ///onRenameClick
-        setIsActive(false)
+    const handleNameChange = (e) => {
+        setModelPart(prevModelPart => ({ ...prevModelPart, name: e.target.value }))
+    }
+
+    const handleDoneClick = () => {
+        updateModelPart(modelPart)
+        setInput(false)
     }
 
     return (
-        <div className={`model-part w-full flex items-center justify-between rounded-md px-2
-            ${visible ? 'text-day-350' : 'text-day-250'} h-9 ${visible && 'hover:bg-day-150'} ${visible && 'active:bg-day-200'} duration-300`}>
-            <p>{`${name.slice(0, 20)}${name.length < 20 ? '' : '...'}`}</p>
-            <div>
-                <button className="invisible more-button pr-2">
-                    <SvgSelector id='more' />
-                </button>
-                <button onClick={handleVisibleClick}>
-                    {visible ? <SvgSelector id='visible' /> : <SvgSelector id='unvisible' />}
-                </button>
-            </div>
+        input ? <div className='flex flex-row items-center space-x-2 justify-between'>
+            <input type="text" id='inputId' value={modelPart.name} onChange={e => handleNameChange(e)}
+                className='h-9 w-full p-2 focus:outline-[0] text-day-350 border rounded-md outline-none bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]' >
+            </input>
+            <button className='flex items-center justify-center h-8 w-10 bg-day-100 rounded hover:bg-day-150 active:bg-day-200 text-day-350 hover:text-black'
+                onClick={handleDoneClick}>
+                <SvgSelector id='check' />
+            </button>
+        </div> :
+            <div className={`model-part w-full flex items-center justify-between rounded-md
+            ${modelPart.visible ? 'text-day-350' : 'text-day-250'} h-9 ${modelPart.visible && 'hover:bg-day-150'} ${modelPart.visible && 'active:bg-day-200'} duration-300`}>
+                <p className='pl-2'>{`${modelPart.name.slice(0, 20)}${modelPart.name.length < 20 ? '' : '...'}`}</p>
 
-            {/* {
-                isActive ? (
-                    <div ref={contextmenuRef} className="fixed z-10 opacity-0 w-32 rounded-md bg-white shadow border text-day-350 p-2" style={{ top: `${position.y}px`, left: `${position.x}px` }}>
-                        <button className="flex w-full items-center gap-2 rounded-md px-2 h-9 text-base text-day-350 hover:bg-day-150"
-                            onClick={handleRenameClick}>
-                            Rename
-                        </button>
-                        <button className="flex w-full items-center gap-2 rounded-md px-2 h-9 text-base text-day-350 hover:bg-day-150"
-                            onClick={() => handleVisibleClick()}>
-                            {visible ? 'Hide' : 'Show'}
-                        </button>
-                    </div>
-                ) : ""
-            } */}
-        </div>
+                <div className='pr-2 flex flex-row items-center'>
+                    <button className="invisible more-button pr-2"
+                        onClick={() => setInput(true)}>
+                        <SvgSelector id='more' />
+                    </button>
+                    <button onClick={handleVisibleClick}>
+                        {modelPart.visible ? <SvgSelector id='visible' /> : <SvgSelector id='unvisible' />}
+                    </button>
+                </div>
+            </div>
     )
 }

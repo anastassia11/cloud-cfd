@@ -16,6 +16,7 @@ export default function Login() {
         const result = await auth('Login', email, password)
 
         if (result.success) {
+            localStorage.setItem('email', email)
             dispatch(setUser({ email }))
             router.push('/')
         } else {

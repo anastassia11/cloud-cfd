@@ -1,10 +1,26 @@
-import { useEffect, useRef, useState } from 'react';
-import ModelPart from './ModelPart';
-import SvgSelector from '../SvgSelector';
+import { useEffect, useState } from 'react'
+import ModelPart from './ModelPart'
 
-
-export default function DropdownGeometry({ geom = [], hidePartObject }) {
+export default function Geometry({ geom = [], hidePartObject, updateGeomArray }) {
     const [settingOpen, setSettingOpen] = useState(false)
+    const [geometry, setGeometry] = useState(geom)
+
+    useEffect(() => {
+        updateGeomArray(geometry)
+    }, [geometry])
+
+    const handleUpdate = (updatedModelPart) => {
+        const updatedGeometry = {
+            ...geometry,
+            models: geometry.models.map((model) => {
+                if (model.uid === updatedModelPart.uid) {
+                    return updatedModelPart
+                }
+                return model
+            })
+        }
+        setGeometry(updatedGeometry)
+    }
 
     return (
         <div className="" key={geom.name}>
@@ -24,7 +40,7 @@ export default function DropdownGeometry({ geom = [], hidePartObject }) {
                         {
                             geom.models.map((model) => (
                                 <li key={model.name}>
-                                    <ModelPart name={model.name} handleClick={() => hidePartObject(model)} onVisible={model.visible} />
+                                    <ModelPart model={model} handleHideClick={(modelPart) => hidePartObject(modelPart)} updateModelPart={(updatedModelPart) => handleUpdate(updatedModelPart)} />
                                 </li>
                             ))
                         }

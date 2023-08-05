@@ -33,7 +33,6 @@ export default function Dashboard() {
     }
 
     const handleDeleteClick = (idProject) => {
-        console.log('handleDeleteClick')
         deleteUserProject(idProject)
     }
 

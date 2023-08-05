@@ -83,35 +83,27 @@ export default function GeometryForm({ onItemClick }) {
 
             </div>
     } else {
-        upload = <div>
+        upload = <div className='h-36 pt-3'>
             {drag
-                ? <div className="bg-day-150 flex flex-col text-day-350 justify-center items-center mt-3 h-28 rounded border-dashed border border-gray-300"
+                ? <div className="bg-day-100 flex flex-col text-day-350 justify-start pt-4 items-center rounded border-dashed border-[1.5px] duration-300 border-gray-400 h-full"
                     onDragStart={e => handleDragStart(e)}
                     onDragLeave={e => handleDragLeave(e)}
                     onDragOver={e => handleDragStart(e)}
                     onDrop={e => handleDrop(e)}>
                     <SvgSelector id='cloud-drop' />
-                    <p className="italic text-sm">Add your file</p></div>
-                : <div className="flex flex-col text-day-350 justify-center items-center space-y-2 bg-day-100 mt-3 h-28 rounded border-dashed border border-gray-300"
+                    <p className="text-sm pt-2">Add your file</p></div>
+                : <label for='geometry_file'
+                    className="flex flex-col text-day-350 justify-start pt-4 items-center space-y-2 bg-day-50 hover:bg-day-100 hover:border-gray-400 h-full rounded border-dashed border-[1.5px] border-gray-300 duration-300 cursor-pointer"
                     onDragStart={e => handleDragStart(e)}
                     onDragLeave={e => handleDragLeave(e)}
                     onDragOver={e => handleDragStart(e)}>
-                    <div className="flex flex-row justify-center">
+                    <div className="flex flex-col justify-center items-center text-day-300">
                         <SvgSelector id='cloud-drag' />
-                        <p className='text-sm pt-2 pl-1'>Drag and drop<span className='italic pl-1'>or</span></p>
+                        <p className='text-sm pt-2'><span className='font-semibold'>Click to upload</span> or drag and drop</p>
                     </div>
-                    <form>
-                        <div className="flex items-center">
-                            <label for='geometry_file' className='px-2 h-8 w-fit text-sm flex flex-row items-center bg-day-00 rounded border border-day-200 hover:shadow active:shadow-inner cursor-pointer'>
-                                <SvgSelector id='computer' />
-                                <p className='text-sm pl-1'>Import from Computer</p>
-                            </label>
-                            <input type="file" id='geometry_file' className="w-0"
-                                onChange={e => handleChange(e)} />
-                        </div>
-                    </form>
-
-                    <p className="text-xs italic">Supported file formats: .stl</p></div>}
+                    <input type="file" id='geometry_file' className="w-0 h-0"
+                        onChange={e => handleChange(e)} />
+                    <p className="text-xs">Supported file formats: STL</p></label>}
         </div>
     }
     return (
