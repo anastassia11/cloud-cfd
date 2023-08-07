@@ -1,4 +1,4 @@
-export default function SvgSelector({ id = '' }) {
+export default function SvgSelector({ id = '', ...props }) {
     switch (id) {
         case 'simulation':
             return (
@@ -8,7 +8,7 @@ export default function SvgSelector({ id = '' }) {
             )
         case 'delete':
             return (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width={1.5} className="h-5 w-5" >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width={1.5} {...props}>
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
             )
@@ -83,8 +83,14 @@ export default function SvgSelector({ id = '' }) {
             )
         case 'edit':
             return (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" {...props}>
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                </svg>
+            )
+        case 'edit2':
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" {...props}>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                 </svg>
             )
         case 'geometry':
@@ -95,7 +101,7 @@ export default function SvgSelector({ id = '' }) {
             )
         case 'more':
             return (
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" fill="#000000" strokeWidth={1.3} stroke="currentColor" className='w-[18px] h-[18px]' >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" fill="#000000" strokeWidth={1.3} stroke="currentColor" {...props} >
                     <g>
                         <path d="M8,22c-4.411,0-8,3.589-8,8s3.589,8,8,8s8-3.589,8-8S12.411,22,8,22z M8,36c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S11.309,36,8,36z" />
                         <path d="M52,22c-4.411,0-8,3.589-8,8s3.589,8,8,8s8-3.589,8-8S56.411,22,52,22z M52,36c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S55.309,36,52,36z" />
@@ -103,16 +109,7 @@ export default function SvgSelector({ id = '' }) {
                     </g>
                 </svg>
             )
-        case 'more-horizontal':
-            return (
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" fill="#000000" strokeWidth={1.3} stroke="currentColor" className='w-[18px] h-[18px] rotate-90' >
-                    <g>
-                        <path d="M8,22c-4.411,0-8,3.589-8,8s3.589,8,8,8s8-3.589,8-8S12.411,22,8,22z M8,36c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S11.309,36,8,36z" />
-                        <path d="M52,22c-4.411,0-8,3.589-8,8s3.589,8,8,8s8-3.589,8-8S56.411,22,52,22z M52,36c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S55.309,36,52,36z" />
-                        <path d="M30,22c-4.411,0-8,3.589-8,8s3.589,8,8,8s8-3.589,8-8S34.411,22,30,22z M30,36c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S33.309,36,30,36z" />
-                    </g>
-                </svg>
-            )
+
         case 'open':
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
