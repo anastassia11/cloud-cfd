@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import SvgSelector from '../SvgSelector'
 import FormGenerator from './FormGenerator'
 import GeometryForm from './GeometryForm'
@@ -9,37 +9,8 @@ export default function Simulation({ name, onDeleteClick, id }) {
     const [selectedItem, setSelectedItem] = useState(null)
     const [userValue, setUserValue] = useState(formDefault)
     const [simulationOpen, setSimulationOpen] = useState(false)
-    const [isActive, setIsActive] = useState(false)
-    const [position, setPosition] = useState({ x: 0, y: 0 })
+
     // const [formData, setFormData] = useState(new FormData())
-    const contextmenuRef = useRef()
-    const contextmenuHandler = useRef()
-
-    useEffect(() => {
-        document.addEventListener("click", () => resetToDefault())
-        document.addEventListener("contextmenu", (e) => {
-            if (contextmenuHandler.current && !contextmenuHandler.current.contains(e.target)) resetToDefault()
-        })
-    }, [])
-
-    const handlecontextMenu = (e) => {
-        e.preventDefault()
-        const { pageX, pageY } = e
-        setIsActive(true)
-        setTimeout(() => {
-            const rect = contextmenuRef.current.getBoundingClientRect();
-            const x = (pageX + rect.width) > window.innerWidth ? (window.innerWidth - rect.width) : pageX + 2;
-            const y = (pageY + rect.height) > window.innerHeight ? (window.innerHeight - rect.height) : pageY + 2;
-            setPosition({ x, y })
-            contextmenuRef.current.classList.remove("opacity-0")
-        }, 100)
-    }
-
-    const resetToDefault = () => {
-        setIsActive(false)
-        document.documentElement.classList.remove("overflow-hidden")
-    }
-
 
     const handleRunClick = async () => {
         // mockapi не понимает FormData
@@ -73,7 +44,6 @@ export default function Simulation({ name, onDeleteClick, id }) {
     const handleDeleteClick = (event) => {
         event.stopPropagation()
         onDeleteClick()
-        setIsActive(false)
     }
 
     const Setting = ({ formName, name, inputs = {}, onFormChange }) => {
@@ -93,7 +63,8 @@ export default function Simulation({ name, onDeleteClick, id }) {
         }
         return (
             <>
-                <div className='w-full flex items-center rounded-md px-2 cursor-pointer text-day-350 h-9 hover:bg-day-150 active:bg-day-200 duration-300'
+                <div className='w-full flex items-center rounded-md px-2 cursor-pointer text-day-350 h-9 
+                hover:bg-day-150 active:bg-day-200 duration-300'
                     onClick={() => handleItemClick(formName)}>{name}</div>
                 <div className={`absolute top-2 left-[350px] ${selectedItem === (formName) ? '' : 'invisible'}`}>
                     <Form formName={formName} />
@@ -156,26 +127,25 @@ export default function Simulation({ name, onDeleteClick, id }) {
 
     return (
         <div>
-            <button className="w-full flex items-center justify-between text-day-350 px-2 h-9 rounded-lg hover:bg-day-150 active:bg-day-200 duration-300"
-                onClick={() => setSimulationOpen(!simulationOpen)}
-                ref={contextmenuHandler} onContextMenu={handlecontextMenu}>
+            <button className="group w-full flex items-center justify-between text-day-350 px-2 h-9 rounded-lg 
+            hover:bg-day-150 active:bg-day-200 duration-300"
+                onClick={() => setSimulationOpen(!simulationOpen)}>
                 <div className="flex items-center gap-x-2 font-medium" >
                     <SvgSelector id='simulation' />
                     {name}
-                    {
-                        isActive ? (
-                            <div ref={contextmenuRef} className="fixed z-10 opacity-0 w-32 rounded-md bg-white shadow border text-day-350" style={{ top: `${position.y}px`, left: `${position.x}px` }}>
-                                <button className="flex w-full items-center gap-2 rounded-md px-2 h-9 text-base text-red-600 hover:bg-day-150"
-                                    onClick={handleDeleteClick}>
-                                    Delete
-                                </button>
-                            </div>
-                        ) : ""
-                    }
                 </div>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={`w-5 h-5 duration-300 ${simulationOpen ? 'rotate-180' : ''}`}>
-                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                </svg>
+                <div className='flex flex-row items-center justify-center'>
+                    <button className='invisible group-hover:visible mr-1'
+                        onClick={handleDeleteClick}>
+                        <SvgSelector id='delete' className="h-5 w-5" />
+                    </button>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                        className={`w-5 h-5 duration-300 ${simulationOpen ? 'rotate-180' : ''}`}>
+                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                            clipRule="evenodd" />
+                    </svg>
+                </div>
+
             </button>
             {
                 simulationOpen ? (
@@ -189,7 +159,8 @@ export default function Simulation({ name, onDeleteClick, id }) {
                                     </li>
                             }
                             )}
-                            <button className="flex w-full items-center gap-2 rounded-lg px-2 h-9 text-base font-normal text-orange-100 hover:bg-day-150 active:bg-day-200 duration-300"
+                            <button className="flex w-full items-center gap-2 rounded-lg px-2 h-9 text-base font-normal 
+                            text-orange-100 hover:bg-day-150 active:bg-day-200 duration-300"
                                 onClick={handleRunClick}>
                                 <SvgSelector id='run' />
                                 Simulation Run
