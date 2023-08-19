@@ -1,19 +1,18 @@
 import { useState } from 'react'
 import SvgSelector from '../SvgSelector'
-import createProject from '@/pages/api/create_project'
 import { Oval } from 'react-loader-spinner'
 import updateProject from '@/pages/api/update_project'
 
-export default function CreateProject({ onCloseClick, onCreate }) {
-    const [name, setName] = useState('')
-    const [description, setDescription] = useState('')
+export default function UpdateProject({ idProject, projectName, projectDescription, onCloseClick, onUpdate }) {
+    const [name, setName] = useState(projectName)
+    const [description, setDescription] = useState(projectDescription)
     const [loading, setLoading] = useState(false)
 
-    const handleSubmitClick = async (name, description) => {
+    const handleSubmitClick = async (idProject, name, description) => {
         setLoading(true)
-        const result = await createProject(name, description)
+        const result = await updateProject(idProject, name, description)
         if (result.success) {
-            onCreate(result.data)
+            onUpdate(result.data)
         } else {
             alert(result.message)
         }
@@ -27,7 +26,7 @@ export default function CreateProject({ onCloseClick, onCreate }) {
                 <div className="relative w-full max-w-lg mx-auto bg-white rounded-md shadow-lg">
                     <div className="flex items-center justify-between py-2 pl-4 pr-2 border-b">
                         <h4 className="text-base font-medium text-day-350">
-                            Create new project
+                            Edit project details
                         </h4>
                         <button className="p-2 rounded-md text-day-300 hover:text-black duration-300 w-8 h-8"
                             onClick={() => onCloseClick()}>
@@ -54,7 +53,7 @@ export default function CreateProject({ onCloseClick, onCreate }) {
                     </div>
                     <div className="flex items-center p-4 justify-end mt-3">
                         <button className="w-36 disabled:bg-orange-disabled px-4 h-9 text-base font-medium text-white bg-orange-100 hover:bg-orange-150 active:bg-orange-200 rounded-lg duration-300 flex items-center justify-center"
-                            onClick={() => handleSubmitClick(name, description)}
+                            onClick={() => handleSubmitClick(idProject, name, description)}
                             disabled={loading}>
                             {loading ?
                                 <Oval
@@ -65,7 +64,7 @@ export default function CreateProject({ onCloseClick, onCreate }) {
                                     ariaLabel='oval-loading'
                                     secondaryColor="#FFFFFF"
                                     strokeWidth={4}
-                                    strokeWidthSecondary={4} /> : 'Create Project'}
+                                    strokeWidthSecondary={4} /> : 'Update'}
                         </button>
                     </div>
                 </div>

@@ -3,9 +3,9 @@ import Dashboard from '@/components/dashboard/Dashboard'
 
 export default function DashboardPage() {
     return (
-        <main className='w-screen min-h-screen bg-day-100'>
+        <div className=''>
             <Dashboard />
-        </main>
+        </div>
     )
 }
 

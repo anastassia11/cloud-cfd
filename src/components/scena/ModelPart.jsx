@@ -1,15 +1,25 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import SvgSelector from '../SvgSelector'
 
 export default function ModelPart({ model, handleHideClick, updateModelPart }) {
     const [input, setInput] = useState(false)
-
     const [modelPart, setModelPart] = useState(model)
+    const checkButtonRef = useRef()
+    const inputRef = useRef()
 
     useEffect(() => {
-        const inputElement = document.getElementById("inputId");
+        const handleClick = (event) => {
+            const inputElement = document.getElementById("inputId")
+            const button = document.getElementById('button')
+            if (button && inputRef && !button.contains(event.target) && !inputRef.contains(event.target)) {
+                setInput(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClick)
+        const inputElement = document.getElementById("inputId")
+
         if (inputElement) {
-            inputElement.addEventListener("keydown", function (event) {
+            inputRef.addEventListener("keydown", function (event) {
                 if (event.key === "Enter") {
                     handleDoneClick()
                 }
@@ -28,17 +38,19 @@ export default function ModelPart({ model, handleHideClick, updateModelPart }) {
     }
 
     const handleNameChange = (e) => {
+        e.stopPropagation()
         setModelPart(prevModelPart => ({ ...prevModelPart, name: e.target.value }))
     }
 
     const handleDoneClick = () => {
         updateModelPart(modelPart)
+        console.log('YEP')
         setInput(false)
     }
 
     return (
         input ? <div className='flex flex-row items-center space-x-2 justify-between'>
-            <input type="text" id='inputId' value={modelPart.name} onChange={e => handleNameChange(e)}
+            <input type="text" id='inputId' ref={inputRef} value={modelPart.name} onChange={e => handleNameChange(e)}
                 className='h-9 w-full p-2 focus:outline-[0] text-day-350 border rounded-md outline-none bg-day-00 shadow-sm 
                 border-day-200 focus:border-[#c9c9c9]' >
             </input>
@@ -52,7 +64,7 @@ export default function ModelPart({ model, handleHideClick, updateModelPart }) {
             ${modelPart.visible ? 'text-day-350' : 'text-day-250'} h-9 ${modelPart.visible && 'hover:bg-day-150'} duration-300`}>
                 <p className='pl-2'>{`${modelPart.name.slice(0, 20)}${modelPart.name.length < 20 ? '' : '...'}`}</p>
                 <div className='pr-2 flex flex-row items-center'>
-                    <button className="invisible group-hover:visible pr-1"
+                    <button className="invisible group-hover:visible pr-1" id='button'
                         onClick={() => setInput(true)}>
                         <SvgSelector id='edit' className='w-[17px] h-[17px]' />
                     </button>

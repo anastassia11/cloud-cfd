@@ -10,9 +10,7 @@ import { BASE_SERVER_URL } from '@/utils/constants';
 import getGeometries from '@/pages/api/get_geometries';
 import Geometry from './Geometry';
 import SvgSelector from '../SvgSelector';
-import { useRouter } from 'next/router';
 import updateGeometry from '@/pages/api/update_geom';
-import { Jost } from 'next/font/google';
 
 export default function Scena() {
     const containerRef = useRef(null);
@@ -139,7 +137,8 @@ export default function Scena() {
         renderer.current.setClearColor("#f0f0f0");
 
         renderer.current.setSize(window.innerWidth, window.innerHeight - 56);
-        document.body.appendChild(renderer.current.domElement);
+        const component = document.getElementById("for-canvas")
+        component.appendChild(renderer.current.domElement);
 
         controls.current = new OrbitControls(
             camera.current,
@@ -238,6 +237,7 @@ export default function Scena() {
 
     const requestUpdateGeoms = async (idProject, jsonGeometry) => {
         const result = await updateGeometry(idProject, jsonGeometry)
+        console.log(result)
         if (result.success) {
 
         } else {
@@ -256,7 +256,7 @@ export default function Scena() {
     }
 
     return (
-        <div className='absolute top-14 left-0 flex justify-between w-full'>
+        <div className='absolute top-14 left-0 flex justify-between w-full' id='for-canvas'>
             <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
             <div className='z-10'><TreePanel /></div>
             {geoms ? <div className='z-10 max-h-[calc(100vh-73px)] bg-day-00 w-[300px] overflow-y-auto p-2 m-2 rounded-md shadow h-fit'>
@@ -266,7 +266,7 @@ export default function Scena() {
                 </div>
                 <div className='mt-2'>
                     {geoms.map((geom) => (
-                        <div className="" key={geom.name}>
+                        <div className="" key={geom.uid}>
                             <Geometry geom={geom} hidePartObject={(model) => hidePartObject(model)} updateGeomArray={(updatedGeom) => updateGeoms(updatedGeom)} />
                         </div>
                     ))}
