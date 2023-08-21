@@ -247,10 +247,17 @@ export default function Scena() {
 
     const updateGeoms = (updatedGeom) => {
         const newGeoms = geoms.map((geom) => {
-            if (geom.name === updatedGeom.name) {
+            if (geom.uid === updatedGeom.uid) {
                 return updatedGeom
-            }
+            } else return geom
         })
+        setGeoms(newGeoms)
+        requestUpdateGeoms(1, JSON.stringify(newGeoms))
+    }
+
+
+    const deleteGeom = (deletedGeom) => {
+        const newGeoms = geoms.filter((geom) => geom.uid !== deletedGeom.uid)
         setGeoms(newGeoms)
         requestUpdateGeoms(1, JSON.stringify(newGeoms))
     }
@@ -267,7 +274,9 @@ export default function Scena() {
                 <div className='mt-2'>
                     {geoms.map((geom) => (
                         <div className="" key={geom.uid}>
-                            <Geometry geom={geom} hidePartObject={(model) => hidePartObject(model)} updateGeomArray={(updatedGeom) => updateGeoms(updatedGeom)} />
+                            <Geometry geom={geom} hidePartObject={(model) => hidePartObject(model)}
+                                updateGeomArray={(updatedGeom) => updateGeoms(updatedGeom)}
+                                deleteGeomArray={(deletedGeom) => deleteGeom(deletedGeom)} />
                         </div>
                     ))}
                 </div>

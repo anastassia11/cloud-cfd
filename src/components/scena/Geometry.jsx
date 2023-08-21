@@ -2,30 +2,30 @@ import { useEffect, useState } from 'react'
 import ModelPart from './ModelPart'
 import SvgSelector from '../SvgSelector'
 
-export default function Geometry({ geom = [], hidePartObject, updateGeomArray }) {
+export default function Geometry({ geom = [], hidePartObject, updateGeomArray, deleteGeomArray }) {
     const [settingOpen, setSettingOpen] = useState(false)
     const [geometry, setGeometry] = useState(geom)
     const [input, setInput] = useState(false)
 
     useEffect(() => {
-        console.log(geom)
-        const handleClick = (event) => {
-            const inputElement = document.getElementById("inputId")
-            const button = document.getElementById('button')
-            if (button && inputElement && !button.contains(event.target) && !inputElement.contains(event.target)) {
-                setInput(false)
-            }
-        }
-        document.addEventListener('mousedown', handleClick)
-        const inputElement = document.getElementById("inputId")
+        // console.log(geom)
+        // const handleClick = (event) => {
+        //     const inputElement = document.getElementById("inputId")
+        //     const button = document.getElementById('button')
+        //     if (button && inputElement && !button.contains(event.target) && !inputElement.contains(event.target)) {
+        //         setInput(false)
+        //     }
+        // }
+        // document.addEventListener('mousedown', handleClick)
+        // const inputElement = document.getElementById("inputId")
 
-        if (inputElement) {
-            inputElement.addEventListener("keydown", function (event) {
-                if (event.key === "Enter") {
-                    handleDoneClick()
-                }
-            })
-        }
+        // if (inputElement) {
+        //     inputElement.addEventListener("keydown", function (event) {
+        //         if (event.key === "Enter") {
+        //             handleDoneClick()
+        //         }
+        //     })
+        // }
     }, [input])
 
     // useEffect(() => {
@@ -42,8 +42,8 @@ export default function Geometry({ geom = [], hidePartObject, updateGeomArray })
                 return model
             })
         }
-        setGeometry(prevGeometry => updatedGeometry)
-        console.log(geometry)
+        setGeometry(updatedGeometry)
+        updateGeomArray(updatedGeometry)
     }
 
     const handleNameChange = (e) => {
@@ -55,13 +55,20 @@ export default function Geometry({ geom = [], hidePartObject, updateGeomArray })
         updateGeomArray(geometry)
         setInput(false)
     }
+
     const handleEditClick = (e) => {
         e.stopPropagation()
         setInput(true)
     }
+
+    const handleDeleteClick = () => {
+        deleteGeomArray(geometry)
+        setGeometry({})
+    }
+
     return (
 
-        <div key={geom.name}>
+        <div key={geometry.name}>
             <div className={`w-full flex items-center justify-start text-day-350 pl-[7px] h-9 rounded-lg 
             ${!input && 'hover:bg-day-150 active:bg-day-200'} duration-300 cursor-pointer group`}
                 onClick={() => !input && setSettingOpen(!settingOpen)}>
@@ -72,7 +79,7 @@ export default function Geometry({ geom = [], hidePartObject, updateGeomArray })
                 </svg>
 
                 {input ? <div className='flex flex-row items-center space-x-2 justify-between'>
-                    <input type="text" id='inputId' value={geom.name} onChange={e => handleNameChange(e)}
+                    <input type="text" id='inputId' value={geometry.name} onChange={e => handleNameChange(e)}
                         className='h-9 w-full p-2 focus:outline-[0] text-day-350 border rounded-md outline-none
                         bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]' >
                     </input>
@@ -84,13 +91,14 @@ export default function Geometry({ geom = [], hidePartObject, updateGeomArray })
                 </div>
                     : <div className='model-part w-full flex items-center justify-between rounded-md text-day-350 h-9 
                         hover:bg-day-150 active:bg-day-200'>
-                        <p className='pl-2'>{`${geom.name.slice(0, 20)}${geom.name.length < 20 ? '' : '...'}`}</p>
+                        <p className='pl-2'>{`${geometry.name.slice(0, 20)}${geometry.name.length < 20 ? '' : '...'}`}</p>
                         <div className='pr-2 flex flex-row items-center'>
                             <button className="invisible group-hover:visible pr-1" id='button'
                                 onClick={e => handleEditClick(e)}>
                                 <SvgSelector id='edit' className='w-[17px] h-[17px]' />
                             </button>
-                            <button className='invisible group-hover:visible'>
+                            <button className='invisible group-hover:visible'
+                                onClick={handleDeleteClick}>
                                 <SvgSelector id='delete' className="h-5 w-5" />
                             </button>
                         </div>
@@ -101,7 +109,7 @@ export default function Geometry({ geom = [], hidePartObject, updateGeomArray })
                 settingOpen ? (
                     <ul className="ml-4 pl-2 border-l text-base font-normal">
                         {
-                            geom.models.map((model) => (
+                            geometry.models.map((model) => (
                                 <li key={model.uid}>
                                     <ModelPart model={model} handleHideClick={(modelPart) => hidePartObject(modelPart)}
                                         updateModelPart={(updatedModelPart) => handleUpdate(updatedModelPart)} />

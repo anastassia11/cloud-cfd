@@ -4,27 +4,26 @@ import SvgSelector from '../SvgSelector'
 export default function ModelPart({ model, handleHideClick, updateModelPart }) {
     const [input, setInput] = useState(false)
     const [modelPart, setModelPart] = useState(model)
-    const checkButtonRef = useRef()
-    const inputRef = useRef()
+
 
     useEffect(() => {
-        const handleClick = (event) => {
-            const inputElement = document.getElementById("inputId")
-            const button = document.getElementById('button')
-            if (button && inputRef && !button.contains(event.target) && !inputRef.contains(event.target)) {
-                setInput(false)
-            }
-        }
-        document.addEventListener('mousedown', handleClick)
-        const inputElement = document.getElementById("inputId")
+        // const handleClick = (event) => {
+        //     const inputElement = document.getElementById("inputId")
+        //     const button = document.getElementById('button')
+        //     if (button && inputElement && !button.contains(event.target) && !inputElement.contains(event.target)) {
+        //         setInput(false)
+        //     }
+        // }
+        // document.addEventListener('mousedown', handleClick)
+        // const inputElement = document.getElementById("inputId")
 
-        if (inputElement) {
-            inputRef.addEventListener("keydown", function (event) {
-                if (event.key === "Enter") {
-                    handleDoneClick()
-                }
-            })
-        }
+        // if (inputElement) {
+        //     inputElement.addEventListener("keydown", function (event) {
+        //         if (event.key === "Enter") {
+        //             handleDoneClick()
+        //         }
+        //     })
+        // }
     }, [input])
 
     useEffect(() => {
@@ -44,13 +43,12 @@ export default function ModelPart({ model, handleHideClick, updateModelPart }) {
 
     const handleDoneClick = () => {
         updateModelPart(modelPart)
-        console.log('YEP')
         setInput(false)
     }
 
     return (
         input ? <div className='flex flex-row items-center space-x-2 justify-between'>
-            <input type="text" id='inputId' ref={inputRef} value={modelPart.name} onChange={e => handleNameChange(e)}
+            <input type="text" id='inputId' value={modelPart.name} onChange={e => handleNameChange(e)}
                 className='h-9 w-full p-2 focus:outline-[0] text-day-350 border rounded-md outline-none bg-day-00 shadow-sm 
                 border-day-200 focus:border-[#c9c9c9]' >
             </input>
