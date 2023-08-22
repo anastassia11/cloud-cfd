@@ -4,46 +4,30 @@ import FormGenerator from './FormGenerator'
 import GeometryForm from './GeometryForm'
 import formDefault from './assets/formData.json'
 import DropdownSettings from './DropdownSettings'
+import DeleteSimulation from './DeleteSimulation'
 
 export default function Simulation({ name, onDeleteClick, id }) {
     const [selectedItem, setSelectedItem] = useState(null)
     const [userValue, setUserValue] = useState(formDefault)
     const [simulationOpen, setSimulationOpen] = useState(false)
-
-    // const [formData, setFormData] = useState(new FormData())
+    const [deleteModal, setDeleteModal] = useState(false)
 
     const handleRunClick = async () => {
-        // mockapi не понимает FormData
-        // Object.keys(userValue).map((key) => {
-        //     const array = userValue[key]
-        //     Object.keys(array).map((key) => {
-        //         formData.set(`${key}`, array[key].value)
-        //     })
-        // })
-        // console.log([...formData.entries()]);
-        const request_body = {
-            id, userValue
-        }
 
-        try {
-            await fetch(`https://644a81a3a8370fb32150ac69.mockapi.io/simulations`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(request_body)
-            })
-            //const data = await response.json()
-        } catch (error) {
-            console.error(error)
-        }
     }
 
     const handleFormChange = (formName, updatedValue) => {
         setUserValue(prev => ({ ...prev, [formName]: updatedValue }))
     }
 
-    const handleDeleteClick = (event) => {
-        event.stopPropagation()
+    const handleDeleteClick = (e) => {
+        e.stopPropagation()
+        setDeleteModal(true)
+    }
+
+    const deleteSimulation = async () => {
         onDeleteClick()
+        setDeleteModal(false)
     }
 
     const Setting = ({ formName, name, inputs = {}, onFormChange }) => {
@@ -145,7 +129,6 @@ export default function Simulation({ name, onDeleteClick, id }) {
                             clipRule="evenodd" />
                     </svg>
                 </div>
-
             </button>
             {
                 simulationOpen ? (
@@ -169,6 +152,9 @@ export default function Simulation({ name, onDeleteClick, id }) {
                     </div>
                 ) : ""
             }
+            {deleteModal ? <DeleteSimulation simulationName={name}
+                onCloseClick={() => setDeleteModal(false)}
+                onDeleteClick={() => deleteSimulation()} /> : ''}
         </div>
     )
 }
