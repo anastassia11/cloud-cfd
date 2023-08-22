@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import ModelPart from './ModelPart'
 import SvgSelector from '../SvgSelector'
+import DeleteModal from './DeleteModal'
 
 export default function Geometry({ geom = [], hidePartObject, updateGeomArray, deleteGeomArray }) {
     const [settingOpen, setSettingOpen] = useState(false)
     const [geometry, setGeometry] = useState(geom)
     const [input, setInput] = useState(false)
+    const [modal, setModal] = useState(false)
 
     useEffect(() => {
         // console.log(geom)
@@ -61,7 +63,14 @@ export default function Geometry({ geom = [], hidePartObject, updateGeomArray, d
         setInput(true)
     }
 
-    const handleDeleteClick = () => {
+    const handleDeleteClick = (e) => {
+        e.stopPropagation()
+        setModal(true)
+        // deleteGeomArray(geometry)
+        // setGeometry({})
+    }
+
+    const deleteProject = () => {
         deleteGeomArray(geometry)
         setGeometry({})
     }
@@ -70,7 +79,7 @@ export default function Geometry({ geom = [], hidePartObject, updateGeomArray, d
 
         <div key={geometry.name}>
             <div className={`w-full flex items-center justify-start text-day-350 pl-[7px] h-9 rounded-lg 
-            ${!input && 'hover:bg-day-150 active:bg-day-200'} duration-300 cursor-pointer group`}
+            ${!input && 'hover:bg-day-150 active:bg-day-200'} cursor-pointer group`}
                 onClick={() => !input && setSettingOpen(!settingOpen)}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                     className={`w-5 h-5 duration-300 ${settingOpen ? 'rotate-180' : ''}`}>
@@ -98,7 +107,7 @@ export default function Geometry({ geom = [], hidePartObject, updateGeomArray, d
                                 <SvgSelector id='edit' className='w-[17px] h-[17px]' />
                             </button>
                             <button className='invisible group-hover:visible'
-                                onClick={handleDeleteClick}>
+                                onClick={e => handleDeleteClick(e)}>
                                 <SvgSelector id='delete' className="h-5 w-5" />
                             </button>
                         </div>
@@ -119,6 +128,7 @@ export default function Geometry({ geom = [], hidePartObject, updateGeomArray, d
                     </ul>
                 ) : ""
             }
+            {modal ? <DeleteModal onCloseClick={() => setModal(false)} geometryName={geometry.name} onDeleteClick={() => deleteProject()} /> : ''}
         </div >
     )
 }
