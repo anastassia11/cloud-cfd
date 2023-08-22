@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
-import geometryReducer from './slices/geometryReducer'
+import geometriesReducer from './slices/geometriesSlice'
 
 
 export default configureStore({
     reducer: {
-        geometries: geometryReducer,
+        geometries: geometriesReducer,
     }
 })

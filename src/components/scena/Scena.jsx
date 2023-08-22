@@ -11,20 +11,28 @@ import getGeometries from '@/pages/api/get_geometries';
 import Geometry from './Geometry';
 import SvgSelector from '../SvgSelector';
 import updateGeometry from '@/pages/api/update_geom';
+import { useDispatch, useSelector } from 'react-redux';
+import { setGeometries } from '@/store/slices/geometriesSlice';
 
 export default function Scena() {
-    const containerRef = useRef(null);
-    const controls = useRef(null);
-    const stlLoader = useRef(null);
-    const renderer = useRef(null);
-    const camera = useRef(null);
-    const [inspectObjectGeometry, setInspectObjectGeometry] = useState([]);
-    const [selectedGeometry, setSelectedGeometry] = useState([]);
+    const containerRef = useRef(null)
+    const controls = useRef(null)
+    const stlLoader = useRef(null)
+    const renderer = useRef(null)
+    const camera = useRef(null)
+    const [inspectObjectGeometry, setInspectObjectGeometry] = useState([])
+    const [selectedGeometry, setSelectedGeometry] = useState([])
 
-    const [geoms, setGeoms] = useState([]);
-    const composer = useRef(null);
-    const outlinePass = useRef(null);
-    const scene = new THREE.Scene();
+    // const [geoms, setGeoms] = useState([])
+
+    const geoms = useSelector(state => state.geometries.geometries)
+    const dispatch = useDispatch()
+
+    const composer = useRef(null)
+    const outlinePass = useRef(null)
+    const scene = new THREE.Scene()
+
+    // const setGeoms = () => dispatch(setGeometries())
 
     useEffect(() => {
         //Метод для загрузки json с массивом разбитых stl-объектов(ссылка + настройки) с сервера
@@ -51,6 +59,7 @@ export default function Scena() {
         const idProject = 1
         const result = await getGeometries(idProject)
         if (result.success) {
+            dispatch(setGeometries(result.data.geometryDataList))
             loadSTL(result.data.geometryDataList)
         } else {
             alert(result.message)
@@ -58,7 +67,8 @@ export default function Scena() {
     }
 
     function loadSTL(arr) {
-        setGeoms(arr)
+        dispatch(setGeometries(arr))
+        // setGeoms(arr)
         arr.forEach((el) => {
             el.models.forEach((model) => {
                 stlLoader.current.load(
@@ -251,14 +261,16 @@ export default function Scena() {
                 return updatedGeom
             } else return geom
         })
-        setGeoms(newGeoms)
+        // setGeoms(newGeoms)
+        dispatch(setGeometries(newGeoms))
         requestUpdateGeoms(1, JSON.stringify(newGeoms))
     }
 
 
     const deleteGeom = (deletedGeom) => {
         const newGeoms = geoms.filter((geom) => geom.uid !== deletedGeom.uid)
-        setGeoms(newGeoms)
+        // setGeoms(newGeoms)
+        dispatch(setGeometries(newGeoms))
         requestUpdateGeoms(1, JSON.stringify(newGeoms))
     }
 

@@ -1,26 +1,15 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import SvgSelector from "../SvgSelector"
 import addGeometry from '@/pages/api/set_geometry'
 import { Oval } from 'react-loader-spinner'
-import getGeometries from '@/pages/api/get_geometries'
+import { useSelector } from 'react-redux'
 
 export default function GeometryForm({ onItemClick }) {
     const [drag, setDrag] = useState(false)
     const [loading, setLoading] = useState([])
-    const [files, setFiles] = useState([])
-    const [fileCount, setFileCount] = useState(0)
-
-    const loadGeoms = async () => {
-        const idProject = 1
-        const result = await getGeometries(idProject)
-        if (result.success) {
-            setFiles(result.data.geometryDataList)
-            setFileCount(result.data.geometryDataList.length)
-            console.log(result.data.geometryDataList.length)
-        } else {
-            alert(result.message)
-        }
-    }
+    const geoms = useSelector(state => state.geometries.geometries)
+    const [files, setFiles] = useState(geoms)
+    const [fileCount, setFileCount] = useState(geoms.length)
 
     const handleGeometrySubmit = (e) => {
         e.preventDefault()
@@ -41,13 +30,10 @@ export default function GeometryForm({ onItemClick }) {
         e.preventDefault()
         setDrag(false)
         const newFiles = Array.from(e.dataTransfer.files)
-
         setFiles((prevFiles) => [...prevFiles, ...newFiles])
         setLoading((prevLoading) => [...prevLoading, ...newFiles.map(() => false)])
         setFileCount((prevCount) => prevCount + newFiles.length)
-
         newFiles.forEach((file, index) => {
-            console.log(fileCount + index)
             handleSetGeometry({ 'Angle': '120', 'IdProject': '1', 'File': file }, fileCount + index)
         })
     }
@@ -82,14 +68,9 @@ export default function GeometryForm({ onItemClick }) {
         setLoading((prevLoading) => [...prevLoading, ...newFiles.map(() => false)])
         setFileCount((prevCount) => prevCount + newFiles.length)
         newFiles.forEach((file, index) => {
-            console.log(fileCount + index)
             handleSetGeometry({ 'Angle': '120', 'IdProject': '1', 'File': file }, fileCount + index)
         })
     }
-
-    useEffect(() => {
-        loadGeoms()
-    }, [])
 
     const filesArray = <div className='mt-2'>
         {files.map((file, index) => (
