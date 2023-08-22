@@ -1,15 +1,19 @@
 import { BASE_SERVER_URL } from '@/utils/constants'
 import axios from 'axios'
 
-export default async function setGeometry(formData) {
+export default async function addGeometry(formData) {
+    const form = new FormData()
+    form.append('Angle', formData.Angle)
+    form.append('IdProject', formData.IdProject)
+    form.append('File', formData.File)
+
     try {
         const response = await axios.post(`${BASE_SERVER_URL}/api/GeometrySTL/Set`,
-            formData,
+            form,
             {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
-                    // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
+                    'Content-Type': `multipart/form-data; boundary=${form._boundary}`,
+                },
             }
         )
         if (response.status === 200) {

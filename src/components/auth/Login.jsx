@@ -1,14 +1,11 @@
 import { useRouter } from 'next/router'
 import Form from './Form'
-import { useDispatch } from 'react-redux'
-import { setUser } from '@/store/slices/userSlice'
 import auth from '@/pages/api/auth'
 import Link from 'next/link'
 import { useState } from 'react'
 
 export default function Login() {
     const router = useRouter()
-    const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
 
     const handleLogin = async (email, password) => {
@@ -17,7 +14,6 @@ export default function Login() {
 
         if (result.success) {
             localStorage.setItem('email', email)
-            dispatch(setUser({ email }))
             router.push('/')
         } else {
             alert(result.message)
