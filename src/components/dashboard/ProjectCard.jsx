@@ -7,10 +7,13 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import ModalProject from './CreateProject';
 import UpdateProject from './UpdateProject';
+import DeleteProject from './DeleteProject';
 
 export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
     const router = useRouter()
     const [modal, setModal] = useState(false)
+    const [deleteModal, setDeleteModal] = useState(false)
+
 
     const date = new Date(item.updateTime)
     const day = date.getDate()
@@ -42,7 +45,13 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
 
     const handleDeleteClick = (e) => {
         e.stopPropagation()
+        setDeleteModal(true)
+        // onDeleteClick()
+    }
+
+    const deleteProject = async () => {
         onDeleteClick()
+        setDeleteModal(false)
     }
 
     const handleProjectUpdate = (project) => {
@@ -73,7 +82,6 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
                                 style={{ bottom: 30, right: 10 }}>
                                 <div className='px-2 py-1.5'>
                                     <button className="flex w-full items-center gap-2 rounded-md px-2 h-9 text-base text-day-350 hover:bg-day-150"
-
                                         onClick={handleExternalClick}>
                                         <SvgSelector id='open' />
                                         Open
@@ -108,6 +116,9 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
             {modal ? <UpdateProject idProject={item.id} projectName={item.name} projectDescription={item.description}
                 onCloseClick={() => setModal(false)}
                 onUpdate={(proejct) => handleProjectUpdate(proejct)} /> : ''}
+            {deleteModal ? <DeleteProject projectName={item.name}
+                onCloseClick={() => setModal(false)}
+                onDeleteClick={() => deleteProject()} /> : ''}
         </div>
     )
 }
