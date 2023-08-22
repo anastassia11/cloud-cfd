@@ -51,7 +51,7 @@ export default function FormGenerator({ formTitle, value, setUserValue, onItemCl
         <form onSubmit={handleFormSubmit} className='flex flex-col bg-day-00 rounded-md shadow w-[335px] p-3'>
             <div className='flex flex-row justify-between items-center border-b pb-2'>
                 <p className='self-end'>{formTitle}</p>
-                <button type="submit" className='flex items-center self-end justify-center w-8 h-8 bg-day-100 rounded hover:bg-day-150 active:bg-day-200 text-day-350 hover:text-black'>
+                <button type="submit" className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 active:bg-day-150 flex items-center justify-center">
                     <SvgSelector id='check' />
                 </button>
             </div>

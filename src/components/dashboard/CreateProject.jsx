@@ -29,7 +29,7 @@ export default function CreateProject({ onCloseClick, onCreate }) {
                         <h4 className="text-base font-medium text-day-350">
                             Create new project
                         </h4>
-                        <button className="p-2 rounded-md text-day-300 hover:text-black duration-300 w-8 h-8"
+                        <button className="rounded-md text-day-300 w-8 h-8 hover:border hover:bg-day-50 active:bg-day-100 flex items-center justify-center"
                             onClick={() => onCloseClick()}>
                             <SvgSelector id='close' />
                         </button>

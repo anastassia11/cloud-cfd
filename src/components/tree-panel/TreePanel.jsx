@@ -15,15 +15,15 @@ export default function TreePanel() {
     return (
         <nav className="max-h-[calc(100vh-73px)] bg-day-00 space-y-8 w-[335px] overflow-y-auto pb-2 m-2 rounded-md shadow">
             <div className="flex flex-col h-full px-2 ">
-                <div className="text-day-350 w-full flex items-center gap-x-1 border-b pt-3 pb-2 pl-[6px] pr-[1px]">
-                    <SvgSelector id='simulations' />
-                    <span className="block text-base font-semibold ">SIMULATIONS {`(${simulations.length})`}</span>
-                    <div className="relative flex-1 text-right">
-                        <button className="p-2 rounded-md text-day-350 hover:text-black hover:bg-day-100 active:bg-day-200 duration-300"
-                            onClick={handleAddClick} >
-                            <SvgSelector id='plus' />
-                        </button>
+                <div className="text-day-350 w-full flex items-center justify-between gap-x-1 border-b pt-3 pb-2 pl-[6px] pr-[1px]">
+                    <div className='flex flex-row gap-x-1'>
+                        <SvgSelector id='simulations' />
+                        <span className="block text-base font-semibold ">SIMULATIONS {`(${simulations.length})`}</span>
                     </div>
+                    <button className="rounded-md text-day-350 w-8 h-8 border bg-day-50 hover:bg-day-100 active:bg-day-150 flex items-center justify-center"
+                        onClick={handleAddClick} >
+                        <SvgSelector id='plus' />
+                    </button>
                 </div>
                 <ul className='mt-2'>
                     {simulations.map((simulation, index) =>
