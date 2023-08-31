@@ -76,8 +76,6 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
                         <button className='group relative flex flex-row justify-center items-center w-10 h-10'
                             id={item.id}>
                             <SvgSelector id='more' className='w-[16px] h-[16px] rotate-90' />
-
-
                             <div className="invisible group-hover:visible absolute max-w-[200px] w-[200px] rounded-md bg-white shadow border text-day-350"
                                 style={{ bottom: 30, right: 10 }}>
                                 <div className='px-2 py-1.5'>

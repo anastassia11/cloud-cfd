@@ -1,18 +1,21 @@
 import React, { useState } from 'react'
 import { Oval } from 'react-loader-spinner'
 import SvgSelector from '../SvgSelector'
+import { useDispatch } from 'react-redux'
+import { deleteGeometries } from '@/store/slices/geometriesSlice'
 
-export default function DeleteModal({ onCloseClick, onDeleteClick, geometryName }) {
+export default function DeleteModal({ onCloseClick, geometry }) {
     const [loading, setLoading] = useState(false)
-    console.log(geometryName)
+    const dispatch = useDispatch()
+
     const handleDeleteClick = async () => {
         setLoading(true)
-        onDeleteClick()
+        dispatch(deleteGeometries(geometry))
         onCloseClick()
     }
 
     return (
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
             <div className="fixed inset-0 w-full h-full bg-black opacity-40" onClick={() => onCloseClick()}></div>
             <div className="flex items-center min-h-screen px-4 py-8">
                 <div className="relative w-full max-w-lg mx-auto bg-white rounded-md shadow-lg">
@@ -26,7 +29,7 @@ export default function DeleteModal({ onCloseClick, onDeleteClick, geometryName 
                         </button>
                     </div>
                     <div className="px-4 mt-3 text-base leading-relaxed text-gray-500">
-                        {`'${geometryName}' will be deleted forever`}
+                        {`'${geometry.name}' will be deleted forever`}
                     </div>
                     <div className="flex items-center p-4 justify-end">
                         <button className="w-36 disabled:bg-orange-disabled px-4 h-9 text-base font-medium text-white

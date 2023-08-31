@@ -2,12 +2,16 @@ import { useEffect, useState } from 'react'
 import ModelPart from './ModelPart'
 import SvgSelector from '../SvgSelector'
 import DeleteModal from './DeleteModal'
+import { useDispatch } from 'react-redux'
+import { updateGeometries } from '@/store/slices/geometriesSlice'
 
-export default function Geometry({ geom = [], hidePartObject, updateGeomArray, deleteGeomArray }) {
+export default function Geometry({ geom = [], hidePartObject }) {
     const [settingOpen, setSettingOpen] = useState(false)
     const [geometry, setGeometry] = useState(geom)
     const [input, setInput] = useState(false)
     const [modal, setModal] = useState(false)
+
+    const dispatch = useDispatch()
 
     useEffect(() => {
         // console.log(geom)
@@ -45,7 +49,7 @@ export default function Geometry({ geom = [], hidePartObject, updateGeomArray, d
             })
         }
         setGeometry(updatedGeometry)
-        updateGeomArray(updatedGeometry)
+        dispatch(updateGeometries(updatedGeometry))
     }
 
     const handleNameChange = (e) => {
@@ -54,7 +58,7 @@ export default function Geometry({ geom = [], hidePartObject, updateGeomArray, d
     }
 
     const handleDoneClick = () => {
-        updateGeomArray(geometry)
+        dispatch(updateGeometries(geometry))
         setInput(false)
     }
 
@@ -66,17 +70,9 @@ export default function Geometry({ geom = [], hidePartObject, updateGeomArray, d
     const handleDeleteClick = (e) => {
         e.stopPropagation()
         setModal(true)
-        // deleteGeomArray(geometry)
-        // setGeometry({})
-    }
-
-    const deleteProject = () => {
-        deleteGeomArray(geometry)
-        setGeometry({})
     }
 
     return (
-
         <div key={geometry.name}>
             <div className={`w-full flex items-center justify-start text-day-350 pl-[7px] h-9 rounded-lg 
             ${!input && 'hover:bg-day-150 active:bg-day-200'} cursor-pointer group`}
@@ -128,7 +124,7 @@ export default function Geometry({ geom = [], hidePartObject, updateGeomArray, d
                     </ul>
                 ) : ""
             }
-            {modal ? <DeleteModal onCloseClick={() => setModal(false)} geometryName={geometry.name} onDeleteClick={() => deleteProject()} /> : ''}
+            {modal ? <DeleteModal onCloseClick={() => setModal(false)} geometry={geometry} /> : ''}
         </div >
     )
 }

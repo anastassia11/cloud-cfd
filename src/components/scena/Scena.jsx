@@ -12,7 +12,7 @@ import Geometry from './Geometry';
 import SvgSelector from '../SvgSelector';
 import updateGeometry from '@/pages/api/update_geom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setGeometries } from '@/store/slices/geometriesSlice';
+import { deleteGeometries, setGeometries, updateGeometries } from '@/store/slices/geometriesSlice';
 
 export default function Scena() {
     const containerRef = useRef(null)
@@ -39,22 +39,23 @@ export default function Scena() {
         //Внутри этот метод вызывает LoadStl() - который загружает по ссылке stl-объект на сцену
         //Когда будешь делать загрузку новых геометрий на сервер, после успешной отправки запроса, 
         //Можно вызвать loadGeoms() и данные на сцене будут обновлены 
-        loadGeoms();
+        loadGeoms()
 
         //Инициализация настроек сцены - свет, камера..
-        init();
+        init()
 
         //Рекурсивная функция, для обновления данных на сцене
-        animate();
+        animate()
     }, []);
 
     useEffect(() => {
-
         //Подключает методы HandleMove и HandleClick - для изменения цвета stl-объекта
         //И для выделения stl-объекта при наведении
         addListeners();
-    }, [inspectObjectGeometry]);
+    }, [inspectObjectGeometry])
 
+    //этот метод перенести в  redux toolkit
+    //создать асинхронный экшен loadGeoms внутри slice с помощью createAsyncThunk 
     const loadGeoms = async () => {
         const idProject = 1
         const result = await getGeometries(idProject)
@@ -245,54 +246,27 @@ export default function Scena() {
         })
     }
 
-    const requestUpdateGeoms = async (idProject, jsonGeometry) => {
-        const result = await updateGeometry(idProject, jsonGeometry)
-        console.log(result)
-        if (result.success) {
-
-        } else {
-            alert(result.message)
-        }
-    }
-
-    const updateGeoms = (updatedGeom) => {
-        const newGeoms = geoms.map((geom) => {
-            if (geom.uid === updatedGeom.uid) {
-                return updatedGeom
-            } else return geom
-        })
-        // setGeoms(newGeoms)
-        dispatch(setGeometries(newGeoms))
-        requestUpdateGeoms(1, JSON.stringify(newGeoms))
-    }
-
-
-    const deleteGeom = (deletedGeom) => {
-        const newGeoms = geoms.filter((geom) => geom.uid !== deletedGeom.uid)
-        // setGeoms(newGeoms)
-        dispatch(setGeometries(newGeoms))
-        requestUpdateGeoms(1, JSON.stringify(newGeoms))
-    }
-
     return (
-        <div className='absolute top-14 left-0 flex justify-between w-full' id='for-canvas'>
+        <div className='absolute top-14 left-0 flex w-full' id='for-canvas'>
             <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
-            <div className='z-10'><TreePanel /></div>
-            {geoms ? <div className='z-10 max-h-[calc(100vh-73px)] bg-day-00 w-[300px] overflow-y-auto p-2 m-2 rounded-md shadow h-fit'>
-                <div className="text-day-350 w-full flex items-center gap-x-1 border-b pb-2 pl-[6px] pr-[1px]">
-                    <SvgSelector id='geometry' />
-                    <span className="block text-base font-semibold pt-[9px] pb-1">GEOMETRY {`(${geoms.length})`}</span>
-                </div>
-                <div className='mt-2'>
-                    {geoms.map((geom) => (
-                        <div className="" key={geom.uid}>
-                            <Geometry geom={geom} hidePartObject={(model) => hidePartObject(model)}
-                                updateGeomArray={(updatedGeom) => updateGeoms(updatedGeom)}
-                                deleteGeomArray={(deletedGeom) => deleteGeom(deletedGeom)} />
-                        </div>
-                    ))}
-                </div>
-            </div> : ''}
+            <div className='z-10 w-full flex flex-row justify-between'>
+                <TreePanel />
+                {geoms ? <div className='max-h-[calc(100vh-73px)] bg-day-00 w-[300px] overflow-y-auto p-2 m-2 rounded-md 
+                shadow h-fit'>
+                    <div className="text-day-350 w-full flex items-center gap-x-1 border-b pb-2 pl-[6px] pr-[1px]">
+                        <SvgSelector id='geometry' />
+                        <span className="block text-base font-semibold pt-[9px] pb-1">GEOMETRY {`(${geoms.length})`}</span>
+                    </div>
+                    <div className='mt-2'>
+                        {geoms.map((geom) => (
+                            <div className="" key={geom.uid}>
+                                <Geometry geom={geom} hidePartObject={(model) => hidePartObject(model)} />
+                            </div>
+                        ))}
+                    </div>
+                </div> : ''}
+            </div>
+
         </div>
     )
 }

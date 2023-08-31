@@ -1,8 +1,10 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import SvgSelector from "../SvgSelector"
 import addGeometry from '@/pages/api/set_geometry'
-import { Oval } from 'react-loader-spinner'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import getGeometries from '@/pages/api/get_geometries'
+import { setGeometries } from '@/store/slices/geometriesSlice'
+import GeometryRow from './GeometryRow'
 
 export default function GeometryForm({ onItemClick }) {
     const [drag, setDrag] = useState(false)
@@ -10,6 +12,12 @@ export default function GeometryForm({ onItemClick }) {
     const geoms = useSelector(state => state.geometries.geometries)
     const [files, setFiles] = useState(geoms)
     const [fileCount, setFileCount] = useState(geoms.length)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        setFiles(geoms)
+        setFileCount(geoms.length)
+    }, [geoms])
 
     const handleGeometrySubmit = (e) => {
         e.preventDefault()
@@ -38,6 +46,18 @@ export default function GeometryForm({ onItemClick }) {
         })
     }
 
+    const loadGeoms = async () => {
+        const idProject = 1
+        const result = await getGeometries(idProject)
+        if (result.success) {
+            dispatch(setGeometries(result.data.geometryDataList))
+            // обновление данных на сцене
+            // loadSTL(result.data.geometryDataList)
+        } else {
+            alert(result.message)
+        }
+    }
+
     const handleSetGeometry = async (geometryData, index) => {
         setLoading((prevLoading) => {
             const newLoading = [...prevLoading]
@@ -46,7 +66,7 @@ export default function GeometryForm({ onItemClick }) {
         })
         const result = await addGeometry(geometryData)
         if (result.success) {
-            console.log(result)
+            loadGeoms()
         } else {
             alert(result.message)
         }
@@ -55,10 +75,6 @@ export default function GeometryForm({ onItemClick }) {
             newLoading[index] = false
             return newLoading
         })
-    }
-
-    const handleDeleteClick = async (idGeometry) => {
-
     }
 
     const handleChange = (e) => {
@@ -74,27 +90,10 @@ export default function GeometryForm({ onItemClick }) {
 
     const filesArray = <div className='mt-2'>
         {files.map((file, index) => (
-            <div key={file.name}
-                className='w-full flex items-center justify-between rounded-md text-day-350 h-9 hover:bg-day-100 duration-300' >
-                <p className='pl-2'>{file.name}</p>
-                <div className='pr-2 flex flex-row items-center'>
-                    {loading[index] ?
-                        <Oval
-                            height={18}
-                            width={18}
-                            color="#6a6a6a"
-                            visible={true}
-                            ariaLabel='oval-loading'
-                            secondaryColor="#6a6a6a"
-                            strokeWidth={4}
-                            strokeWidthSecondary={4} /> : ''
-                    }
-                    <button className="pl-1" id='button'
-                        onClick={() => handleDeleteClick()}>
-                        <SvgSelector id='delete' className='w-5 h-5' stroke-width={1.3} />
-                    </button>
-                </div>
-            </div>)
+            <div key={index}>
+                <GeometryRow geometry={file} loading={loading[index]} />
+            </div>
+        )
         )}
     </div>
 
@@ -122,16 +121,17 @@ export default function GeometryForm({ onItemClick }) {
     </div>
 
     return (
-        <form onSubmit={handleGeometrySubmit} className='flex flex-col bg-white w-[335px] p-3 shadow rounded-md'>
-            <div className='flex flex-row justify-between items-center border-b pb-2'>
-                <p className='self-end font-medium text-day-350'>Geomerty</p>
-
-                <button type="submit" className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 active:bg-day-150 flex items-center justify-center">
-                    <SvgSelector id='check' />
-                </button>
-            </div>
-            {upload}
-            {files.length > 0 ? filesArray : ''}
-        </form>
+        <>
+            <form onSubmit={handleGeometrySubmit} className='flex flex-col bg-white w-[335px] p-3 shadow rounded-md'>
+                <div className='flex flex-row justify-between items-center border-b pb-2'>
+                    <p className='self-end font-medium text-day-350'>Geomerty</p>
+                    <button type="submit" className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 active:bg-day-150 flex items-center justify-center">
+                        <SvgSelector id='check' />
+                    </button>
+                </div>
+                {upload}
+                {files.length > 0 ? filesArray : ''}
+            </form>
+        </>
     )
 }

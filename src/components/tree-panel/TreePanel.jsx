@@ -13,7 +13,7 @@ export default function TreePanel() {
         setSimulations(prev => [...prev, { sim: <Simulation name={`Simulation ${simulations.length}`} onDeleteClick={() => handleDeleteClick(sim_id)} id={sim_id} />, id: sim_id }])
     }
     return (
-        <nav className="max-h-[calc(100vh-73px)] bg-day-00 space-y-8 w-[335px] overflow-y-auto pb-2 m-2 rounded-md shadow">
+        <nav className="max-h-[calc(100vh-73px)] bg-day-00 space-y-8 w-[335px] overflow-y-auto pb-2 m-2 rounded-md shadow h-fit">
             <div className="flex flex-col h-full px-2 ">
                 <div className="text-day-350 w-full flex items-center justify-between gap-x-1 border-b pt-3 pb-2 pl-[6px] pr-[1px]">
                     <div className='flex flex-row gap-x-1'>
