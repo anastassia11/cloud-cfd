@@ -20,14 +20,12 @@ const geometriesSlice = createSlice({
                 } else return geom
             })
             const result = updateGeometry(1, JSON.stringify(state.geometries))
-            console.log(result)
         },
 
         deleteGeometries(state, action) {
             const deletedGeom = action.payload
             state.geometries = state.geometries.filter((geom) => geom.uid !== deletedGeom.uid)
             const result = updateGeometry(1, JSON.stringify(state.geometries))
-            console.log(result)
         }
     }
 })

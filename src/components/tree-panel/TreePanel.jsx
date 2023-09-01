@@ -10,17 +10,24 @@ export default function TreePanel() {
     }
     const handleAddClick = () => {
         const sim_id = uuid()
-        setSimulations(prev => [...prev, { sim: <Simulation name={`Simulation ${simulations.length}`} onDeleteClick={() => handleDeleteClick(sim_id)} id={sim_id} />, id: sim_id }])
+        setSimulations(prev => [...prev, {
+            sim: <Simulation name={`Simulation ${simulations.length}`}
+                onDeleteClick={() => handleDeleteClick(sim_id)} id={sim_id} />, id: sim_id
+        }])
     }
     return (
-        <nav className="max-h-[calc(100vh-73px)] bg-day-00 space-y-8 w-[335px] overflow-y-auto pb-2 m-2 rounded-md shadow h-fit">
+        <nav className="max-h-[calc(100vh-73px)] bg-day-00 space-y-8 overflow-y-auto pb-2 rounded-md 
+            shadow h-fit">
             <div className="flex flex-col h-full px-2 ">
-                <div className="text-day-350 w-full flex items-center justify-between gap-x-1 border-b pt-3 pb-2 pl-[6px] pr-[1px]">
+                <div className="text-day-350 w-full flex items-center justify-between gap-x-1 border-b pt-3 pb-2 
+                    pl-[6px] pr-[1px] overflow-hidden">
                     <div className='flex flex-row gap-x-1'>
                         <SvgSelector id='simulations' />
-                        <span className="block text-base font-semibold ">SIMULATIONS {`(${simulations.length})`}</span>
+                        <span className="block text-base font-semibold text-ellipsis whitespace-nowrap overflow-hidden">
+                            SIMULATIONS {`(${simulations.length})`}</span>
                     </div>
-                    <button className="rounded-md text-day-350 w-8 h-8 border bg-day-50 hover:bg-day-100 active:bg-day-150 flex items-center justify-center"
+                    <button className="rounded-md text-day-350 min-h-[32px] min-w-[32px] w-8 h-8 border bg-day-50 
+                        hover:bg-day-100 active:bg-day-150 flex items-center justify-center"
                         onClick={handleAddClick} >
                         <SvgSelector id='plus' />
                     </button>

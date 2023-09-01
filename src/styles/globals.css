@@ -16,6 +16,7 @@ body {
 
 ::-webkit-scrollbar {
   width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -27,4 +28,21 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 12px;
+}
+
+.scene-grid {
+  display: grid;
+  grid-template-column: 1fr 1fr 1fr 1fr;
+}
+
+.tree-panel {
+  grid-area: tree-panel;
+}
+
+.setting-form {
+  grid-area: setting-form;
+}
+
+.geometries-panel {
+  grid-area: geometries-panel;
 }

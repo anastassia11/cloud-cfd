@@ -1,18 +1,17 @@
-import * as THREE from "three";
-import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { OutlinePass } from "three/addons/postprocessing/OutlinePass.js";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import React, { useRef, useEffect, useState } from "react";
-import TreePanel from '../tree-panel/TreePanel';
-import { BASE_SERVER_URL } from '@/utils/constants';
-import getGeometries from '@/pages/api/get_geometries';
-import Geometry from './Geometry';
-import SvgSelector from '../SvgSelector';
-import updateGeometry from '@/pages/api/update_geom';
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteGeometries, setGeometries, updateGeometries } from '@/store/slices/geometriesSlice';
+import * as THREE from "three"
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader"
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { OutlinePass } from "three/addons/postprocessing/OutlinePass.js"
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js"
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js"
+import React, { useRef, useEffect, useState } from "react"
+import TreePanel from '../tree-panel/TreePanel'
+import { BASE_SERVER_URL } from '@/utils/constants'
+import getGeometries from '@/pages/api/get_geometries'
+import { useDispatch, useSelector } from 'react-redux'
+import { setGeometries } from '@/store/slices/geometriesSlice'
+import GeometriesPanel from './GeometriesPanel'
+import SettingForm from '../tree-panel/SettingForm'
 
 export default function Scena() {
     const containerRef = useRef(null)
@@ -22,6 +21,10 @@ export default function Scena() {
     const camera = useRef(null)
     const [inspectObjectGeometry, setInspectObjectGeometry] = useState([])
     const [selectedGeometry, setSelectedGeometry] = useState([])
+
+    const selectedItem = useSelector(state => state.setting.setting)
+    const formName = useSelector(state => state.setting.formName)
+
 
     // const [geoms, setGeoms] = useState([])
 
@@ -51,11 +54,13 @@ export default function Scena() {
     useEffect(() => {
         //Подключает методы HandleMove и HandleClick - для изменения цвета stl-объекта
         //И для выделения stl-объекта при наведении
-        addListeners();
+        addListeners()
     }, [inspectObjectGeometry])
 
-    //этот метод перенести в  redux toolkit
-    //создать асинхронный экшен loadGeoms внутри slice с помощью createAsyncThunk 
+    useEffect(() => {
+        loadSTL(geoms)
+    }, [geoms.length])
+
     const loadGeoms = async () => {
         const idProject = 1
         const result = await getGeometries(idProject)
@@ -69,7 +74,6 @@ export default function Scena() {
 
     function loadSTL(arr) {
         dispatch(setGeometries(arr))
-        // setGeoms(arr)
         arr.forEach((el) => {
             el.models.forEach((model) => {
                 stlLoader.current.load(
@@ -82,7 +86,9 @@ export default function Scena() {
                         });
                         material.side = THREE.DoubleSide;
                         const mesh = new THREE.Mesh(geometry, material);
-                        mesh.position.set(0, 0, 0);
+
+                        //ОБНУЛИТЬ ПОТОМ 
+                        mesh.position.set(-30, 0, 0);
                         mesh.scale.set(1, 1, 1);
                         mesh.castShadow = true;
                         mesh.receiveShadow = true;
@@ -96,7 +102,14 @@ export default function Scena() {
         });
     }
 
+    function onWindowResize() {
+        camera.current.aspect = window.innerWidth / window.innerHeight;
+        camera.current.updateProjectionMatrix();
+        renderer.current.setSize(window.innerWidth, window.innerHeight - 56);
+    }
+
     function init() {
+        window.addEventListener('resize', onWindowResize)
         stlLoader.current = new STLLoader();
         camera.current = new THREE.PerspectiveCamera(
             75,
@@ -104,7 +117,9 @@ export default function Scena() {
             0.1,
             1000
         );
-        camera.current.position.z = 10;
+        camera.current.position.x = 0;
+        camera.current.position.y = 0
+        camera.current.position.z = 50;
         camera.current.lookAt(new THREE.Vector3(0, 0, 0));
 
         //цвет фона
@@ -241,7 +256,7 @@ export default function Scena() {
         inspectObjectGeometry.forEach((d) => {
             if (d.uid === model.uid) {
                 d.visible = !d.visible;
-                d.material.visible = d.visible // обновить видимость сетки
+                d.material.visible = d.visible
             }
         })
     }
@@ -249,22 +264,18 @@ export default function Scena() {
     return (
         <div className='absolute top-14 left-0 flex w-full' id='for-canvas'>
             <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
-            <div className='z-10 w-full flex flex-row justify-between'>
-                <TreePanel />
-                {geoms ? <div className='max-h-[calc(100vh-73px)] bg-day-00 w-[300px] overflow-y-auto p-2 m-2 rounded-md 
-                shadow h-fit'>
-                    <div className="text-day-350 w-full flex items-center gap-x-1 border-b pb-2 pl-[6px] pr-[1px]">
-                        <SvgSelector id='geometry' />
-                        <span className="block text-base font-semibold pt-[9px] pb-1">GEOMETRY {`(${geoms.length})`}</span>
-                    </div>
-                    <div className='mt-2'>
-                        {geoms.map((geom) => (
-                            <div className="" key={geom.uid}>
-                                <Geometry geom={geom} hidePartObject={(model) => hidePartObject(model)} />
-                            </div>
-                        ))}
-                    </div>
-                </div> : ''}
+            <div className='z-10 grid grid-cols-[minmax(0px,_335px)_335px_minmax(0px,_1fr)_minmax(0px,_335px)] w-full m-2 gap-2'>
+                <div className=''>
+                    <TreePanel />
+                </div>
+                <div className={`
+                    ${selectedItem !== null && selectedItem === (formName) ? '' : 'invisible'}`}>
+                    <SettingForm />
+                </div>
+                <div className='col-start-4'>
+                    {geoms ? <GeometriesPanel onHidePartObject={(model) => hidePartObject(model)} /> : ''}
+                </div>
+
             </div>
 
         </div>

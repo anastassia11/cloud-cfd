@@ -1,14 +1,21 @@
-import { useState } from "react"
+import { useEffect, useLayoutEffect, useState } from "react"
 import SvgSelector from "../SvgSelector"
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserValue } from '@/store/slices/paramsSlice';
+import { setFormValues } from '@/store/slices/settingSlice';
 
-export default function FormGenerator({ formTitle, value, setUserValue, onItemClick }) {
-    const [formValues, setFormValues] = useState(value)
-    const [selectedOption, setSelectedOption] = useState({});
+export default function FormGenerator({ formName, formTitle, value, onItemClick }) {
+    // const [formValues, setFormValues] = useState(value || {})
+    const [selectedOption, setSelectedOption] = useState({})
+    const formValues = useSelector(state => state.setting.inputs)
+
+    const dispatch = useDispatch()
 
     const handleInputChange = (e) => {
         const { name, value } = e.target
-        setFormValues(prev => ({ ...prev, [name]: { ...prev[name], value: value } }))
+        dispatch(setFormValues({ name, value }))
     }
+
     const handleSelectChange = (e, name) => {
         const { value } = e.target
         setSelectedOption(prev => ({ ...prev, [name]: value }))
@@ -16,9 +23,17 @@ export default function FormGenerator({ formTitle, value, setUserValue, onItemCl
     }
     const handleFormSubmit = (e) => {
         e.preventDefault()
-        setUserValue(formValues)
+        dispatch(setUserValue({ formName, updatedValue: formValues }))
+        // setUserValue(formValues)
+        // dispatch(setUserValue({ formName, updatedValue: formValues }))
         onItemClick()
     }
+
+    // useEffect(() => {
+    //     if (value) {
+    //         setFormValues(value);
+    //     }
+    // }, [value])
 
     const inputs = Object.keys(formValues).map((key) => {
         const isSelect = formValues[key].select
@@ -48,7 +63,7 @@ export default function FormGenerator({ formTitle, value, setUserValue, onItemCl
     })
 
     return (
-        <form onSubmit={handleFormSubmit} className='flex flex-col bg-day-00 rounded-md shadow w-[335px] p-3'>
+        <form onSubmit={handleFormSubmit} className='flex flex-col bg-day-00 rounded-md shadow p-3'>
             <div className='flex flex-row justify-between items-center border-b pb-2'>
                 <p className='self-end'>{formTitle}</p>
                 <button type="submit" className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 active:bg-day-150 flex items-center justify-center">

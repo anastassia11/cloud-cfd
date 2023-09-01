@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import getGeometries from '@/pages/api/get_geometries'
 import { setGeometries } from '@/store/slices/geometriesSlice'
 import GeometryRow from './GeometryRow'
+import { setSetting } from '@/store/slices/settingSlice'
 
 export default function GeometryForm({ onItemClick }) {
     const [drag, setDrag] = useState(false)
@@ -21,7 +22,7 @@ export default function GeometryForm({ onItemClick }) {
 
     const handleGeometrySubmit = (e) => {
         e.preventDefault()
-        onItemClick()
+        dispatch(setSetting('geomerty'))
     }
 
     const handleDragStart = (e) => {
@@ -122,7 +123,7 @@ export default function GeometryForm({ onItemClick }) {
 
     return (
         <>
-            <form onSubmit={handleGeometrySubmit} className='flex flex-col bg-white w-[335px] p-3 shadow rounded-md'>
+            <form onSubmit={handleGeometrySubmit} className='flex flex-col bg-white p-3 shadow rounded-md'>
                 <div className='flex flex-row justify-between items-center border-b pb-2'>
                     <p className='self-end font-medium text-day-350'>Geomerty</p>
                     <button type="submit" className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 active:bg-day-150 flex items-center justify-center">

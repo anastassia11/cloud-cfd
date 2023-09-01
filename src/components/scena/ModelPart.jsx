@@ -58,11 +58,11 @@ export default function ModelPart({ model, handleHideClick, updateModelPart }) {
                 <SvgSelector id='check' />
             </button>
         </div> :
-            <div className={`group w-full flex items-center justify-between rounded-md
+            <div className={`group w-full flex items-center justify-between rounded-md overflow-hidden
             ${modelPart.visible ? 'text-day-350' : 'text-day-250'} h-9 ${modelPart.visible && 'hover:bg-day-150'} duration-300`}>
-                <p className='pl-2'>{`${modelPart.name.slice(0, 20)}${modelPart.name.length < 20 ? '' : '...'}`}</p>
+                <p className='pl-2 text-ellipsis whitespace-nowrap overflow-hidden'>{modelPart.name}</p>
                 <div className='pr-2 flex flex-row items-center'>
-                    <button className="invisible group-hover:visible pr-1" id='button'
+                    <button className="invisible group-hover:visible px-1" id='button'
                         onClick={() => setInput(true)}>
                         <SvgSelector id='edit' className='w-[17px] h-[17px]' />
                     </button>

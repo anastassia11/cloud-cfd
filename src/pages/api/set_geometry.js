@@ -17,7 +17,6 @@ export default async function addGeometry(formData) {
             }
         )
         if (response.status === 200) {
-            console.log(response)
             return { success: true, data: response.data }
         } else {
             throw new Error('Error loading geometry')
