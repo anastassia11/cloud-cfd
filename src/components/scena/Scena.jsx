@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setGeometries } from '@/store/slices/geometriesSlice'
 import GeometriesPanel from './GeometriesPanel'
 import SettingForm from '../tree-panel/SettingForm'
+import { setLoader } from '@/store/slices/loaderSlice'
 
 export default function Scena() {
     const containerRef = useRef(null)
@@ -62,13 +63,16 @@ export default function Scena() {
     }, [geoms.length])
 
     const loadGeoms = async () => {
+        dispatch(setLoader(true))
         const idProject = 1
         const result = await getGeometries(idProject)
         if (result.success) {
             dispatch(setGeometries(result.data.geometryDataList))
             loadSTL(result.data.geometryDataList)
+            dispatch(setLoader(false))
         } else {
             alert(result.message)
+            dispatch(setLoader(false))
         }
     }
 

@@ -29,7 +29,8 @@ export default function DeleteProject({ onCloseClick, onDeleteClick, projectName
                         {`'${projectName}' will be deleted forever`}
                     </div>
                     <div className="flex items-center p-4 justify-end">
-                        <button className="w-36 disabled:bg-orange-disabled px-4 h-9 text-base font-medium text-white
+                        <button
+                            className="w-36 disabled:bg-orange-disabled px-4 h-9 text-base font-medium text-white
                          bg-orange-100 hover:bg-orange-150 active:bg-orange-200 rounded-lg duration-300 flex 
                          items-center justify-center"
                             onClick={() => handleDeleteClick()}

@@ -5,22 +5,29 @@ import getProjects from '@/pages/api/get_projects'
 import ProjectCard from './ProjectCard'
 import deleteProject from '@/pages/api/delete_project'
 import CreateProject from './CreateProject'
+import { useDispatch, useSelector } from 'react-redux'
+import { setLoader } from '@/store/slices/loaderSlice'
 
 export default function Dashboard() {
     const [modal, setModal] = useState(false)
     const [projects, setProjects] = useState([])
     const [filterName, setFilterName] = useState('')
 
+    const dispatch = useDispatch()
+
     useEffect(() => {
         fetchProjects()
     }, [])
 
     const fetchProjects = async () => {
+        dispatch(setLoader(true))
         const result = await getProjects()
         if (result.success) {
             setProjects(result.data)
+            dispatch(setLoader(false))
         } else {
             alert(result.message)
+            dispatch(setLoader(false))
         }
     }
 
