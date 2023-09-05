@@ -1,21 +1,35 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Oval } from 'react-loader-spinner'
 import SvgSelector from '../SvgSelector'
-import { useDispatch } from 'react-redux'
-import { deleteGeometries } from '@/store/slices/geometriesSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { deleteGeometries } from '@/store/slices/projectSlice'
 
 export default function DeleteModal({ onCloseClick, geometry }) {
     const [loading, setLoading] = useState(false)
+    const idProject = useSelector(state => state.project.idProject)
+    const deleteFormRef = useRef(null)
     const dispatch = useDispatch()
 
     const handleDeleteClick = async () => {
         setLoading(true)
-        dispatch(deleteGeometries(geometry))
+        dispatch(deleteGeometries({ idProject: idProject, deletedGeometry: geometry }))
         onCloseClick()
     }
 
+    const handleKeyDown = (e) => {
+        console.log('Enter')
+        if (e.key === "Enter") {
+            handleDeleteClick()
+        }
+    }
+
+    useEffect(() => {
+        deleteFormRef.current.focus()
+    }, [])
+
     return (
-        <div className="fixed inset-0 z-20 overflow-y-auto">
+        <div ref={deleteFormRef}
+            className="fixed inset-0 z-20 overflow-y-auto" onKeyDown={(e) => handleKeyDown(e)} tabIndex={0}>
             <div className="fixed inset-0 w-full h-full bg-black opacity-40" onClick={() => onCloseClick()}></div>
             <div className="flex items-center min-h-screen px-4 py-8">
                 <div className="relative w-full max-w-lg mx-auto bg-white rounded-md shadow-lg">

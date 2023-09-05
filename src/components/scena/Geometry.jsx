@@ -3,7 +3,7 @@ import ModelPart from './ModelPart'
 import SvgSelector from '../SvgSelector'
 import DeleteModal from './DeleteModal'
 import { useDispatch } from 'react-redux'
-import { updateGeometries } from '@/store/slices/geometriesSlice'
+import { updateGeometries } from '@/store/slices/projectSlice'
 
 export default function Geometry({ geom = [], hidePartObject }) {
     const [settingOpen, setSettingOpen] = useState(false)
@@ -49,7 +49,7 @@ export default function Geometry({ geom = [], hidePartObject }) {
             })
         }
         setGeometry(updatedGeometry)
-        dispatch(updateGeometries(updatedGeometry))
+        dispatch(updateGeometries({ updatedGeometry: updatedGeometry }))
     }
 
     const handleNameChange = (e) => {
@@ -58,7 +58,7 @@ export default function Geometry({ geom = [], hidePartObject }) {
     }
 
     const handleDoneClick = () => {
-        dispatch(updateGeometries(geometry))
+        dispatch(updateGeometries(({ updatedGeometry: geometry })))
         setInput(false)
     }
 
@@ -83,7 +83,7 @@ export default function Geometry({ geom = [], hidePartObject }) {
                         1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
                 </svg>
 
-                {input ? <div className='flex flex-row items-center space-x-2 justify-between'>
+                {input ? <div className='flex flex-row items-center space-x-2 w-full justify-between'>
                     <input type="text" id='inputId' value={geometry.name} onChange={e => handleNameChange(e)}
                         className='h-9 w-full p-2 focus:outline-[0] text-day-350 border rounded-md outline-none
                         bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]' >
@@ -96,7 +96,7 @@ export default function Geometry({ geom = [], hidePartObject }) {
                 </div>
                     : <div className='model-part w-full flex items-center justify-between rounded-md text-day-350 h-9 
                         hover:bg-day-150 active:bg-day-200 overflow-hidden'>
-                        <p className='pl-2 text-ellipsis whitespace-nowrap overflow-hidden'>{geometry.name}</p>
+                        <p className='pl-[6px] text-ellipsis whitespace-nowrap overflow-hidden'>{geometry.name}</p>
                         <div className='pr-2 flex flex-row items-center'>
                             <button className="invisible group-hover:visible px-1" id='button'
                                 onClick={e => handleEditClick(e)}>
@@ -109,7 +109,6 @@ export default function Geometry({ geom = [], hidePartObject }) {
                         </div>
                     </div>}
             </div>
-
             {
                 settingOpen ? (
                     <ul className="ml-4 pl-2 border-l text-base font-normal">

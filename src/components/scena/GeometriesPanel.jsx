@@ -4,29 +4,42 @@ import Geometry from './Geometry'
 import { useSelector } from 'react-redux'
 
 export default function GeometriesPanel({ onHidePartObject }) {
-    const geoms = useSelector(state => state.geometries.geometries)
+    const geomsState = useSelector(state => state.project.geometries)
+    const geoms = geomsState ? geomsState : []
+    const loader = useSelector(state => state.loader.loader)
 
     return (
-        <div className='max-h-[calc(100vh-73px)] bg-day-00 overflow-y-auto overflow-x-hidden p-2 rounded-md 
+        <div className='max-h-[calc(100vh-73px)] bg-day-00 overflow-y-auto pb-2 rounded-md 
                 shadow h-fit'>
-            <div className="text-day-350 w-full flex items-center gap-x-1 border-b pb-2 pl-[6px] pr-[1px]">
-                <span className='min-w-[24px]'>
-                    <SvgSelector id='geometry' className='' />
-                </span>
+            <div className="flex flex-col h-full px-2 ">
+                <div className="text-day-350 flex items-center justify-between pt-[10px]  
+                    pl-[6px] pr-[1px] overflow-hidden">
+                    <div className="flex items-center gap-x-1 ">
+                        <span className='min-w-[24px]'>
+                            <SvgSelector id='geometry' className='' />
+                        </span>
 
-                <span className="block text-base font-semibold pt-[9px] pb-1">
-                    <p className='text-ellipsis whitespace-nowrap overflow-hidden'>
-                        GEOMETRIES {`(${geoms.length})`}
-                    </p>
-                </span>
-            </div>
-            <div className='mt-2'>
-                {geoms.map((geom) => (
-                    <div className="" key={geom.uid}>
-                        <Geometry geom={geom} hidePartObject={(model) => onHidePartObject(model)} />
+                        <span className="block text-base font-semibold pt-[2px]">
+                            <p className='text-ellipsis whitespace-nowrap overflow-hidden'>
+                                GEOMETRIES {`(${loader ? 0 : geoms.length})`}
+                            </p>
+                        </span>
                     </div>
-                ))}
+                    <button className="rounded-md min-h-[32px] min-w-[32px] w-8 h-8 border bg-day-50 
+                        hover:bg-day-100 active:bg-day-150 flex items-center justify-center"
+                    >
+                        <SvgSelector id='plus' />
+                    </button>
+                </div>
+                {geoms.length > 0 ? <ul className='mt-2 pt-2 border-t'>
+                    {!loader && geoms.map((geom) => (
+                        <li className="" key={geom.uid}>
+                            <Geometry geom={geom} hidePartObject={(model) => onHidePartObject(model)} />
+                        </li>
+                    ))}
+                </ul> : ''}
             </div>
+
         </div>
     )
 }

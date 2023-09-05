@@ -3,26 +3,27 @@ import SvgSelector from "../SvgSelector"
 import addGeometry from '@/pages/api/set_geometry'
 import { useDispatch, useSelector } from 'react-redux'
 import getGeometries from '@/pages/api/get_geometries'
-import { setGeometries } from '@/store/slices/geometriesSlice'
+import { setGeometries } from '@/store/slices/projectSlice'
 import GeometryRow from './GeometryRow'
-import { setSetting } from '@/store/slices/settingSlice'
+import { resetSetting } from '@/store/slices/settingSlice'
 
-export default function GeometryForm({ onItemClick }) {
+export default function GeometryForm({ }) {
     const [drag, setDrag] = useState(false)
     const [loading, setLoading] = useState([])
-    const geoms = useSelector(state => state.geometries.geometries)
-    const [files, setFiles] = useState(geoms)
-    const [fileCount, setFileCount] = useState(geoms.length)
+    const geoms = useSelector(state => state.project.geometries)
+    const idProject = useSelector(state => state.project.idProject)
+    const [files, setFiles] = useState(geoms || [])
+    const [fileCount, setFileCount] = useState(geoms?.length)
     const dispatch = useDispatch()
 
     useEffect(() => {
         setFiles(geoms)
-        setFileCount(geoms.length)
+        setFileCount(geoms?.length)
     }, [geoms])
 
     const handleGeometrySubmit = (e) => {
         e.preventDefault()
-        dispatch(setSetting('geomerty'))
+        dispatch(resetSetting())
     }
 
     const handleDragStart = (e) => {
@@ -43,15 +44,14 @@ export default function GeometryForm({ onItemClick }) {
         setLoading((prevLoading) => [...prevLoading, ...newFiles.map(() => false)])
         setFileCount((prevCount) => prevCount + newFiles.length)
         newFiles.forEach((file, index) => {
-            handleSetGeometry({ 'Angle': '120', 'IdProject': '1', 'File': file }, fileCount + index)
+            handleSetGeometry({ 'Angle': '120', 'IdProject': idProject, 'File': file }, fileCount + index)
         })
     }
 
     const loadGeoms = async () => {
-        const idProject = 1
         const result = await getGeometries(idProject)
         if (result.success) {
-            dispatch(setGeometries(result.data.geometryDataList))
+            dispatch(setGeometries({ geometries: result.data.geometryDataList }))
             // обновление данных на сцене
             // loadSTL(result.data.geometryDataList)
         } else {
@@ -85,12 +85,12 @@ export default function GeometryForm({ onItemClick }) {
         setLoading((prevLoading) => [...prevLoading, ...newFiles.map(() => false)])
         setFileCount((prevCount) => prevCount + newFiles.length)
         newFiles.forEach((file, index) => {
-            handleSetGeometry({ 'Angle': '120', 'IdProject': '1', 'File': file }, fileCount + index)
+            handleSetGeometry({ 'Angle': '120', 'IdProject': idProject, 'File': file }, fileCount + index)
         })
     }
 
     const filesArray = <div className='mt-2'>
-        {files.map((file, index) => (
+        {files?.map((file, index) => (
             <div key={index}>
                 <GeometryRow geometry={file} loading={loading[index]} />
             </div>
@@ -100,7 +100,8 @@ export default function GeometryForm({ onItemClick }) {
 
     const upload = <div className='h-36 pt-3'>
         {drag
-            ? <div className="bg-day-100 flex flex-col text-day-350 justify-start pt-4 items-center rounded border-dashed border-[1.5px] duration-300 border-gray-400 h-full"
+            ? <div className="bg-day-100 flex flex-col text-day-350 justify-start pt-4 items-center rounded 
+                        border-dashed border-[1.5px] duration-300 border-gray-400 h-full"
                 onDragStart={e => handleDragStart(e)}
                 onDragLeave={e => handleDragLeave(e)}
                 onDragOver={e => handleDragStart(e)}
@@ -108,7 +109,9 @@ export default function GeometryForm({ onItemClick }) {
                 <SvgSelector id='cloud-drop' />
                 <p className="text-sm pt-2">Add your file</p></div>
             : <label for='geometry_file'
-                className="flex flex-col text-day-350 justify-start pt-4 items-center space-y-2 bg-day-50 hover:bg-day-100 hover:border-gray-400 h-full rounded border-dashed border-[1.5px] border-gray-300 duration-300 cursor-pointer"
+                className="flex flex-col text-day-350 justify-start pt-4 items-center space-y-2 bg-day-50 
+                    hover:bg-day-100 hover:border-gray-400 h-full rounded border-dashed border-[1.5px] 
+                    border-gray-300 duration-300 cursor-pointer"
                 onDragStart={e => handleDragStart(e)}
                 onDragLeave={e => handleDragLeave(e)}
                 onDragOver={e => handleDragStart(e)}>
@@ -131,7 +134,7 @@ export default function GeometryForm({ onItemClick }) {
                     </button>
                 </div>
                 {upload}
-                {files.length > 0 ? filesArray : ''}
+                {files?.length > 0 ? filesArray : ''}
             </form>
         </>
     )

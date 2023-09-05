@@ -9,34 +9,41 @@ import TreePanel from '../tree-panel/TreePanel'
 import { BASE_SERVER_URL } from '@/utils/constants'
 import getGeometries from '@/pages/api/get_geometries'
 import { useDispatch, useSelector } from 'react-redux'
-import { setGeometries } from '@/store/slices/geometriesSlice'
+import { setGeometries, setProject } from '@/store/slices/projectSlice'
 import GeometriesPanel from './GeometriesPanel'
 import SettingForm from '../tree-panel/SettingForm'
 import { setLoader } from '@/store/slices/loaderSlice'
+import { Resizable } from 're-resizable'
 
-export default function Scena() {
+export default function Scena({ idProject }) {
+    const [treeSize, setTreeSize] = useState(335)
+    const [geomSize, setGeomSize] = useState(300)
+    const [windowSize, setWindowSize] = useState(window.innerWidth)
+
+    const settingSize = 335
+
+    const [inspectObjectGeometry, setInspectObjectGeometry] = useState([])
+    const [selectedGeometry, setSelectedGeometry] = useState([])
+    const selectedItem = useSelector(state => state.setting.setting)
+    const formName = useSelector(state => state.setting.formName)
+    const geoms = useSelector(state => state.project.geometries)
+    const loader = useSelector(state => state.loader.loader)
+
+    const dispatch = useDispatch()
+
     const containerRef = useRef(null)
     const controls = useRef(null)
     const stlLoader = useRef(null)
     const renderer = useRef(null)
     const camera = useRef(null)
-    const [inspectObjectGeometry, setInspectObjectGeometry] = useState([])
-    const [selectedGeometry, setSelectedGeometry] = useState([])
-
-    const selectedItem = useSelector(state => state.setting.setting)
-    const formName = useSelector(state => state.setting.formName)
-
-
-    // const [geoms, setGeoms] = useState([])
-
-    const geoms = useSelector(state => state.geometries.geometries)
-    const dispatch = useDispatch()
-
     const composer = useRef(null)
     const outlinePass = useRef(null)
+
     const scene = new THREE.Scene()
 
-    // const setGeoms = () => dispatch(setGeometries())
+    useEffect(() => {
+        setWindowSize(window.innerWidth)
+    }, [window.innerWidth])
 
     useEffect(() => {
         //Метод для загрузки json с массивом разбитых stl-объектов(ссылка + настройки) с сервера
@@ -58,16 +65,15 @@ export default function Scena() {
         addListeners()
     }, [inspectObjectGeometry])
 
-    useEffect(() => {
-        loadSTL(geoms)
-    }, [geoms.length])
+    // useEffect(() => {
+    //     loadSTL(geoms)
+    // }, [geoms?.length])
 
     const loadGeoms = async () => {
         dispatch(setLoader(true))
-        const idProject = 1
         const result = await getGeometries(idProject)
         if (result.success) {
-            dispatch(setGeometries(result.data.geometryDataList))
+            dispatch(setGeometries({ geometries: result.data.geometryDataList }))
             loadSTL(result.data.geometryDataList)
             dispatch(setLoader(false))
         } else {
@@ -76,10 +82,9 @@ export default function Scena() {
         }
     }
 
-    function loadSTL(arr) {
-        dispatch(setGeometries(arr))
-        arr.forEach((el) => {
-            el.models.forEach((model) => {
+    function loadSTL(geometries) {
+        geometries?.forEach((geom) => {
+            geom.models.forEach((model) => {
                 stlLoader.current.load(
                     BASE_SERVER_URL + model.link,
                     (geometry) => {
@@ -97,13 +102,13 @@ export default function Scena() {
                         mesh.castShadow = true;
                         mesh.receiveShadow = true;
                         mesh.uid = model.uid;
-                        mesh.category = el.name;
+                        mesh.category = geom.name;
                         scene.add(mesh);
                         setInspectObjectGeometry((prevGeoms) => [...prevGeoms, mesh]);
                     }
-                );
-            });
-        });
+                )
+            })
+        })
     }
 
     function onWindowResize() {
@@ -265,23 +270,70 @@ export default function Scena() {
         })
     }
 
+    const HandleLeft = () => {
+        return (
+            <div className='relative h-full w-[12px] left-[5px] cursor-ew-resize'>
+                <div className='relative top-1/2'>
+                    <div className='absolute left-[35%] w-[0.8px] h-[20px] bg-day-300 transform -translate-x-1/2 -translate-y-1/2' />
+                    <div className='absolute left-[65%] w-[0.8px] h-[20px] bg-day-300 transform -translate-x-1/2 -translate-y-1/2' />
+                </div>
+            </div>
+        )
+    }
+    const HandleRight = () => {
+        return (
+            <div className='relative h-full w-[12px] right-[6px] cursor-ew-resize'>
+                <div className='relative top-1/2'>
+                    <div className='absolute left-[28%] w-[0.8px] h-[20px] bg-day-300 transform -translate-x-1/2 -translate-y-1/2' />
+                    <div className='absolute left-[58%] w-[0.8px] h-[20px] bg-day-300 transform -translate-x-1/2 -translate-y-1/2' />
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className='absolute top-14 left-0 flex w-full' id='for-canvas'>
             <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
-            <div className='z-10 grid grid-cols-[minmax(0px,_335px)_335px_minmax(0px,_1fr)_minmax(0px,_335px)] w-full m-2 gap-2'>
-                <div className=''>
-                    <TreePanel />
+            <div className={`z-10 grid w-full m-2`} style={{ gridTemplateColumns: `auto ${settingSize}px 1fr auto` }}>
+                <div className='col-start-1 mr-[12px]'>
+                    <Resizable
+                        enable={{ top: false, right: true, bottom: false, left: false, topRight: false, bottomRight: false, bottomLeft: false, topLeft: false }}
+                        minWidth={0}
+                        maxWidth={windowSize - geomSize - settingSize - 40}
+                        size={{ width: treeSize }}
+                        onResizeStop={(e, direction, ref, d) => {
+                            setTreeSize(treeSize + d.width)
+                        }}
+                        handleStyles={{
+                            right: { cursor: 'ew-resize' }
+                        }}
+                        handleComponent={{ right: <HandleLeft /> }}>
+                        <TreePanel />
+                    </Resizable>
                 </div>
-                <div className={`
-                    ${selectedItem !== null && selectedItem === (formName) ? '' : 'invisible'}`}>
+
+                <div className={`w-${settingSize}px 
+                    ${selectedItem !== null && selectedItem === (formName) ? '' : 'hidden'}`}>
                     <SettingForm />
                 </div>
-                <div className='col-start-4'>
-                    {geoms ? <GeometriesPanel onHidePartObject={(model) => hidePartObject(model)} /> : ''}
+                <div className='col-start-3' />
+                <div className='col-start-4 justify-self-end ml-[12px]'>
+                    <Resizable
+                        enable={{ top: false, right: false, bottom: false, left: true, topRight: false, bottomRight: false, bottomLeft: false, topLeft: false }}
+                        minWidth={0}
+                        maxWidth={windowSize - treeSize - settingSize - 40}
+                        size={{ width: geomSize }}
+                        onResizeStop={(e, direction, ref, d) => {
+                            setGeomSize(geomSize + d.width)
+                        }}
+                        handleStyles={{
+                            left: { cursor: 'ew-resize' }
+                        }}
+                        handleComponent={{ left: <HandleRight /> }}>
+                        {<GeometriesPanel onHidePartObject={(model) => hidePartObject(model)} />}
+                    </Resizable>
                 </div>
-
             </div>
-
-        </div>
+        </div >
     )
 }

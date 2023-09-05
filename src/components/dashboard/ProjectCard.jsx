@@ -4,17 +4,14 @@ import geom_preview2 from '@/../public/geom_preview2.jpg'
 import { useRouter } from 'next/router';
 import SvgSelector from '../SvgSelector';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import ModalProject from './CreateProject';
-import UpdateProject from './UpdateProject';
-import DeleteProject from './DeleteProject';
+import { useEffect, useState } from 'react'
+import UpdateProject from './UpdateProject'
+import DeleteProject from './DeleteProject'
 
 export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
     const router = useRouter()
     const [modal, setModal] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
-
-
     const date = new Date(item.updateTime)
     const day = date.getDate()
     const month = date.getMonth()
@@ -46,7 +43,6 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
     const handleDeleteClick = (e) => {
         e.stopPropagation()
         setDeleteModal(true)
-        // onDeleteClick()
     }
 
     const deleteProject = async () => {
@@ -115,7 +111,7 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
                 onCloseClick={() => setModal(false)}
                 onUpdate={(proejct) => handleProjectUpdate(proejct)} /> : ''}
             {deleteModal ? <DeleteProject projectName={item.name}
-                onCloseClick={() => setModal(false)}
+                onCloseClick={() => setDeleteModal(false)}
                 onDeleteClick={() => deleteProject()} /> : ''}
         </div>
     )

@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Oval } from 'react-loader-spinner'
 import SvgSelector from '../SvgSelector'
 
 export default function DeleteSimulation({ onCloseClick, onDeleteClick, simulationName }) {
     const [loading, setLoading] = useState(false)
+    const deleteFormRef = useRef(null)
 
     const handleDeleteClick = async () => {
         setLoading(true)
@@ -11,8 +12,20 @@ export default function DeleteSimulation({ onCloseClick, onDeleteClick, simulati
         onCloseClick()
     }
 
+    const handleKeyDown = (e) => {
+        console.log('Enter')
+        if (e.key === "Enter") {
+            handleDeleteClick()
+        }
+    }
+
+    useEffect(() => {
+        deleteFormRef.current.focus()
+    }, [])
+
     return (
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div ref={deleteFormRef} onKeyDown={(e) => handleKeyDown(e)} tabIndex={0}
+            className="fixed inset-0 z-10 overflow-y-auto">
             <div className="fixed inset-0 w-full h-full bg-black opacity-40" onClick={() => onCloseClick()}></div>
             <div className="flex items-center min-h-screen px-4 py-8">
                 <div className="relative w-full max-w-lg mx-auto bg-white rounded-md shadow-lg">

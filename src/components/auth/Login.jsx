@@ -14,7 +14,7 @@ export default function Login() {
 
         if (result.success) {
             localStorage.setItem('email', email)
-            router.push('/')
+            router.push('/dashboard')
         } else {
             alert(result.message)
         }

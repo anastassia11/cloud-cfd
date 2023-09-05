@@ -9,7 +9,6 @@ const paramsSlice = createSlice({
 
     reducers: {
         setUserValue(state, action) {
-            console.log(action.payload)
             state.params = { ...state.params, [action.payload.formName]: action.payload.updatedValue }
         }
     }

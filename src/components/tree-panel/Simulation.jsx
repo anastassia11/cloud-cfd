@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import SvgSelector from '../SvgSelector'
-import formDefault from './assets/formData.json'
 import DropdownSettings from './DropdownSettings'
 import DeleteSimulation from './DeleteSimulation'
 import Setting from './Setting'
@@ -8,9 +7,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setUserValue } from '@/store/slices/paramsSlice'
 
 export default function Simulation({ name, onDeleteClick, id }) {
-    // const [userValue, setUserValue] = useState(formDefault)
     const userValue = useSelector(state => state.params.params)
-    console.log(userValue)
+
     const [simulationOpen, setSimulationOpen] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
     const dispatch = useDispatch()
@@ -21,7 +19,6 @@ export default function Simulation({ name, onDeleteClick, id }) {
 
     const handleFormChange = (formName, updatedValue) => {
         dispatch(setUserValue(formName, updatedValue))
-        // setUserValue(prev => ({ ...prev, [formName]: updatedValue }))
     }
 
     const handleDeleteClick = (e) => {
@@ -89,12 +86,13 @@ export default function Simulation({ name, onDeleteClick, id }) {
     return (
         <div>
             <button className="group w-full flex items-center justify-between text-day-350 px-2 h-9 rounded-lg 
-            hover:bg-day-150 active:bg-day-200 duration-300 overflow-hidden min-w-0"
+            hover:bg-day-150 active:bg-day-200 overflow-hidden min-w-0"
                 onClick={() => setSimulationOpen(!simulationOpen)}>
                 <div className="flex items-center gap-x-2 font-medium text-ellipsis whitespace-nowrap overflow-hidden" >
-                    <span className='min-w-[20px]'>
+                    <span className='min-w-[22px]'>
                         <SvgSelector id='simulation' />
                     </span>
+
                     <p className='text-ellipsis whitespace-nowrap overflow-hidden'>{name}</p>
                 </div>
                 <div className='flex flex-row items-center justify-center overflow-hidden'>

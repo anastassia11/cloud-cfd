@@ -5,7 +5,6 @@ export default function ModelPart({ model, handleHideClick, updateModelPart }) {
     const [input, setInput] = useState(false)
     const [modelPart, setModelPart] = useState(model)
 
-
     useEffect(() => {
         // const handleClick = (event) => {
         //     const inputElement = document.getElementById("inputId")

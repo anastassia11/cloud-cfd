@@ -1,10 +1,10 @@
-import { useEffect, useLayoutEffect, useState } from "react"
+import { useState } from "react"
 import SvgSelector from "../SvgSelector"
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserValue } from '@/store/slices/paramsSlice';
-import { setFormValues } from '@/store/slices/settingSlice';
+import { resetSetting, setFormValues } from '@/store/slices/settingSlice';
 
-export default function FormGenerator({ formName, formTitle, value, onItemClick }) {
+export default function FormGenerator({ formName, formTitle }) {
     // const [formValues, setFormValues] = useState(value || {})
     const [selectedOption, setSelectedOption] = useState({})
     const formValues = useSelector(state => state.setting.inputs)
@@ -24,9 +24,7 @@ export default function FormGenerator({ formName, formTitle, value, onItemClick 
     const handleFormSubmit = (e) => {
         e.preventDefault()
         dispatch(setUserValue({ formName, updatedValue: formValues }))
-        // setUserValue(formValues)
-        // dispatch(setUserValue({ formName, updatedValue: formValues }))
-        onItemClick()
+        dispatch(resetSetting())
     }
 
     // useEffect(() => {
@@ -35,7 +33,7 @@ export default function FormGenerator({ formName, formTitle, value, onItemClick 
     //     }
     // }, [value])
 
-    const inputs = Object.keys(formValues).map((key) => {
+    const inputs = Object.keys(formValues ? formValues : []).map((key) => {
         const isSelect = formValues[key].select
         const input = isSelect
             ? <select value={selectedOption[key] || formValues[key].value}

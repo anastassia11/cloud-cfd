@@ -30,7 +30,7 @@ export default function App({ Component, pageProps }) {
     }
     else {
       if (token) {
-        router.push('/').then(() => {
+        router.push('/dashboard').then(() => {
           setHeaderVisible(false)
           setIsChecked(true)
         })

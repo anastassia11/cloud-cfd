@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Oval } from 'react-loader-spinner'
 import SvgSelector from '../SvgSelector'
 
 export default function DeleteProject({ onCloseClick, onDeleteClick, projectName }) {
     const [loading, setLoading] = useState(false)
+    const deleteFormRef = useRef(null)
 
     const handleDeleteClick = async () => {
         setLoading(true)
@@ -11,8 +12,20 @@ export default function DeleteProject({ onCloseClick, onDeleteClick, projectName
         onCloseClick()
     }
 
+    const handleKeyDown = (e) => {
+        console.log('Enter')
+        if (e.key === "Enter") {
+            handleDeleteClick()
+        }
+    }
+
+    useEffect(() => {
+        deleteFormRef.current.focus()
+    }, [])
+
     return (
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div ref={deleteFormRef}
+            className="fixed inset-0 z-10 overflow-y-auto" onKeyDown={(e) => handleKeyDown(e)} tabIndex={0}>
             <div className="fixed inset-0 w-full h-full bg-black opacity-40" onClick={() => onCloseClick()}></div>
             <div className="flex items-center min-h-screen px-4 py-8">
                 <div className="relative w-full max-w-lg mx-auto bg-white rounded-md shadow-lg">
@@ -20,7 +33,8 @@ export default function DeleteProject({ onCloseClick, onDeleteClick, projectName
                         <h4 className="text-base font-medium text-day-350">
                             Delete project
                         </h4>
-                        <button className="rounded-md text-day-300 w-8 h-8 hover:border hover:bg-day-50 active:bg-day-100 flex items-center justify-center"
+                        <button className="rounded-md text-day-300 w-8 h-8 hover:border hover:bg-day-50 
+                            active:bg-day-100 flex items-center justify-center"
                             onClick={() => onCloseClick()}>
                             <SvgSelector id='close' />
                         </button>
