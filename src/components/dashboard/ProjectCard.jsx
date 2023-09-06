@@ -55,7 +55,8 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
     }
 
     return (
-        <div className="rounded-lg overflow-hidden shadow transition hover:shadow-lg bg-white flex flex-col">
+        <div className="rounded-lg overflow-hidden shadow transition hover:shadow-lg bg-white flex flex-col"
+            onDoubleClick={handleExternalClick}>
             <Image src={geom_preview2} width={500} height={500} alt={geom_preview}
                 className='h-56 w-full object-cover' />
             <div className="bg-white py-4 pl-4 flex flex-col justify-between flex-grow h-full">
@@ -72,7 +73,8 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
                         <button className='group relative flex flex-row justify-center items-center w-10 h-10'
                             id={item.id}>
                             <SvgSelector id='more' className='w-[16px] h-[16px] rotate-90' />
-                            <div className="invisible group-hover:visible absolute max-w-[200px] w-[200px] rounded-md bg-white shadow border text-day-350"
+                            <div className="invisible opacity-0 group-hover:opacity-100 group-hover:visible translate-y-3 group-hover:translate-y-0
+                                absolute max-w-[200px] w-[200px] rounded-md bg-white shadow border text-day-350 duration-100 "
                                 style={{ bottom: 30, right: 10 }}>
                                 <div className='px-2 py-1.5'>
                                     <button className="flex w-full items-center gap-2 rounded-md px-2 h-9 text-base text-day-350 hover:bg-day-150"
