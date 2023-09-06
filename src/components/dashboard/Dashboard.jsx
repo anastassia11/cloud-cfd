@@ -1,17 +1,18 @@
 import SvgSelector from '../SvgSelector'
 import { useEffect, useState } from 'react'
-import ModalProject from './CreateProject'
 import getProjects from '@/pages/api/get_projects'
 import ProjectCard from './ProjectCard'
 import deleteProject from '@/pages/api/delete_project'
 import CreateProject from './CreateProject'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoader } from '@/store/slices/loaderSlice'
+import ContentLoader from 'react-content-loader'
 
 export default function Dashboard() {
     const [modal, setModal] = useState(false)
     const [projects, setProjects] = useState([])
     const [filterName, setFilterName] = useState('')
+    const loader = useSelector(state => state.loader.loader)
 
     const dispatch = useDispatch()
 
@@ -60,8 +61,27 @@ export default function Dashboard() {
         project.name.toLowerCase().includes(filterName.toLowerCase())
     )
 
+
+    const DashboardLoader = () => (
+        <div className={`${loader ? 'block' : 'hidden'} rounded-lg overflow-hidden shadow transition hover:shadow-lg bg-white flex flex-col`}>
+            <ContentLoader
+                speed={2}
+                backgroundColor="#d7d7d7"
+                foregroundColor="#e5e5e5"
+                height="410">
+                <rect x="0" y="0" width="100%" height="224" />
+                <rect x="16" y="240" rx="4" ry="4" width="60%" height="12" />
+                <rect x="16" y="270" rx="4" ry="4" width="40%" height="16" />
+                <rect x="16" y="300" rx="4" ry="4" width="85%" height="14" />
+                <rect x="16" y="322" rx="4" ry="4" width="75%" height="14" />
+                <rect x="16" y="344" rx="4" ry="4" width="80%" height="14" />
+                <rect x="16" y="376" rx="4" ry="4" width="60%" height="12" />
+            </ContentLoader>
+        </div>
+
+    )
     return (
-        <div className="px-6 py-2 bg-day-100 min-h-[calc(100vh-56px)] overflow-scroll">
+        <div className="px-6 pt-2 bg-day-100 min-h-[calc(100vh-56px)]">
             <div className='flex flex-row justify-between space-x-2'>
                 <h1 className="text-xl py-2 text-day-350 font-medium">
                     Projects
@@ -79,14 +99,19 @@ export default function Dashboard() {
                     </button>
                 </div>
             </div>
-            <div className='project-grid mt-4'>
-                {
-                    filteredProjects.map((project) => (
+            <div className='mt-4 h-[calc(100vh-126px)] overflow-y-scroll rounded pr-2'>
+
+                <div className='project-grid pb-4'>
+
+                    <DashboardLoader />
+                    <DashboardLoader />
+                    <DashboardLoader />
+                    {filteredProjects.map((project) => (
                         <ProjectCard item={project} key={project.id}
                             onDeleteClick={() => handleDeleteClick(project.id)}
                             onEditClick={(newProject) => handleEditClick(newProject)} />
-                    ))
-                }
+                    ))}
+                </div>
             </div>
 
             {modal ? <CreateProject onCloseClick={() => setModal(false)}
