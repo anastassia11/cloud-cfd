@@ -5,6 +5,7 @@ const projectSlice = createSlice({
     name: 'project',
     initialState: {
         idProject: null,
+        simulations: [],
         geometries: []
     },
 
@@ -31,9 +32,23 @@ const projectSlice = createSlice({
             const deletedGeom = action.payload.deletedGeometry
             state.geometries = state.geometries.filter((geom) => geom.uid !== deletedGeom.uid)
             const result = updateGeometry(action.payload.idProject, JSON.stringify(state.geometries))
+        },
+
+        setSimulations(state, action) {
+            state.simulations = action.payload.simulations
+        },
+
+        addSimulation(state, action) {
+            state.simulations.push(action.payload.newSimulation)
+        },
+
+        deleteSimulation(state, action) {
+            const deletedSimId = action.payload.deletedSimulation
+            state.simulations = state.simulations.filter((sim) => sim.id !== deletedSimId)
         }
     }
 })
 
-export const { setProject, setGeometries, updateGeometries, deleteGeometries } = projectSlice.actions;
+export const { setProject, setGeometries, updateGeometries, deleteGeometries,
+    setSimulations, addSimulation, deleteSimulation } = projectSlice.actions;
 export default projectSlice.reducer
