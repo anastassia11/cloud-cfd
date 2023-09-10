@@ -1,22 +1,44 @@
-import { useState } from "react";
-import SvgSelector from '../SvgSelector';
-import Simulation from './Simulation';
-import uuid from 'react-uuid';
+import { useEffect } from "react"
+import SvgSelector from '../SvgSelector'
+import uuid from 'react-uuid'
+import createSimulation from '@/pages/api/create_simulation'
+import { useDispatch, useSelector } from 'react-redux'
+import { addSimulation, setSimulations } from '@/store/slices/projectSlice'
+import { setLoader } from '@/store/slices/loaderSlice'
+import getSimulations from '@/pages/api/get_simulations'
+import Simulation from './Simulation'
 
 export default function TreePanel() {
-    const [simulations, setSimulations] = useState([])
+    const simulations = useSelector(state => state.project.simulations)
+    const idProject = useSelector(state => state.project.idProject)
 
-    const handleDeleteClick = (id) => {
-        setSimulations(prev => prev.filter((item) => item.id !== id))
+    const dispatch = useDispatch()
+
+    const fetchSimulations = async () => {
+        dispatch(setLoader(true))
+        const result = await getSimulations(idProject)
+        if (result.success) {
+            dispatch(setSimulations({ simulations: result.data }))
+            dispatch(setLoader(false))
+        } else {
+            alert(result.message)
+            dispatch(setLoader(false))
+        }
     }
 
-    const handleAddClick = () => {
-        const sim_id = uuid()
-        setSimulations(prev => [...prev, {
-            sim: <Simulation name={`Simulation ${simulations.length}`}
-                onDeleteClick={() => handleDeleteClick(sim_id)} id={sim_id} />, id: sim_id
-        }])
+    const handleAddClick = async () => {
+        const simulationName = `Simulation ${simulations.length}`
+        const result = await createSimulation(idProject, simulationName)
+        if (result.success) {
+            dispatch(addSimulation({ newSimulation: result.data }))
+        } else {
+            alert(result.message)
+        }
     }
+
+    useEffect(() => {
+        fetchSimulations()
+    }, [])
 
     return (
         <nav className="max-h-[calc(100vh-73px)] bg-day-00 overflow-y-auto pb-2 rounded-md 
@@ -43,9 +65,9 @@ export default function TreePanel() {
                     </button>
                 </div>
                 {simulations.length > 0 ? <ul className='mt-[9px] pt-2 border-t'>
-                    {simulations.map((simulation, index) =>
-                        <li key={index} className=''>
-                            {simulation.sim}
+                    {simulations.map((simulation) =>
+                        <li key={simulation.id} className=''>
+                            <Simulation id={simulation.id} name={simulation.name} />
                         </li>)}
                 </ul> : ''}
             </div>

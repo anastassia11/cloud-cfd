@@ -1,19 +1,28 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Oval } from 'react-loader-spinner'
 import SvgSelector from '../SvgSelector'
+import { useDispatch } from 'react-redux'
+import delete_Simulation from '@/pages/api/delete_simulation'
+import { deleteSimulation } from '@/store/slices/projectSlice'
 
-export default function DeleteSimulation({ onCloseClick, onDeleteClick, simulationName }) {
+export default function DeleteSimulation({ onCloseClick, simulationName, simulationId }) {
     const [loading, setLoading] = useState(false)
     const deleteFormRef = useRef(null)
 
+    const dispatch = useDispatch()
+
     const handleDeleteClick = async () => {
         setLoading(true)
-        onDeleteClick()
+        const result = await delete_Simulation(simulationId)
+        if (result.success) {
+            dispatch(deleteSimulation({ deletedSimulation: simulationId }))
+        } else {
+            alert(result.message)
+        }
         onCloseClick()
     }
 
     const handleKeyDown = (e) => {
-        console.log('Enter')
         if (e.key === "Enter") {
             handleDeleteClick()
         }

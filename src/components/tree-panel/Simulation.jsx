@@ -3,23 +3,21 @@ import SvgSelector from '../SvgSelector'
 import DropdownSettings from './DropdownSettings'
 import DeleteSimulation from './DeleteSimulation'
 import Setting from './Setting'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { setUserValue } from '@/store/slices/paramsSlice'
 
-export default function Simulation({ name, onDeleteClick, id }) {
-    const userValue = useSelector(state => state.params.params)
-
+export default function Simulation({ id, name }) {
     const [simulationOpen, setSimulationOpen] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
-    const dispatch = useDispatch()
+    const userValue = useSelector(state => state.params.params)
 
     const handleRunClick = async () => {
 
     }
 
-    const handleFormChange = (formName, updatedValue) => {
-        dispatch(setUserValue(formName, updatedValue))
-    }
+    // const handleFormChange = (formName, updatedValue) => {
+    //     dispatch(setUserValue(formName, updatedValue))
+    // }
 
     const handleDeleteClick = (e) => {
         e.stopPropagation()
@@ -136,7 +134,7 @@ export default function Simulation({ name, onDeleteClick, id }) {
                     </div>
                 ) : ""
             }
-            {deleteModal ? <DeleteSimulation simulationName={name}
+            {deleteModal ? <DeleteSimulation simulationName={name} simulationId={id}
                 onCloseClick={() => setDeleteModal(false)}
                 onDeleteClick={() => deleteSimulation()} /> : ''}
         </div>
