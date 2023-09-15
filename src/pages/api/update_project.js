@@ -1,9 +1,9 @@
 import { BASE_SERVER_URL } from '@/utils/constants'
 import axios from 'axios'
 
-export default async function updateProject(idProject, name, description) {
+export default async function updateProject(projectId, name, description) {
     try {
-        const response = await axios.put(`${BASE_SERVER_URL}/api/Project/Update/${idProject}`,
+        const response = await axios.put(`${BASE_SERVER_URL}/api/Project/Update/${projectId}`,
             { name, description },
             {
                 headers: {

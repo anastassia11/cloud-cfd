@@ -109,7 +109,7 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
                     <span aria-hidden="true" className="block transition-all group-hover:ms-0.5 rtl:rotate-180">&rarr;</span>
                 </Link>
             </div>
-            {modal ? <UpdateProject idProject={item.id} projectName={item.name} projectDescription={item.description}
+            {modal ? <UpdateProject projectId={item.id} projectName={item.name} projectDescription={item.description}
                 onCloseClick={() => setModal(false)}
                 onUpdate={(proejct) => handleProjectUpdate(proejct)} /> : ''}
             {deleteModal ? <DeleteProject projectName={item.name}

@@ -32,17 +32,17 @@ export default function Dashboard() {
         }
     }
 
-    const deleteUserProject = async (idProject) => {
-        const result = await deleteProject(idProject)
+    const deleteUserProject = async (projectId) => {
+        const result = await deleteProject(projectId)
         if (result.success) {
-            setProjects(prevProjects => prevProjects.filter((project) => project.id !== idProject))
+            setProjects(prevProjects => prevProjects.filter((project) => project.id !== projectId))
         } else {
             alert(result.message)
         }
     }
 
-    const handleDeleteClick = (idProject) => {
-        deleteUserProject(idProject)
+    const handleDeleteClick = (projectId) => {
+        deleteUserProject(projectId)
     }
 
     const handleEditClick = (project) => {
@@ -78,8 +78,8 @@ export default function Dashboard() {
                 <rect x="16" y="376" rx="4" ry="4" width="60%" height="12" />
             </ContentLoader>
         </div>
-
     )
+
     return (
         <div className="px-6 pt-2 bg-day-100 min-h-[calc(100vh-56px)]">
             <div className='flex flex-row justify-between space-x-2'>
@@ -89,8 +89,9 @@ export default function Dashboard() {
                 <div className='flex flex-row items-center justify-end space-x-2'>
                     <div className="relative flex items-center">
                         <SvgSelector id='search' />
-                        <input type="text" placeholder="Search" value={filterName} onChange={(e) => setFilterName(e.target.value)
-                        }
+                        <input type="text" placeholder="Search" value={filterName}
+                            onChange={(e) => setFilterName(e.target.value)
+                            }
                             className="w-72 h-9 pl-12 pr-4 text-base text-day-350 border rounded-md outline-none bg-day-50 focus:bg-day-00 focus:border-day-200" />
                     </div>
                     <button className="w-32 px-4 h-9 text-base flex items-center font-medium text-white bg-orange-100 hover:bg-orange-150 active:bg-orange-200 rounded-lg duration-300"
@@ -100,9 +101,7 @@ export default function Dashboard() {
                 </div>
             </div>
             <div className='mt-4 h-[calc(100vh-126px)] overflow-y-scroll rounded pr-2'>
-
                 <div className='project-grid pb-4'>
-
                     <DashboardLoader />
                     <DashboardLoader />
                     <DashboardLoader />

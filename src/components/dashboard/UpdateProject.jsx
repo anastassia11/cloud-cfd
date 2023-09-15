@@ -3,14 +3,14 @@ import SvgSelector from '../SvgSelector'
 import { Oval } from 'react-loader-spinner'
 import updateProject from '@/pages/api/update_project'
 
-export default function UpdateProject({ idProject, projectName, projectDescription, onCloseClick, onUpdate }) {
+export default function UpdateProject({ projectId, projectName, projectDescription, onCloseClick, onUpdate }) {
     const [name, setName] = useState(projectName)
     const [description, setDescription] = useState(projectDescription)
     const [loading, setLoading] = useState(false)
 
-    const handleSubmitClick = async (idProject, name, description) => {
+    const handleSubmitClick = async (projectId, name, description) => {
         setLoading(true)
-        const result = await updateProject(idProject, name, description)
+        const result = await updateProject(projectId, name, description)
         if (result.success) {
             onUpdate(result.data)
         } else {
@@ -51,7 +51,7 @@ export default function UpdateProject({ idProject, projectName, projectDescripti
                             </div>
                             <div className="flex items-center py-4 justify-end mt-3">
                                 <button className="w-36 disabled:bg-orange-disabled px-4 h-9 text-base font-medium text-white bg-orange-100 hover:bg-orange-150 active:bg-orange-200 rounded-lg duration-300 flex items-center justify-center"
-                                    onClick={() => handleSubmitClick(idProject, name, description)}
+                                    onClick={() => handleSubmitClick(projectId, name, description)}
                                     disabled={loading}>
                                     {loading ?
                                         <Oval

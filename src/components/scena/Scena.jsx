@@ -9,69 +9,78 @@ import TreePanel from '../tree-panel/TreePanel'
 import { BASE_SERVER_URL } from '@/utils/constants'
 import getGeometries from '@/pages/api/get_geometries'
 import { useDispatch, useSelector } from 'react-redux'
-import { setGeometries, setProject } from '@/store/slices/projectSlice'
+import { addSelectedPart, deleteSelectedPart, setGeometries, setProject, setSelectedGeometries } from '@/store/slices/projectSlice'
 import GeometriesPanel from './GeometriesPanel'
 import SettingForm from '../tree-panel/SettingForm'
 import { setLoader } from '@/store/slices/loaderSlice'
 import { Resizable } from 're-resizable'
 
-export default function Scena({ idProject }) {
-    const [treeSize, setTreeSize] = useState(335)
-    const [geomSize, setGeomSize] = useState(300)
-    const [windowSize, setWindowSize] = useState(window.innerWidth)
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+
+export default function Scena({ }) {
+    const didLogRef = useRef(false)
+
+    const projectId = useSelector(state => state.project.projectId)
 
     const settingSize = 335
+    const [treeSize, setTreeSize] = useState((window.innerWidth - settingSize - 40) * 0.35)
+    const [geomSize, setGeomSize] = useState((window.innerWidth - settingSize - 40) * 0.3)
+    const [windowSize, setWindowSize] = useState(window.innerWidth)
 
     const [inspectObjectGeometry, setInspectObjectGeometry] = useState([])
-    const [selectedGeometry, setSelectedGeometry] = useState([])
+    const [selectedModelPart, setSelectedModelPart] = useState([])
     const selectedItem = useSelector(state => state.setting.setting)
     const formName = useSelector(state => state.setting.formName)
-    const geoms = useSelector(state => state.project.geometries)
-    const loader = useSelector(state => state.loader.loader)
 
     const dispatch = useDispatch()
 
     const containerRef = useRef(null)
+    const axisRef = useRef(null)
+
     const controls = useRef(null)
     const stlLoader = useRef(null)
+
     const renderer = useRef(null)
+    const axisRenderer = useRef(null)
+
     const camera = useRef(null)
+    const axisCamera = useRef(null)
+
     const composer = useRef(null)
     const outlinePass = useRef(null)
 
     const scene = new THREE.Scene()
-
-    useEffect(() => {
-        setWindowSize(window.innerWidth)
-    }, [window.innerWidth])
-
-    useEffect(() => {
-        //Метод для загрузки json с массивом разбитых stl-объектов(ссылка + настройки) с сервера
-        //Внутри этот метод вызывает LoadStl() - который загружает по ссылке stl-объект на сцену
-        //Когда будешь делать загрузку новых геометрий на сервер, после успешной отправки запроса, 
-        //Можно вызвать loadGeoms() и данные на сцене будут обновлены 
-        loadGeoms()
-
-        //Инициализация настроек сцены - свет, камера..
-        init()
-
-        //Рекурсивная функция, для обновления данных на сцене
-        animate()
-    }, []);
-
-    useEffect(() => {
-        //Подключает методы HandleMove и HandleClick - для изменения цвета stl-объекта
-        //И для выделения stl-объекта при наведении
-        addListeners()
-    }, [inspectObjectGeometry])
+    const axisScene = new THREE.Scene()
 
     // useEffect(() => {
-    //     loadSTL(geoms)
-    // }, [geoms?.length])
+    //     function handleResize() {
+    //         setWindowSize(window.innerWidth)
+    //         setTreeSize((window.innerWidth - settingSize - 40) * 0.35)
+    //         setGeomSize((window.innerWidth - settingSize - 40) * 0.3)
+
+    //     }
+    //     window.addEventListener('resize', handleResize)
+    //     return () => window.removeEventListener('resize', handleResize)
+    // }, [treeSize, geomSize, settingSize])
+
+    useEffect(() => {
+        if (didLogRef.current === false) {
+            didLogRef.current = true;
+            loadGeoms()
+        }
+        init()
+        animate()
+    }, [])
+
+    useEffect(() => {
+        addListeners()
+        return () => removeListeners()
+    }, [inspectObjectGeometry])
 
     const loadGeoms = async () => {
         dispatch(setLoader(true))
-        const result = await getGeometries(idProject)
+        const result = await getGeometries(projectId)
         if (result.success) {
             dispatch(setGeometries({ geometries: result.data.geometryDataList }))
             loadSTL(result.data.geometryDataList)
@@ -82,8 +91,8 @@ export default function Scena({ idProject }) {
         }
     }
 
-    function loadSTL(geometries) {
-        geometries?.forEach((geom) => {
+    function loadSTL(geoms) {
+        geoms?.forEach((geom) => {
             geom.models.forEach((model) => {
                 stlLoader.current.load(
                     BASE_SERVER_URL + model.link,
@@ -102,6 +111,7 @@ export default function Scena({ idProject }) {
                         mesh.castShadow = true;
                         mesh.receiveShadow = true;
                         mesh.uid = model.uid;
+                        mesh.visible = model.visible
                         mesh.category = geom.name;
                         scene.add(mesh);
                         setInspectObjectGeometry((prevGeoms) => [...prevGeoms, mesh]);
@@ -131,6 +141,7 @@ export default function Scena({ idProject }) {
         camera.current.position.z = 50;
         camera.current.lookAt(new THREE.Vector3(0, 0, 0));
 
+        const axisCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
         //цвет фона
         scene.background = new THREE.Color(0xf0f0f0);
         //немного света
@@ -196,53 +207,55 @@ export default function Scena({ idProject }) {
         requestAnimationFrame(animate);
         renderer.current.render(scene, camera.current);
         controls.current.update();
-
         composer.current.render();
     }
 
     function addListeners() {
         renderer.current.domElement.addEventListener("click", handleClick);
         renderer.current.domElement.addEventListener("pointermove", handleMove);
-        renderer.current.domElement.addEventListener("contextmenu", handleRightClick);
+    }
+
+    function removeListeners() {
+        renderer.current.domElement.removeEventListener("click", handleClick);
+        renderer.current.domElement.removeEventListener("pointermove", handleMove);
     }
 
     function handleClick(event) {
+        event.stopPropagation()
         const mouse = new THREE.Vector2();
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
         const raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(mouse, camera.current);
-        const intersects = raycaster.intersectObjects(inspectObjectGeometry, true);
-        if (intersects.length > 0) {
-            const object = intersects[0].object;
-            const material = new THREE.MeshPhongMaterial({
-                color: 0x404080,
-                specular: 0x494949,
-                shininess: 100,
-            });
-            object.material = material;
+        const intersects = raycaster.intersectObjects(inspectObjectGeometry, true)
 
-            setSelectedGeometry((prevGeoms) => [...prevGeoms, object]);
-        }
-    }
-    function handleRightClick(event) {
-        const mouse = new THREE.Vector2();
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        const selected_material = new THREE.MeshPhongMaterial({
+            color: 0x404080,
+            specular: 0x494949,
+            shininess: 100,
+        })
+        const material = new THREE.MeshPhongMaterial({
+            color: 0x808080,
+            specular: 0x494949,
+            shininess: 100,
+        })
 
-        const raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(mouse, camera.current);
-        const intersects = raycaster.intersectObjects(inspectObjectGeometry, true);
         if (intersects.length > 0) {
-            const object = intersects[0].object;
-            const material = new THREE.MeshPhongMaterial({
-                color: 0x808080,
-                specular: 0x494949,
-                shininess: 100,
-            });
-            object.material = material;
+            const object = intersects[0].object
+            setSelectedModelPart((prevGeoms) => {
+                if (prevGeoms.length > 0 && prevGeoms.some((prevGeom) => prevGeom.uid === object.uid)) {
+                    object.material = material
+                    dispatch(deleteSelectedPart({ deletedPart: object.uid }))
+                    return prevGeoms.filter((prevGeom) => prevGeom.uid !== object.uid)
+                } else {
+                    object.material = selected_material
+                    dispatch(addSelectedPart({ addedPart: object.uid }))
+                    return [...prevGeoms, object]
+                }
+            })
         }
+
     }
 
     function handleMove(event) {
@@ -290,16 +303,19 @@ export default function Scena({ idProject }) {
             </div>
         )
     }
+    const treeRef = useRef(null)
+    const geomRef = useRef(null)
 
     return (
         <div className='absolute top-14 left-0 flex w-full' id='for-canvas'>
             <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
-            <div className={`z-10 grid w-full m-2`} style={{ gridTemplateColumns: `auto ${settingSize}px 1fr auto` }}>
-                <div className='col-start-1 mr-[12px]'>
+            <div className={`grid w-full m-2`} style={{ gridTemplateColumns: `auto ${settingSize}px 1fr auto` }}>
+                <div ref={treeRef}
+                    className='z-10 col-start-1 mr-[12px]' style={{ flexShrink: 1 }}>
                     <Resizable
                         enable={{ top: false, right: true, bottom: false, left: false, topRight: false, bottomRight: false, bottomLeft: false, topLeft: false }}
                         minWidth={0}
-                        maxWidth={windowSize - geomSize - settingSize - 40}
+                        maxWidth={window.innerWidth - geomSize - settingSize - 40}
                         size={{ width: treeSize }}
                         onResizeStop={(e, direction, ref, d) => {
                             setTreeSize(treeSize + d.width)
@@ -312,16 +328,17 @@ export default function Scena({ idProject }) {
                     </Resizable>
                 </div>
 
-                <div className={`w-${settingSize}px 
+                <div className={`z-10 w-${settingSize}px
                     ${selectedItem !== null && selectedItem === (formName) ? '' : 'hidden'}`}>
                     <SettingForm />
                 </div>
                 <div className='col-start-3' />
-                <div className='col-start-4 justify-self-end ml-[12px]'>
+                <div ref={geomRef}
+                    className='z-10 col-start-4 justify-self-end ml-[12px]' style={{ flexShrink: 1 }}>
                     <Resizable
                         enable={{ top: false, right: false, bottom: false, left: true, topRight: false, bottomRight: false, bottomLeft: false, topLeft: false }}
                         minWidth={0}
-                        maxWidth={windowSize - treeSize - settingSize - 40}
+                        maxWidth={window.innerWidth - treeSize - settingSize - 40}
                         size={{ width: geomSize }}
                         onResizeStop={(e, direction, ref, d) => {
                             setGeomSize(geomSize + d.width)

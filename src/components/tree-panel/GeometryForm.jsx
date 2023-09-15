@@ -11,7 +11,7 @@ export default function GeometryForm({ }) {
     const [drag, setDrag] = useState(false)
     const [loading, setLoading] = useState([])
     const geoms = useSelector(state => state.project.geometries)
-    const idProject = useSelector(state => state.project.idProject)
+    const projectId = useSelector(state => state.project.projectId)
     const [files, setFiles] = useState(geoms || [])
     const [fileCount, setFileCount] = useState(geoms?.length)
     const dispatch = useDispatch()
@@ -44,12 +44,12 @@ export default function GeometryForm({ }) {
         setLoading((prevLoading) => [...prevLoading, ...newFiles.map(() => false)])
         setFileCount((prevCount) => prevCount + newFiles.length)
         newFiles.forEach((file, index) => {
-            handleSetGeometry({ 'Angle': '120', 'IdProject': idProject, 'File': file }, fileCount + index)
+            handleSetGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file }, fileCount + index)
         })
     }
 
     const loadGeoms = async () => {
-        const result = await getGeometries(idProject)
+        const result = await getGeometries(projectId)
         if (result.success) {
             dispatch(setGeometries({ geometries: result.data.geometryDataList }))
             // обновление данных на сцене
@@ -85,7 +85,7 @@ export default function GeometryForm({ }) {
         setLoading((prevLoading) => [...prevLoading, ...newFiles.map(() => false)])
         setFileCount((prevCount) => prevCount + newFiles.length)
         newFiles.forEach((file, index) => {
-            handleSetGeometry({ 'Angle': '120', 'IdProject': idProject, 'File': file }, fileCount + index)
+            handleSetGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file }, fileCount + index)
         })
     }
 

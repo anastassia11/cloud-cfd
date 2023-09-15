@@ -4,18 +4,27 @@ import { createSlice } from '@reduxjs/toolkit'
 const projectSlice = createSlice({
     name: 'project',
     initialState: {
-        idProject: null,
+        projectId: null,
         simulations: [],
-        geometries: []
+        geometries: [],
+        selectedPart: []
     },
 
     reducers: {
         setProject(state, action) {
-            state.idProject = action.payload.idProject
+            state.projectId = action.payload.projectId
         },
 
         setGeometries(state, action) {
             state.geometries = action.payload.geometries
+        },
+
+        addSelectedPart(state, action) {
+            state.selectedPart.push(action.payload.addedPart)
+        },
+
+        deleteSelectedPart(state, action) {
+            state.selectedPart = state.selectedPart.filter((part) => part !== action.payload.deletedPart)
         },
 
         updateGeometries(state, action) {
@@ -31,7 +40,7 @@ const projectSlice = createSlice({
         deleteGeometries(state, action) {
             const deletedGeom = action.payload.deletedGeometry
             state.geometries = state.geometries.filter((geom) => geom.uid !== deletedGeom.uid)
-            const result = updateGeometry(action.payload.idProject, JSON.stringify(state.geometries))
+            const result = updateGeometry(action.payload.projectId, JSON.stringify(state.geometries))
         },
 
         setSimulations(state, action) {
@@ -50,5 +59,5 @@ const projectSlice = createSlice({
 })
 
 export const { setProject, setGeometries, updateGeometries, deleteGeometries,
-    setSimulations, addSimulation, deleteSimulation } = projectSlice.actions;
+    setSimulations, addSimulation, deleteSimulation, addSelectedPart, deleteSelectedPart } = projectSlice.actions;
 export default projectSlice.reducer

@@ -1,10 +1,10 @@
 import { BASE_SERVER_URL } from '@/utils/constants'
 import axios from 'axios'
 
-export default async function createSimulation(idProject, simulationName) {
+export default async function createSimulation(projectId, simulationName) {
     try {
         const response = await axios.post(`${BASE_SERVER_URL}/api/Simulation/Create`,
-            { idProject, name: simulationName },
+            { idProject: projectId, name: simulationName },
             {
                 headers: {
                     'Content-Type': 'application/json',

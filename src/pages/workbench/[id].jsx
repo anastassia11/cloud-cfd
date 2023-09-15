@@ -3,7 +3,7 @@ import { setLoader } from '@/store/slices/loaderSlice'
 import { setProject } from '@/store/slices/projectSlice'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 export default function WorkbenchPage() {
     const router = useRouter()
@@ -15,15 +15,11 @@ export default function WorkbenchPage() {
     useEffect(() => {
         dispatch(setLoader(isLoaded))
         if (id) {
-            dispatch(setProject({ idProject: id }))
+            dispatch(setProject({ projectId: id }))
             setIsLoaded(false)
             dispatch(setLoader(isLoaded))
         }
     }, [id])
-
-    useEffect(() => {
-        console.log(isLoaded)
-    }, [isLoaded])
 
     if (isLoaded) {
         return <></>
@@ -31,7 +27,7 @@ export default function WorkbenchPage() {
 
     return (
         <div className=''>
-            <Scena idProject={id} isLoaded={isLoaded} />
+            <Scena />
         </div>
     )
 }

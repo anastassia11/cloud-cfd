@@ -1,6 +1,5 @@
 import { useEffect } from "react"
 import SvgSelector from '../SvgSelector'
-import uuid from 'react-uuid'
 import createSimulation from '@/pages/api/create_simulation'
 import { useDispatch, useSelector } from 'react-redux'
 import { addSimulation, setSimulations } from '@/store/slices/projectSlice'
@@ -10,13 +9,13 @@ import Simulation from './Simulation'
 
 export default function TreePanel() {
     const simulations = useSelector(state => state.project.simulations)
-    const idProject = useSelector(state => state.project.idProject)
+    const projectId = useSelector(state => state.project.projectId)
 
     const dispatch = useDispatch()
 
     const fetchSimulations = async () => {
         dispatch(setLoader(true))
-        const result = await getSimulations(idProject)
+        const result = await getSimulations(projectId)
         if (result.success) {
             dispatch(setSimulations({ simulations: result.data }))
             dispatch(setLoader(false))
@@ -28,7 +27,7 @@ export default function TreePanel() {
 
     const handleAddClick = async () => {
         const simulationName = `Simulation ${simulations.length}`
-        const result = await createSimulation(idProject, simulationName)
+        const result = await createSimulation(projectId, simulationName)
         if (result.success) {
             dispatch(addSimulation({ newSimulation: result.data }))
         } else {
@@ -43,7 +42,6 @@ export default function TreePanel() {
     return (
         <nav className="max-h-[calc(100vh-73px)] bg-day-00 overflow-y-auto pb-2 rounded-md 
             shadow h-fit">
-
             <div className="flex flex-col h-full px-2 ">
                 <div className="text-day-350 flex items-center justify-between pt-[10px] 
                     pl-[6px] pr-[1px] overflow-hidden">

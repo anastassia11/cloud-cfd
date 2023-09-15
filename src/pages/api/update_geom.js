@@ -1,10 +1,10 @@
 import { BASE_SERVER_URL } from '@/utils/constants'
 import axios from 'axios'
 
-export default async function updateGeometry(idProject, jsonGeometries) {
+export default async function updateGeometry(projectId, jsonGeometries) {
     try {
         const response = await axios.post(`${BASE_SERVER_URL}/api/GeometrySTL/Update`,
-            { idProject, jsonGeometries },
+            { idProject: projectId, jsonGeometries },
             {
                 headers: {
                     'Content-Type': 'application/json',

@@ -6,13 +6,13 @@ import { deleteGeometries } from '@/store/slices/projectSlice'
 
 export default function DeleteModal({ onCloseClick, geometry }) {
     const [loading, setLoading] = useState(false)
-    const idProject = useSelector(state => state.project.idProject)
+    const projectId = useSelector(state => state.project.projectId)
     const deleteFormRef = useRef(null)
     const dispatch = useDispatch()
 
     const handleDeleteClick = async () => {
         setLoading(true)
-        dispatch(deleteGeometries({ idProject: idProject, deletedGeometry: geometry }))
+        dispatch(deleteGeometries({ projectId: projectId, deletedGeometry: geometry }))
         onCloseClick()
     }
 
