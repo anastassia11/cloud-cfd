@@ -25,11 +25,11 @@ export default function GeometriesPanel({ onHidePartObject }) {
                             </p>
                         </span>
                     </div>
-                    <button className="rounded-md min-h-[32px] min-w-[32px] w-8 h-8 border bg-day-50 
+                    {/* <button className="rounded-md min-h-[32px] min-w-[32px] w-8 h-8 border bg-day-50 
                         hover:bg-day-100 active:bg-day-150 flex items-center justify-center"
                     >
                         <SvgSelector id='plus' />
-                    </button>
+                    </button> */}
                 </div>
                 {geoms.length > 0 ? <ul className='mt-2 pt-2 border-t'>
                     {!loader && geoms.map((geom) => (

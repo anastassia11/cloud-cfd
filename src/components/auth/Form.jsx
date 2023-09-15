@@ -6,7 +6,7 @@ export default function Form({ title, handleClick, loading }) {
     const [password, setPassword] = useState('')
 
     return (
-        <div className="bg-white shadow p-4 py-6 space-y-8 sm:p-6 sm:rounded-lg">
+        <div className="bg-white shadow p-4 py-6 space-y-8 rounded-lg">
             <form onSubmit={(e) => e.preventDefault()} className="space-y-5">
                 <div>
                     <label className="font-medium text-day-350">

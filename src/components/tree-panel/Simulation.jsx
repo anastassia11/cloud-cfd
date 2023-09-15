@@ -68,12 +68,6 @@ export default function Simulation({ id, name }) {
             child: true
         },
         {
-            setting: <DropdownSettings items={initialChildren}>
-                Boundary conditions
-            </DropdownSettings>,
-            child: true
-        },
-        {
             setting: <DropdownSettings items={advancedChildren}>
                 Advanced concept
             </DropdownSettings>,
@@ -83,14 +77,13 @@ export default function Simulation({ id, name }) {
 
     return (
         <div>
-            <button className="group w-full flex items-center justify-between text-day-350 px-2 h-9 rounded-lg 
-            hover:bg-day-150 active:bg-day-200 overflow-hidden min-w-0"
+            <div className="group w-full flex items-center justify-between text-day-350 px-2 h-9 rounded-lg 
+            hover:bg-day-150 active:bg-day-200 overflow-hidden min-w-0 cursor-pointer"
                 onClick={() => setSimulationOpen(!simulationOpen)}>
                 <div className="flex items-center gap-x-2 font-medium text-ellipsis whitespace-nowrap overflow-hidden" >
                     <span className='min-w-[22px]'>
                         <SvgSelector id='simulation' />
                     </span>
-
                     <p className='text-ellipsis whitespace-nowrap overflow-hidden'>{name}</p>
                 </div>
                 <div className='flex flex-row items-center justify-center overflow-hidden'>
@@ -108,15 +101,14 @@ export default function Simulation({ id, name }) {
                         </svg>
                     </span>
                 </div>
-            </button>
+            </div>
             {
                 simulationOpen ? (
                     <div className="border-l ml-[17px]">
                         <ul className="text-base font-normal flex-1 ml-3">
                             {settings.map((item) => {
-                                return item.child ? <li>{item.setting}</li> :
-                                    <li key={''}
-                                        className=''>
+                                return item.child ? <li key={item.setting}>{item.setting}</li> :
+                                    <li key={item.setting}>
                                         {item.setting}
                                     </li>
                             }
@@ -127,7 +119,6 @@ export default function Simulation({ id, name }) {
                                 <span className='w-5'>
                                     <SvgSelector id='run' />
                                 </span>
-
                                 <p className='text-ellipsis whitespace-nowrap overflow-hidden'>Simulation Run</p>
                             </button>
                         </ul>

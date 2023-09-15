@@ -34,10 +34,6 @@ export default function Geometry({ geom = [], hidePartObject }) {
         // }
     }, [input])
 
-    // useEffect(() => {
-    //     updateGeomArray(geometry)
-    // }, [geometry])
-
     const handleUpdate = (updatedModelPart) => {
         const updatedGeometry = {
             ...geometry,

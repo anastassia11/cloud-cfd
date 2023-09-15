@@ -46,8 +46,8 @@ export default function Header() {
                         </div>
                     </button>
 
-                    <button className='relative group text-day-350 hover:bg-day-50 flex items-center 
-                        hover:border-b-2 hover:border-orange-100 duration-100 h-[56px] px-3'>
+                    <div className='relative group text-day-350 hover:bg-day-50 flex items-center 
+                        hover:border-b-2 hover:border-orange-100 duration-100 h-[56px] px-3 cursor-pointer'>
                         <div className='w-8 h-8 mr-2 rounded-full bg-day-250 flex items-center justify-center' >
                             <p className='text-white uppercase text-[22px]  font-medium '>
                                 {email && email[0]}
@@ -78,13 +78,12 @@ export default function Header() {
                             </div>
 
                         </div>
-                    </button>
+                    </div>
                 </div>
             </div>
             <div className='absolute top-[54px] w-full'>
                 <BarLoader color="#e66e0d" width='100%' speedMultiplier={0.3} height={2} loading={loader} />
             </div>
-
         </header>
     )
 }
