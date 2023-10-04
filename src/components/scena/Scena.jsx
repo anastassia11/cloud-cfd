@@ -410,7 +410,7 @@ export default function Scena({ }) {
     const handleBoxChange = () => {
         console.log(scene.children)
         scene.traverse(function (object) {
-            console.log(object.name);
+            console.log(object);
         });
         // scene.remove(boxPatternMesh.current);
         // scene.remove(cylinderPatternMesh.current);
@@ -500,27 +500,29 @@ export default function Scena({ }) {
                                     <SvgSelector id='select-face' className='w-6' />
                                 </button>
                             </div>
-                            <div className='flex flex-row items-center group relative cursor-pointer w-[100px] h-8 ml-2 pl-2 justify-start text-day-1000'>
-                                <div className='flex flex-row items-center'>
-                                    <p className='text-[13px] pt-[2px] mr-[2px] tracking-wide'>CREATE</p>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                        className='w-5 h-5 duration-300 group-hover:rotate-180'>
-                                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                                    </svg>
-                                </div>
-                                <div className='flex flex-col justify-center invisible group-hover:visible bg-day-00 rounded-md shadow absolute 
-                                    top-[25px] border border-day-200 -left-[6px] w-[95px] text-base z-20 duration-100 opacity-0 group-hover:opacity-100 
-                                    ease-linear transition-all group-hover:translate-y-[10px]'>
-                                    <button ref={createBox} className='flex flex-col pt-2 items-center space-x-1 text-day-1000 hover:bg-day-100  
-                                rounded-md'>
-                                        <SvgSelector id='cube' className='w-[20px] text-day-350' />
-                                        <p className='text-[11px] tracking-wide'>Box</p>
-                                    </button>
-                                    <button ref={createCylinder} className='flex flex-col pt-2 items-center space-x-1 text-day-1000 hover:bg-day-100  
-                                rounded-md'>
-                                        <SvgSelector id='cylinder' className='w-[20px] text-day-350' />
-                                        <p className='text-[11px] tracking-wide'>Cylinder</p>
-                                    </button>
+                            <div className='relative group text-day-1000 flex flex-row items-center cursor-pointer w-[100px] h-8 ml-2 pl-2 justify-start '>
+                                <p className='text-[13px] pt-[2px] mr-[2px] tracking-wide'>CREATE</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    className='w-5 h-5 duration-300 group-hover:rotate-180'>
+                                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                                </svg>
+
+                                <div className='bg-day-00 rounded-md shadow absolute 
+                                    top-[25px] border border-day-200 -left-[6px] w-[95px] text-base z-20 duration-100 
+                                    ease-linear transition-all group-hover:translate-y-[10px]
+                                    opacity-0 group-hover:opacity-100 '>
+                                    <div className='flex flex-col justify-center h-fit'>
+                                        <button ref={createBox} className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
+                                        hover:bg-day-100 rounded-md h-fit'>
+                                            <SvgSelector id='cube' className='w-[20px] text-day-350' />
+                                            <p className='text-[11px] tracking-wide'>Box</p>
+                                        </button>
+                                        <button ref={createCylinder} className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
+                                        hover:bg-day-100 rounded-md h-fit'>
+                                            <SvgSelector id='cylinder' className='w-[20px] text-day-350' />
+                                            <p className='text-[11px] tracking-wide'>Cylinder</p>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -556,8 +558,9 @@ export default function Scena({ }) {
                         <BoxForm params={boxFormData.params}
                             onParamsChange={(newParams) => handleBoxChange(newParams)} />
                     </div> : ''}
-                    <button ref={button} className='z-10'
-                    >delete</button>
+                    <button ref={button} className='z-10 w-10'>
+                        delete
+                    </button>
                 </div>
             </div>
         </div >
