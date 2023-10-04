@@ -396,6 +396,35 @@ export default function Scena({ }) {
         console.log(cylinderPatternMesh.current);
         //setCylinderFormData({ visible: true, uid: cylinderPatternMesh.current.uuid, name: 'group.name', params: cylinderGeom.position })
     }
+
+    const handleBoxClick = () => {
+        const boxPatternGeom = new THREE.BoxGeometry(30, 30, 30);
+        const boxPatternMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
+        boxPatternMesh.current = new THREE.Mesh(boxPatternGeom, boxPatternMaterial);
+        scene.add(boxPatternMesh.current);
+        console.log(boxPatternMesh.current);
+        //setBoxFormData({ visible: true, uid: boxPatternMesh.current.uuid, name: 'group.name', params: boxPatternGeom.position })
+        //scene.remove(boxPatternMesh.current);
+    }
+
+    const handleBoxChange = () => {
+        console.log(scene.children)
+        scene.traverse(function (object) {
+            console.log(object.name);
+        });
+        // scene.remove(boxPatternMesh.current);
+        // scene.remove(cylinderPatternMesh.current);
+
+        // const { width, height, depth } = boxFormData.params
+        // console.log(boxFormData.params)
+        // const newBoxPatternGeom = new THREE.BoxGeometry(10, 30, 40);
+
+        // boxPatternMesh.current.geometry = newBoxPatternGeom;
+        // boxPatternMesh.current.updateMatrix();
+
+        //setBoxFormData((prevData) => ({ ...prevData, params: newParams }))
+    }
+
     function hidePartObject(model) {
         meshes.forEach((d) => {
             if (d.uid === model.uid) {
@@ -523,6 +552,12 @@ export default function Scena({ }) {
                             onParamsChange={(newParams) => handleBoxChange(cylinderFormData.uid, newParams)} />
                     </div> : ''}
 
+                    {boxFormData.visible ? <div className={`z-10 w-[300px] self-end mt-[10px]`}>
+                        <BoxForm params={boxFormData.params}
+                            onParamsChange={(newParams) => handleBoxChange(newParams)} />
+                    </div> : ''}
+                    <button ref={button} className='z-10'
+                    >delete</button>
                 </div>
             </div>
         </div >
