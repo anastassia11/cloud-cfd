@@ -100,8 +100,17 @@ export default function Dashboard() {
                     </button>
                 </div>
             </div>
-            <div className='mt-4 h-[calc(100vh-126px)] overflow-y-scroll rounded pr-2'>
-                <div className='project-grid pb-4'>
+            <div className='mt-4 h-[calc(100vh-126px)] overflow-y-scroll rounded pr-2 w-full'>
+                {!loader && projects.length === 0 ? <div className='w-full h-[70%] flex flex-col items-center justify-center'>
+                    <div className=''>
+                        <SvgSelector id='add-folder' />
+                    </div>
+
+                    <button className="text-lg py-2 font-medium text-orange-100 hover:underline underline-offset-8"
+                        onClick={() => setModal(true)}>
+                        Create Your First Project
+                    </button>
+                </div> : <div className='project-grid pb-4'>
                     <DashboardLoader />
                     <DashboardLoader />
                     <DashboardLoader />
@@ -111,6 +120,7 @@ export default function Dashboard() {
                             onEditClick={(newProject) => handleEditClick(newProject)} />
                     ))}
                 </div>
+                }
             </div>
 
             {modal ? <CreateProject onCloseClick={() => setModal(false)}

@@ -218,5 +218,91 @@ export default function SvgSelector({ id = '', ...props }) {
                     />
                 </svg>
             )
+        case 'add-folder':
+            return (
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlSpace="preserve"
+                    viewBox="0 0 256 256"
+                    width={150}
+                    height={150}
+                    {...props}
+                >
+                    <g
+                        style={{
+                            stroke: "none",
+                            strokeWidth: 0,
+                            strokeDasharray: "none",
+                            strokeLinecap: "butt",
+                            strokeLinejoin: "miter",
+                            strokeMiterlimit: 10,
+                            fill: "none",
+                            fillRule: "nonzero",
+                            opacity: 1,
+                        }}
+                    >
+                        <path
+                            d="M58.58 80.854H4.756A4.76 4.76 0 0 1 0 76.099V30.953a1 1 0 0 1 1-1h88a1 1 0 0 1 1 1v19.324a1 1 0 1 1-2 0V31.953H2v44.146a2.759 2.759 0 0 0 2.756 2.756H58.58a1 1 0 1 1 0 1.999z"
+                            style={{
+                                stroke: "none",
+                                strokeWidth: 1,
+                                strokeDasharray: "none",
+                                strokeLinecap: "butt",
+                                strokeLinejoin: "miter",
+                                strokeMiterlimit: 10,
+                                fill: "#959595",
+                                fillRule: "nonzero",
+                                opacity: 1,
+                            }}
+                            transform="matrix(2.81 0 0 2.81 1.407 1.407)"
+                        />
+                        <path
+                            d="M89 31.953a1 1 0 0 1-1-1v-7.839a2.759 2.759 0 0 0-2.756-2.756h-38.63a15.03 15.03 0 0 1-8.772-2.806l-5.573-3.973a13.036 13.036 0 0 0-7.61-2.435H5.541A3.546 3.546 0 0 0 2 14.686v16.268a1 1 0 0 1-2 0V14.686a5.547 5.547 0 0 1 5.541-5.541h19.118c3.163 0 6.196.97 8.771 2.806l5.573 3.973a13.037 13.037 0 0 0 7.611 2.435h38.63A4.761 4.761 0 0 1 90 23.115v7.839a1 1 0 0 1-1 .999zM75.616 80.854c-7.932 0-14.384-6.452-14.384-14.384s6.452-14.384 14.384-14.384S90 58.539 90 66.471s-6.452 14.383-14.384 14.383zm0-26.767c-6.828 0-12.384 5.556-12.384 12.384s5.556 12.384 12.384 12.384S88 73.299 88 66.471s-5.556-12.384-12.384-12.384z"
+                            style={{
+                                stroke: "none",
+                                strokeWidth: 1,
+                                strokeDasharray: "none",
+                                strokeLinecap: "butt",
+                                strokeLinejoin: "miter",
+                                strokeMiterlimit: 10,
+                                fill: "#959595",
+                                fillRule: "nonzero",
+                                opacity: 1,
+                            }}
+                            transform="matrix(2.81 0 0 2.81 1.407 1.407)"
+                        />
+                        <path
+                            d="M81.145 67.471H70.087a1 1 0 1 1 0-2h11.058a1 1 0 1 1 0 2z"
+                            style={{
+                                stroke: "none",
+                                strokeWidth: 1,
+                                strokeDasharray: "none",
+                                strokeLinecap: "butt",
+                                strokeLinejoin: "miter",
+                                strokeMiterlimit: 10,
+                                fill: "#e66e0d",
+                                fillRule: "nonzero",
+                                opacity: 1,
+                            }}
+                            transform="matrix(2.81 0 0 2.81 1.407 1.407)"
+                        />
+                        <path
+                            d="M75.616 73a1 1 0 0 1-1-1V60.942a1 1 0 1 1 2 0V72a1 1 0 0 1-1 1z"
+                            style={{
+                                stroke: "none",
+                                strokeWidth: 1,
+                                strokeDasharray: "none",
+                                strokeLinecap: "butt",
+                                strokeLinejoin: "miter",
+                                strokeMiterlimit: 10,
+                                fill: "#e66e0d",
+                                fillRule: "nonzero",
+                                opacity: 1,
+                            }}
+                            transform="matrix(2.81 0 0 2.81 1.407 1.407)"
+                        />
+                    </g>
+                </svg>
+            )
     }
 }
