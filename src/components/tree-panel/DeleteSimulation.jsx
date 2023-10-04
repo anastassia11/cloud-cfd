@@ -34,7 +34,7 @@ export default function DeleteSimulation({ onCloseClick, simulationName, simulat
 
     return (
         <div ref={deleteFormRef} onKeyDown={(e) => handleKeyDown(e)} tabIndex={0}
-            className="fixed inset-0 z-10 overflow-y-auto">
+            className="fixed inset-0 z-20 overflow-y-auto">
             <div className="fixed inset-0 w-full h-full bg-black opacity-40" onClick={() => onCloseClick()}></div>
             <div className="flex items-center min-h-screen px-4 py-8">
                 <div className="relative w-full max-w-lg mx-auto bg-white rounded-md shadow-lg">

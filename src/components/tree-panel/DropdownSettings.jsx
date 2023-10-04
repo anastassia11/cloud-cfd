@@ -4,7 +4,7 @@ export default function DropdownSettings({ children, items }) {
     const [settingOpen, setSettingOpen] = useState(false)
     return (
         <div>
-            <button className="w-full flex items-center justify-between text-day-350 px-2 h-9 rounded-lg 
+            <button className="w-full flex items-center justify-between text-day-1000 px-2 h-9 rounded-lg 
              hover:bg-day-150 active:bg-day-200 duration-300 overflow-hidden"
                 onClick={() => setSettingOpen(!settingOpen)}>
                 <div className="flex items-center gap-x-2 text-ellipsis whitespace-nowrap overflow-hidden">

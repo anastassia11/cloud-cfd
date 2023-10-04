@@ -7,7 +7,7 @@ export default function Setting({ formName, formTitle, inputs = {} }) {
 
     return (
         <>
-            <div className='flex items-center rounded-md px-2 cursor-pointer text-day-350 h-9
+            <div className='flex items-center rounded-md px-2 cursor-pointer text-day-1000 h-9
                 hover:bg-day-150 active:bg-day-200 duration-300'
                 onClick={() => dispatch(setSetting({ formName, formTitle, inputs }))}>
                 <p className='text-ellipsis whitespace-nowrap overflow-hidden'>{formTitle}</p>

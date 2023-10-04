@@ -9,7 +9,7 @@ export default function GeometriesPanel({ onHidePartObject }) {
     const loader = useSelector(state => state.loader.loader)
 
     return (
-        <div className='max-h-[calc(100vh-73px)] bg-day-00 overflow-y-auto pb-2 rounded-md 
+        <div className='max-h-[calc(100vh-73px)] bg-day-00 overflow-y-auto pb-2 rounded-md opacity-95
                 shadow h-fit'>
             <div className="flex flex-col h-full px-2 ">
                 <div className="text-day-350 flex items-center justify-between pt-[10px]  
@@ -25,11 +25,6 @@ export default function GeometriesPanel({ onHidePartObject }) {
                             </p>
                         </span>
                     </div>
-                    {/* <button className="rounded-md min-h-[32px] min-w-[32px] w-8 h-8 border bg-day-50 
-                        hover:bg-day-100 active:bg-day-150 flex items-center justify-center"
-                    >
-                        <SvgSelector id='plus' />
-                    </button> */}
                 </div>
                 {geoms.length > 0 ? <ul className='mt-2 pt-2 border-t'>
                     {!loader && geoms.map((geom) => (

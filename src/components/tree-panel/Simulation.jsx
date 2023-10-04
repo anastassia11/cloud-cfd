@@ -114,7 +114,7 @@ export default function Simulation({ id, name }) {
                             }
                             )}
                             <button className="flex w-full items-center gap-2 rounded-lg px-2 h-9 text-base font-normal 
-                            text-orange-100 hover:bg-day-150 active:bg-day-200 duration-300 "
+                            text-[#ef7931] hover:bg-day-150 active:bg-day-200 duration-300 "
                                 onClick={handleRunClick}>
                                 <span className='w-5'>
                                     <SvgSelector id='run' />

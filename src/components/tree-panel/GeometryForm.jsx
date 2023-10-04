@@ -129,9 +129,17 @@ export default function GeometryForm({ }) {
             <form onSubmit={handleGeometrySubmit} className='flex flex-col bg-white p-3 shadow rounded-md'>
                 <div className='flex flex-row justify-between items-center border-b pb-2'>
                     <p className='self-end font-medium text-day-350'>Geomerty</p>
-                    <button type="submit" className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 active:bg-day-150 flex items-center justify-center">
-                        <SvgSelector id='check' />
-                    </button>
+                    <div className='flex flex-row space-x-[6px]'>
+                        <button type="submit" className="text-base font-medium text-white 
+                            bg-orange-200 hover:bg-orange-100 active:bg-orange-150 duration-300 
+                            rounded-md  w-8 h-8 border flex items-center justify-center">
+                            <SvgSelector id='check' />
+                        </button>
+                        <button className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 
+                            active:bg-day-150 flex items-center justify-center">
+                            <SvgSelector id='close' />
+                        </button>
+                    </div>
                 </div>
                 {upload}
                 {files?.length > 0 ? filesArray : ''}

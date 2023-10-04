@@ -6,18 +6,21 @@ export default function SvgSelector({ id = '', ...props }) {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
                 </svg>
             )
+
         case 'delete':
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} {...props}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
             )
+
         case 'plus':
             return (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.7} stroke="currentColor" className="w-[17px] h-[17px] ">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-[17px] h-[17px]" {...props}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
             )
+
         case 'run':
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -25,9 +28,10 @@ export default function SvgSelector({ id = '', ...props }) {
                 </svg>
 
             )
+
         case 'check':
             return (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-[16px] h-[16px] ">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-[16px] h-[16px] ">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
             )
@@ -114,6 +118,104 @@ export default function SvgSelector({ id = '', ...props }) {
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                </svg>
+            )
+
+        case 'select-volume':
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 31 32" {...props}>
+                    <polygon className="fill-[#f5b395]" points="6.473 10.456 15.492 5.332 24.524 10.455 15.485 15.865 6.473 10.456"></polygon>
+                    <polygon className="fill-[#dc5415]" points="6.473 10.456 15.489 15.866 15.492 26.635 6.472 21.259 6.473 10.456"></polygon>
+                    <polygon className="fill-[#ee824f]" points="24.524 10.455 24.528 21.305 15.492 26.635 15.492 15.866 24.524 10.455"></polygon>
+                    <path d="M25,19.2774V12.7226a1.99519,1.99519,0,0,0-1.7934-3.55738L17.48846,5.91528a1.99309,1.99309,0,0,0-3.98327.0036L7.7934,9.16522A1.995,1.995,0,0,0,6,12.7226v6.5548a1.99147,1.99147,0,1,0,1.974,3.45936l5.52917,3.29467a1.99669,1.99669,0,0,0,3.99286.00794l5.55774-3.28754A1.978,1.978,0,0,0,24,23a1.994,1.994,0,0,0,1-3.7226ZM24,19a1.99034,1.99034,0,0,0-1.70233,3.03741l-5.0586,2.99286A1.99143,1.99143,0,0,0,16,24.07074V17.92926a1.95841,1.95841,0,0,0,1.41339-2.48053l5.15869-3.05121A1.99165,1.99165,0,0,0,24,13ZM8.626,9.84247,13.73969,6.936a1.9833,1.9833,0,0,0,3.51605-.00257l5.11828,2.909a1.92006,1.92006,0,0,0-.295,1.68426l-5.167,3.05725a1.99805,1.99805,0,0,0-2.819-.00415L8.92865,11.502A1.92423,1.92423,0,0,0,8.626,9.84247ZM7,13a1.98967,1.98967,0,0,0,1.44446-.6225l5.144,3.06513A1.9584,1.9584,0,0,0,15,17.92926v6.14148a1.99126,1.99126,0,0,0-1.23547.95294L8.7149,22.01422A1.98831,1.98831,0,0,0,7,19Z"></path>
+                </svg>
+            )
+
+        case 'select-face':
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 31 32" strokeWidth="1.5" {...props}>
+                    <polygon className="fill-[#dc5415]" points="6.473 10.456 15.489 15.866 15.492 26.635 6.472 21.259 6.473 10.456"></polygon>
+                    <path d="M25,19.2774V12.7226a1.99519,1.99519,0,0,0-1.7934-3.55738L17.48846,5.91528a1.99309,1.99309,0,0,0-3.98327.0036L7.7934,9.16522A1.995,1.995,0,0,0,6,12.7226v6.5548a1.99147,1.99147,0,1,0,1.974,3.45936l5.52917,3.29467a1.99669,1.99669,0,0,0,3.99286.00794l5.55774-3.28754A1.978,1.978,0,0,0,24,23a1.994,1.994,0,0,0,1-3.7226ZM24,19a1.99034,1.99034,0,0,0-1.70233,3.03741l-5.0586,2.99286A1.99143,1.99143,0,0,0,16,24.07074V17.92926a1.95841,1.95841,0,0,0,1.41339-2.48053l5.15869-3.05121A1.99165,1.99165,0,0,0,24,13ZM8.626,9.84247,13.73969,6.936a1.9833,1.9833,0,0,0,3.51605-.00257l5.11828,2.909a1.92006,1.92006,0,0,0-.295,1.68426l-5.167,3.05725a1.99805,1.99805,0,0,0-2.819-.00415L8.92865,11.502A1.92423,1.92423,0,0,0,8.626,9.84247ZM7,13a1.98967,1.98967,0,0,0,1.44446-.6225l5.144,3.06513A1.9584,1.9584,0,0,0,15,17.92926v6.14148a1.99126,1.99126,0,0,0-1.23547.95294L8.7149,22.01422A1.98831,1.98831,0,0,0,7,19Z"></path>
+                </svg>
+            )
+        case 'cylinder':
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" viewBox="0 0 58 58" {...props} >
+                    <path d="M29 8C13.536 8 1 6.209 1 4v50c0 2.209 12.536 4 28 4s28-1.791 28-4V4c0 2.209-12.536 4-28 4z"
+                        style={{
+                            fill: "#556080",
+                        }}
+                    />
+                    <ellipse
+                        cx={29}
+                        cy={4}
+                        rx={28}
+                        ry={4}
+                        style={{
+                            fill: "#7383bf",
+                        }}
+                    />
+                    <ellipse
+                        cx={29}
+                        cy={54}
+                        rx={28}
+                        ry={4}
+                        style={{
+                            fill: "#434c6d",
+                        }}
+                    />
+                </svg>
+            )
+        case 'cube':
+            return (
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlSpace="preserve"
+                    viewBox="0 0 58 58"
+                    {...props}
+                >
+                    <path
+                        d="M14 14h30v30H14z"
+                        style={{
+                            fill: "#556080",
+                        }}
+                    />
+                    <path
+                        d="M14 14H0v44l14-14z"
+                        style={{
+                            fill: "#434c6d",
+                        }}
+                    />
+                    <path
+                        d="M44 14 58 0H14v14z"
+                        style={{
+                            fill: "#7383bf",
+                        }}
+                    />
+                    <path
+                        d="M14 0 0 14h14z"
+                        style={{
+                            fill: "#59699b",
+                        }}
+                    />
+                    <path
+                        d="M14 44 0 58h44V44z"
+                        style={{
+                            fill: "#333c56",
+                        }}
+                    />
+                    <path
+                        d="M44 14v30h14V0z"
+                        style={{
+                            fill: "#434c6d",
+                        }}
+                    />
+                    <path
+                        d="m44 58 14-14H44z"
+                        style={{
+                            fill: "#47526d",
+                        }}
+                    />
                 </svg>
             )
     }
