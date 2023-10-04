@@ -387,6 +387,15 @@ export default function Scena({ }) {
     }
 
 
+    const handleCylinderClick = () => {
+        const cylinderGeom = new THREE.CylinderGeometry(5, 5, 20, 32);
+        const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
+
+        cylinderPatternMesh.current = new THREE.Mesh(cylinderGeom, cylinderMaterial);
+        scene.add(cylinderPatternMesh.current);
+        console.log(cylinderPatternMesh.current);
+        //setCylinderFormData({ visible: true, uid: cylinderPatternMesh.current.uuid, name: 'group.name', params: cylinderGeom.position })
+    }
     function hidePartObject(model) {
         meshes.forEach((d) => {
             if (d.uid === model.uid) {
@@ -507,6 +516,11 @@ export default function Scena({ }) {
                     {transformFormData.visible ? <div className={`z-10 w-[300px] self-end mt-[10px]`}>
                         <TransformForm geomName={transformFormData.name} position={transformFormData.position}
                             onPositionChange={(newPosition) => handlePositionChange(transformFormData.uid, newPosition)} />
+                    </div> : ''}
+
+                    {cylinderFormData.visible ? <div className={`z-10 w-[300px] self-end mt-[10px]`}>
+                        <CylinderForm params={cylinderFormData.params}
+                            onParamsChange={(newParams) => handleBoxChange(cylinderFormData.uid, newParams)} />
                     </div> : ''}
 
                 </div>
