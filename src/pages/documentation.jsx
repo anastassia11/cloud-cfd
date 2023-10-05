@@ -2,7 +2,7 @@
 
 export default function DocumentationPage() {
     return (
-        <div className='h-[calc(50vh-56px)] '>
+        <div className='h-[calc(100vh-56px)] '>
 
         </div>
     )
