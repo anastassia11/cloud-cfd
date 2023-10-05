@@ -57,7 +57,7 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
     return (
         <div className="rounded-lg overflow-hidden shadow transition hover:shadow-lg bg-white flex flex-col"
             onDoubleClick={handleExternalClick}>
-            <Image src={geom_preview2} width={500} height={500} alt={geom_preview}
+            <Image src={geom_preview2} width={500} height={500} alt='geom preview'
                 className='h-56 w-full object-cover' />
             <div className="bg-white py-4 pl-4 flex flex-col justify-between flex-grow h-full">
                 <div>

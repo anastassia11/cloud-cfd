@@ -4,31 +4,39 @@ import logo from '@/../public/logo.jpg'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import { BarLoader } from 'react-spinners'
+import { useEffect, useRef } from 'react'
 
 export default function Header() {
     const router = useRouter()
-    const email = localStorage.getItem('email')
-    const login = email?.split('@')[0]
     const loader = useSelector(state => state.loader.loader)
+    const email = useRef(null)
+    const login = useRef(null)
 
     const handleLogOutClick = () => {
         localStorage.removeItem('token')
+        localStorage.removeItem('email')
         router.push('/login')
     }
+
+    useEffect(() => {
+        email.current = localStorage.getItem('email')
+        login.current = email.current?.split('@')[0]
+        console.log(email.current)
+    }, [router])
 
     return (
         <header className="flex flex-col">
             <div className="flex flex-row bg-day-00 w-screen h-[56px] p-4 justify-between items-center border-b 
-                border-[#e6e6e6] pr-8">
+                border-[#e6e6e6] ">
                 <Image src={logo} width={500} height={500} alt='cloudCFD'
                     className='w-32 cursor-pointer' onClick={() => router.push(' /')} />
                 <div className='flex flex-row items-center space-x-1'>
-                    <Link href="/dashboard" prefetch={true}
+                    {email.current && <Link href="/dashboard" prefetch={true}
                         className='text-day-350 hover:bg-day-50 flex items-center hover:border-b-2 
                             hover:border-orange-100 duration-100 h-[56px] px-3'
                         onClick={() => router.push('/dashboard')}>
                         Dashboard
-                    </Link>
+                    </Link>}
                     <button className='relative group text-day-350 hover:bg-day-50 flex items-center 
                         hover:border-b-2 hover:border-orange-100 duration-100 h-[56px] px-3'>
                         <p className='pr-1'>Help</p>
@@ -45,15 +53,20 @@ export default function Header() {
                             </Link>
                         </div>
                     </button>
-
-                    <div className='relative group text-day-350 hover:bg-day-50 flex items-center 
+                    {!email.current && <Link href="/pricing" prefetch={true}
+                        className='text-day-350 hover:bg-day-50 flex items-center hover:border-b-2 
+                            hover:border-orange-100 duration-100 h-[56px] px-3'
+                        onClick={() => router.push('/pricing')}>
+                        Pricing
+                    </Link>}
+                    {email.current && <div className='relative group text-day-350 hover:bg-day-50 flex items-center 
                         hover:border-b-2 hover:border-orange-100 duration-100 h-[56px] px-3 cursor-pointer'>
                         <div className='w-8 h-8 mr-2 rounded-full bg-day-250 flex items-center justify-center' >
                             <p className='text-white uppercase text-[22px]  font-medium '>
-                                {email && email[0]}
+                                {email.current && email.current[0]}
                             </p>
                         </div>
-                        <p className='pr-1'>{login}</p>
+                        <p className='pr-1'>{login.current}</p>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                             className='w-5 h-5 duration-300 group-hover:rotate-180'>
                             <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
@@ -78,7 +91,15 @@ export default function Header() {
                             </div>
 
                         </div>
-                    </div>
+                    </div>}
+                    {!email.current && <div className='flex items-center h-[56px] pl-3'>
+                        <button className="disabled:bg-orange-disabled w-full px-4 h-9 text-base font-medium 
+                    text-white bg-orange-100 hover:bg-orange-150 active:bg-orange-200 rounded-lg duration-300 
+                    flex items-center justify-center"
+                            onClick={() => router.push('/login')}>
+                            Log In
+                        </button>
+                    </div>}
                 </div>
             </div>
             <div className='absolute top-[54px] w-full'>

@@ -19,6 +19,7 @@ export default function App({ Component, pageProps }) {
 
     if (requiresAuth) {
       if (!token) {
+
         router.push('/login').then(() => {
           setHeaderVisible(false)
           setIsChecked(true)
@@ -29,15 +30,22 @@ export default function App({ Component, pageProps }) {
       }
     }
     else {
-      if (token) {
-        router.push('/dashboard').then(() => {
-          setHeaderVisible(false)
-          setIsChecked(true)
-        })
-      } else {
+      if (router.pathname === '/login' || router.pathname === '/register') {
         setHeaderVisible(false)
+      } else {
+        setHeaderVisible(true)
         setIsChecked(true)
       }
+      // if (token) {
+      //   router.push('/dashboard').then(() => {
+      //     setHeaderVisible(false)
+      //     setIsChecked(true)
+      //   })
+      // } else {
+      //   setHeaderVisible(false)
+      //   setIsChecked(true)
+      // }
+
     }
   }, [requiresAuth, router])
 

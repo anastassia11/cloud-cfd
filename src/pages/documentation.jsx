@@ -8,4 +8,4 @@ export default function DocumentationPage() {
     )
 }
 
-DocumentationPage.requiresAuth = true
+DocumentationPage.requiresAuth = false

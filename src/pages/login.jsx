@@ -8,3 +8,5 @@ export default function LoginPage() {
         </main>
     )
 }
+
+LoginPage.requiresAuth = false

@@ -65,6 +65,7 @@ export default function GeometryForm({ }) {
             newLoading[index] = true
             return newLoading
         })
+        console.log(geometryData)
         const result = await addGeometry(geometryData)
         if (result.success) {
             loadGeoms()
