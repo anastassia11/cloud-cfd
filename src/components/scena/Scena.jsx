@@ -19,6 +19,7 @@ import SvgSelector from '../SvgSelector'
 import TransformForm from './TransformForm'
 import CylinderForm from './CylinderForm'
 import BoxForm from './BoxForm'
+import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
 
 export default function Scena({ }) {
     const containerRef = useRef(null)
@@ -38,6 +39,7 @@ export default function Scena({ }) {
 
     const [transformControls, setTransformControls] = useState([])
     const [selectionMode, setSelectionMode] = useState("face")
+
     const [transformFormData, setTransformFormData] = useState({
         visible: false,
         uid: '',
@@ -69,26 +71,30 @@ export default function Scena({ }) {
     const composer = useRef(null)
     const outlinePass = useRef(null)
 
-    const createCylinder = useRef(null)
-    const createBox = useRef(null)
-
-    const button = useRef(null)
-
     const boxPatternMesh = useRef(null)
     const cylinderPatternMesh = useRef(null)
 
-    const scene = new THREE.Scene()
+    const sceneRef = useRef(null)
+    const material = new THREE.MeshPhongMaterial({
+        color: 0xa0a0a0,
+        specular: 0x494949,
+        shininess: 100,
+        side: THREE.DoubleSide,
+    });
 
     useEffect(() => {
+        sceneRef.current = new THREE.Scene()
         if (didLogRef.current === false) {
             didLogRef.current = true;
             loadGeoms()
         }
         init()
         animate()
+        // addPrimitiveListeners()
         return () => {
             setGroups([])
             setMeshes([])
+            // removePrimitiveListeners()
             renderer.current.dispose()
         }
     }, [])
@@ -97,10 +103,6 @@ export default function Scena({ }) {
         addListeners()
         return () => removeListeners()
     }, [meshes, groups, selectionMode])
-
-    useEffect(() => {
-        console.log(transformFormData.position)
-    }, [transformFormData])
 
 
     const loadGeoms = async () => {
@@ -126,14 +128,9 @@ export default function Scena({ }) {
                 stlLoader.current.load(
                     BASE_SERVER_URL + model.link,
                     (geometry) => {
-                        const material = new THREE.MeshPhongMaterial({
-                            color: 0x808080,
-                            specular: 0x494949,
-                            shininess: 100,
-                        });
                         geometry.computeBoundingSphere();
                         center.add(geometry.boundingSphere.center);
-                        material.side = THREE.DoubleSide;
+
                         const mesh = new THREE.Mesh(geometry, material);
 
                         mesh.scale.set(1, 1, 1);
@@ -148,7 +145,7 @@ export default function Scena({ }) {
                 )
             })
 
-            scene.add(group);
+            sceneRef.current.add(group);
             setGroups((prevGroups) => [...prevGroups, group]);
             //center.divideScalar(6)
 
@@ -162,7 +159,7 @@ export default function Scena({ }) {
             transformControl.uid = group.uid;
             transformControl.position.set(147.67429780960083 / 6, -67.31102013587952 / 6, 58.5 / 6)
 
-            scene.add(transformControl);
+            sceneRef.current.add(transformControl);
             transformControl.addEventListener('dragging-changed', handleMove);
             transformControl.addEventListener('change', () => {
                 setTransformFormData((prevData) => ({ ...prevData, position: transformControl.object.position }))
@@ -190,8 +187,8 @@ export default function Scena({ }) {
         camera.current.position.y = 0
         camera.current.position.z = 50;
         camera.current.lookAt(new THREE.Vector3(0, 0, 0));
-        scene.background = new THREE.Color(0xf0f0f0);
-        scene.add(new THREE.AmbientLight(0xf0f0f0));
+        sceneRef.current.background = new THREE.Color(0xf0f0f0);
+        sceneRef.current.add(new THREE.AmbientLight(0xf0f0f0));
 
         const light = new THREE.SpotLight(0xffffff, 1.5);
         light.position.set(0, 1500, 200);
@@ -202,7 +199,7 @@ export default function Scena({ }) {
         light.shadow.bias = -0.000222;
         light.shadow.mapSize.width = 1024;
         light.shadow.mapSize.height = 1024;
-        scene.add(light);
+        sceneRef.current.add(light);
 
         const planeGeometry = new THREE.PlaneGeometry(2000, 2000);
         planeGeometry.rotateX(-Math.PI / 2);
@@ -213,13 +210,13 @@ export default function Scena({ }) {
         const plane = new THREE.Mesh(planeGeometry, planeMaterial);
         plane.position.y = -200;
         plane.receiveShadow = true;
-        scene.add(plane);
+        sceneRef.current.add(plane);
 
         const helper = new THREE.GridHelper(2000, 100);
         helper.position.y = -199;
         helper.material.opacity = 0.25;
         helper.material.transparent = true;
-        scene.add(helper);
+        sceneRef.current.add(helper);
 
         renderer.current = new THREE.WebGLRenderer({
             canvas: containerRef.current,
@@ -237,39 +234,31 @@ export default function Scena({ }) {
         );
 
         composer.current = new EffectComposer(renderer.current);
-        const renderPass = new RenderPass(scene, camera.current);
+        const renderPass = new RenderPass(sceneRef.current, camera.current);
         outlinePass.current = new OutlinePass(
             new THREE.Vector2(window.innerWidth, window.innerHeight),
-            scene,
+            sceneRef.current,
             camera.current
         );
         composer.current.addPass(renderPass);
         composer.current.addPass(outlinePass.current);
-
     }
 
     function animate() {
         requestAnimationFrame(animate);
-        renderer.current.render(scene, camera.current);
+        renderer.current.render(sceneRef.current, camera.current);
         orbitControls.current.update();
         composer.current.render();
     }
 
     function addListeners() {
-        renderer.current.domElement.addEventListener("click", handleClick);
-        renderer.current.domElement.addEventListener("pointermove", handleHover);
-        createCylinder.current.addEventListener('click', handleCylinderClick)
-        createBox.current.addEventListener('click', handleBoxClick)
-        button.current.addEventListener('click', handleBoxChange)
+        renderer.current.domElement.addEventListener("click", handleClick)
+        renderer.current.domElement.addEventListener("pointermove", handleHover)
     }
 
     function removeListeners() {
         renderer.current.domElement.removeEventListener("click", handleClick);
         renderer.current.domElement.removeEventListener("pointermove", handleHover);
-
-        //createCylinder.current.removeEventListener('click', handleCylinderClick)
-        createBox.current.removeEventListener('click', handleBoxClick)
-        button.current.removeEventListener('click', handleBoxChange)
     }
 
     const handleClick = (event) => {
@@ -283,11 +272,6 @@ export default function Scena({ }) {
 
         const selected_material = new THREE.MeshPhongMaterial({
             color: 0x404080,
-            specular: 0x494949,
-            shininess: 100,
-        })
-        const material = new THREE.MeshPhongMaterial({
-            color: 0x808080,
             specular: 0x494949,
             shininess: 100,
         })
@@ -328,6 +312,7 @@ export default function Scena({ }) {
                 }
             })
         } else if (selectionMode === 'face') {
+            console.log(meshes)
             const intersects = raycaster.intersectObjects(meshes, true)
             if (intersects.length > 0) {
                 const object = intersects[0].object
@@ -386,43 +371,62 @@ export default function Scena({ }) {
         setTransformFormData((prevData) => ({ ...prevData, position: newPosition, visible: false }))
     }
 
-
-    const handleCylinderClick = () => {
-        const cylinderGeom = new THREE.CylinderGeometry(5, 5, 20, 32);
-        const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
-
-        cylinderPatternMesh.current = new THREE.Mesh(cylinderGeom, cylinderMaterial);
-        scene.add(cylinderPatternMesh.current);
-        console.log(cylinderPatternMesh.current);
-        //setCylinderFormData({ visible: true, uid: cylinderPatternMesh.current.uuid, name: 'group.name', params: cylinderGeom.position })
-    }
-
     const handleBoxClick = () => {
         const boxPatternGeom = new THREE.BoxGeometry(30, 30, 30);
         const boxPatternMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
         boxPatternMesh.current = new THREE.Mesh(boxPatternGeom, boxPatternMaterial);
-        scene.add(boxPatternMesh.current);
-        console.log(boxPatternMesh.current);
-        //setBoxFormData({ visible: true, uid: boxPatternMesh.current.uuid, name: 'group.name', params: boxPatternGeom.position })
-        //scene.remove(boxPatternMesh.current);
+        sceneRef.current.add(boxPatternMesh.current);
+        setBoxFormData({ visible: true, uid: boxPatternMesh.current.uuid, name: 'box', params: boxPatternGeom.parameters })
     }
 
-    const handleBoxChange = () => {
-        console.log(scene.children)
-        scene.traverse(function (object) {
-            console.log(object);
-        });
-        // scene.remove(boxPatternMesh.current);
-        // scene.remove(cylinderPatternMesh.current);
+    const handleBoxChange = (newParams) => {
+        const { width, height, depth } = newParams
+        const newBoxPatternGeom = new THREE.BoxGeometry(width, height, depth);
+        boxPatternMesh.current.geometry = newBoxPatternGeom;
+        setBoxFormData((prevData) => ({ ...prevData, params: newParams }))
+    }
 
-        // const { width, height, depth } = boxFormData.params
-        // console.log(boxFormData.params)
-        // const newBoxPatternGeom = new THREE.BoxGeometry(10, 30, 40);
+    const handleBoxCreate = () => {
+        boxPatternMesh.current.material = material;
+        setBoxFormData((prevData) => ({ ...prevData, visible: false }))
+        // здесь отправить на сервер бокс
+    }
 
-        // boxPatternMesh.current.geometry = newBoxPatternGeom;
-        // boxPatternMesh.current.updateMatrix();
+    const handleCloseBoxForm = () => {
+        sceneRef.current.remove(boxPatternMesh.current)
+        setBoxFormData((prevData) => ({ ...prevData, visible: false }))
+    }
 
-        //setBoxFormData((prevData) => ({ ...prevData, params: newParams }))
+    const handleCylinderClick = () => {
+        const cylinderGeom = new THREE.CylinderGeometry(5, 5, 20);
+        const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
+        cylinderPatternMesh.current = new THREE.Mesh(cylinderGeom, cylinderMaterial);
+        sceneRef.current.add(cylinderPatternMesh.current);
+        console.log(cylinderGeom.parameters)
+        setCylinderFormData({ visible: true, uid: cylinderPatternMesh.current.uuid, name: 'cylinder', params: cylinderGeom.parameters })
+    }
+
+    const handleCylinderChange = (newParams) => {
+        const { radiusTop, radiusBottom, height } = newParams
+        const newCylinderPatternGeom = new THREE.CylinderGeometry(radiusTop, radiusBottom, height);
+        cylinderPatternMesh.current.geometry = newCylinderPatternGeom;
+        setCylinderFormData((prevData) => ({ ...prevData, params: newParams }))
+    }
+
+    const handleCylinderCreate = () => {
+        cylinderPatternMesh.current.material = material;
+        setCylinderFormData((prevData) => ({ ...prevData, visible: false }))
+        const stlData = stlLoader.current.parse(cylinderPatternMesh.current.geometry)
+        const blob = new Blob([stlData], { type: 'application/octet-stream' })
+        const formData = new FormData()
+        formData.append('file', blob, 'cylinder.stl')
+
+
+    }
+
+    const handleCloseCylinderForm = () => {
+        sceneRef.current.remove(cylinderPatternMesh.current)
+        setCylinderFormData((prevData) => ({ ...prevData, visible: false }))
     }
 
     function hidePartObject(model) {
@@ -512,13 +516,15 @@ export default function Scena({ }) {
                                     ease-linear transition-all group-hover:translate-y-[10px]
                                     opacity-0 group-hover:opacity-100 '>
                                     <div className='flex flex-col justify-center h-fit'>
-                                        <button ref={createBox} className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
-                                        hover:bg-day-100 rounded-md h-fit'>
+                                        <button className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
+                                        hover:bg-day-100 rounded-md h-fit'
+                                            onClick={handleBoxClick}>
                                             <SvgSelector id='cube' className='w-[20px] text-day-350' />
                                             <p className='text-[11px] tracking-wide'>Box</p>
                                         </button>
-                                        <button ref={createCylinder} className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
-                                        hover:bg-day-100 rounded-md h-fit'>
+                                        <button className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
+                                        hover:bg-day-100 rounded-md h-fit'
+                                            onClick={handleCylinderClick}>
                                             <SvgSelector id='cylinder' className='w-[20px] text-day-350' />
                                             <p className='text-[11px] tracking-wide'>Cylinder</p>
                                         </button>
@@ -551,16 +557,17 @@ export default function Scena({ }) {
 
                     {cylinderFormData.visible ? <div className={`z-10 w-[300px] self-end mt-[10px]`}>
                         <CylinderForm params={cylinderFormData.params}
-                            onParamsChange={(newParams) => handleBoxChange(cylinderFormData.uid, newParams)} />
+                            onParamsChange={(newParams) => handleCylinderChange(newParams)}
+                            onCreate={handleCylinderCreate}
+                            onCloseForm={handleCloseCylinderForm} />
                     </div> : ''}
 
                     {boxFormData.visible ? <div className={`z-10 w-[300px] self-end mt-[10px]`}>
                         <BoxForm params={boxFormData.params}
-                            onParamsChange={(newParams) => handleBoxChange(newParams)} />
+                            onParamsChange={(newParams) => handleBoxChange(newParams)}
+                            onCreate={handleBoxCreate}
+                            onCloseForm={handleCloseBoxForm} />
                     </div> : ''}
-                    <button ref={button} className='z-10 w-10'>
-                        delete
-                    </button>
                 </div>
             </div>
         </div >

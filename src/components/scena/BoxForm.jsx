@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import SvgSelector from '../SvgSelector'
 
 
-export default function BoxForm({ params, onParamsChange }) {
+export default function BoxForm({ params, onParamsChange, onCreate, onCloseForm }) {
     const [boxParams, setBoxParams] = useState(params)
 
     useEffect(() => {
@@ -11,8 +11,12 @@ export default function BoxForm({ params, onParamsChange }) {
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
-        onParamsChange(boxParams)
+        onCreate()
     }
+
+    useEffect(() => {
+        onParamsChange(boxParams)
+    }, [boxParams])
 
     const widthChange = (e) => {
         const { value } = e.target
@@ -39,25 +43,26 @@ export default function BoxForm({ params, onParamsChange }) {
                             bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]'/>
                     <p className='ml-2'>m</p>
                 </div>
-
             </div>
         )
     }
 
     return (
-        <form onSubmit={handleFormSubmit} className='flex flex-col bg-day-00 rounded-md shadow p-3'>
+        <form className='flex flex-col bg-day-00 rounded-md shadow p-3'>
             <div className='flex flex-row justify-between items-center border-b pb-2'>
                 <p className='self-end'>Box</p>
-
                 <div className='flex flex-row space-x-[6px]'>
-                    <button type="submit" className="text-base font-medium text-white 
+                    <button type="button"
+                        className="text-base font-medium text-white 
                             bg-orange-200 hover:bg-orange-100 active:bg-orange-150 duration-300 
                             rounded-md  w-8 h-8 border flex items-center justify-center"
                         onClick={handleFormSubmit}>
                         <SvgSelector id='check' />
                     </button>
-                    <button className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 
-                            active:bg-day-150 flex items-center justify-center">
+                    <button type="button"
+                        className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 
+                            active:bg-day-150 flex items-center justify-center"
+                        onClick={onCloseForm}>
                         <SvgSelector id='close' />
                     </button>
                 </div>
