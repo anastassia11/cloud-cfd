@@ -4,7 +4,7 @@ import axios from 'axios'
 export default async function addGeometry(formData) {
     const form = new FormData()
     form.append('Angle', formData.Angle)
-    form.append('IdProject', formData.projectId)
+    form.append('IdProject', formData.IdProject)
     form.append('File', formData.File)
 
     try {

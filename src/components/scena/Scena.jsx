@@ -20,6 +20,7 @@ import TransformForm from './TransformForm'
 import CylinderForm from './CylinderForm'
 import BoxForm from './BoxForm'
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
+import addGeometry from '@/pages/api/set_geometry'
 
 export default function Scena({ }) {
     const containerRef = useRef(null)
@@ -389,7 +390,13 @@ export default function Scena({ }) {
     const handleBoxCreate = () => {
         boxPatternMesh.current.material = material;
         setBoxFormData((prevData) => ({ ...prevData, visible: false }))
-        // здесь отправить на сервер бокс
+
+        const stlExporter = new STLExporter()
+        const stlData = stlExporter.parse(boxPatternMesh.current, { binary: true })
+        const stlBlob = new Blob([stlData], { type: 'application/octet-stream' })
+        const file = new File([stlBlob], 'box.stl')
+
+        setGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file })
     }
 
     const handleCloseBoxForm = () => {
@@ -398,11 +405,10 @@ export default function Scena({ }) {
     }
 
     const handleCylinderClick = () => {
-        const cylinderGeom = new THREE.CylinderGeometry(5, 5, 20);
-        const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
-        cylinderPatternMesh.current = new THREE.Mesh(cylinderGeom, cylinderMaterial);
-        sceneRef.current.add(cylinderPatternMesh.current);
-        console.log(cylinderGeom.parameters)
+        const cylinderGeom = new THREE.CylinderGeometry(5, 5, 20)
+        const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true })
+        cylinderPatternMesh.current = new THREE.Mesh(cylinderGeom, cylinderMaterial)
+        sceneRef.current.add(cylinderPatternMesh.current)
         setCylinderFormData({ visible: true, uid: cylinderPatternMesh.current.uuid, name: 'cylinder', params: cylinderGeom.parameters })
     }
 
@@ -416,17 +422,27 @@ export default function Scena({ }) {
     const handleCylinderCreate = () => {
         cylinderPatternMesh.current.material = material;
         setCylinderFormData((prevData) => ({ ...prevData, visible: false }))
-        const stlData = stlLoader.current.parse(cylinderPatternMesh.current.geometry)
-        const blob = new Blob([stlData], { type: 'application/octet-stream' })
-        const formData = new FormData()
-        formData.append('file', blob, 'cylinder.stl')
 
+        const stlExporter = new STLExporter()
+        const stlData = stlExporter.parse(cylinderPatternMesh.current, { binary: true })
+        const stlBlob = new Blob([stlData], { type: 'application/octet-stream' })
+        const file = new File([stlBlob], 'сylinder.stl')
 
+        setGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file })
     }
 
     const handleCloseCylinderForm = () => {
         sceneRef.current.remove(cylinderPatternMesh.current)
         setCylinderFormData((prevData) => ({ ...prevData, visible: false }))
+    }
+
+    const setGeometry = async (geometryData) => {
+        const result = await addGeometry(geometryData)
+        if (result.success) {
+            loadGeoms()
+        } else {
+            alert(result.message)
+        }
     }
 
     function hidePartObject(model) {
