@@ -1,16 +1,14 @@
-import Header from '@/components/header/Header'
+
+import Home from '@/components/home/Home'
 import Scena from '@/components/scena/Scena'
 import { useEffect } from 'react'
 
 export default function HomePage() {
-  useEffect(() => {
-    console.log("asass")
-  })
 
   return (
-    <div className=''>
-      {/* <Scena /> */}
+    <div className='h-[calc(100vh-56px)] bg-day-50 '>
+      <Home />
     </div>
   )
 }
-HomePage.requiresAuth = true
+HomePage.requiresAuth = false
