@@ -76,6 +76,7 @@ export default function Scena({ }) {
     const cylinderPatternMesh = useRef(null)
 
     const sceneRef = useRef(null)
+    const geomsState = useSelector(state => state.project.geometries)
 
     useEffect(() => {
         sceneRef.current = new THREE.Scene()
@@ -86,9 +87,7 @@ export default function Scena({ }) {
         init()
         animate()
         return () => {
-            setGroups([])
-            setMeshes([])
-            renderer.current.dispose()
+            //renderer.current.dispose()
         }
     }, [])
 
@@ -98,13 +97,19 @@ export default function Scena({ }) {
     }, [meshes, groups, selectionMode])
 
     useEffect(() => {
-        console.log(meshes)
-    }, [meshes])
+        const geomsToRemove = sceneRef.current.children
+            .filter(child => child.isGroup && !geomsState.some(geom => geom.uid === child.uid))
+            .map(group => {
+                sceneRef.current.remove(group)
+                return group.uid
+            });
+        setGroups((prevGroups) => prevGroups.filter(prevGroup => !geomsToRemove.includes(prevGroup.uid)))
+    }, [geomsState])
 
     useEffect(() => {
-        console.log(groups)
+        const allChildren = groups.flatMap(group => group.children)
+        setMeshes(allChildren)
     }, [groups])
-
 
     const loadGeoms = async () => {
         dispatch(setLoader(true))
@@ -121,56 +126,70 @@ export default function Scena({ }) {
 
     function loadSTL(geoms) {
         geoms?.forEach((geom) => {
-            const group = new THREE.Group()
-            group.name = geom.name
-            group.uid = geom.uid
-            let center = new THREE.Vector3()
-            geom.models.forEach((model) => {
-                stlLoader.current.load(
-                    BASE_SERVER_URL + model.link,
-                    (geometry) => {
-                        geometry.computeBoundingSphere()
-                        center.add(geometry.boundingSphere.center)
-                        const meshMaterial = new THREE.MeshPhongMaterial({
-                            color: 0xa0a0a0,
-                            specular: 0x494949,
-                            shininess: 100,
-                            side: THREE.DoubleSide,
-                        });
-                        const mesh = new THREE.Mesh(geometry, meshMaterial)
+            if (!groups.some(group => group.uid === geom.uid)) {
+                const group = new THREE.Group()
+                group.name = geom.name
+                group.uid = geom.uid
+                let center = new THREE.Vector3()
+                geom.models.forEach((model) => {
+                    stlLoader.current.load(
+                        BASE_SERVER_URL + model.link,
+                        (geometry) => {
+                            geometry.computeBoundingSphere()
+                            center.add(geometry.boundingSphere.center)
+                            const meshMaterial = new THREE.MeshPhongMaterial({
+                                color: 0xa0a0a0,
+                                specular: 0x494949,
+                                shininess: 100,
+                                side: THREE.DoubleSide,
+                            });
+                            const mesh = new THREE.Mesh(geometry, meshMaterial)
 
-                        mesh.scale.set(1, 1, 1)
-                        mesh.castShadow = true
-                        mesh.receiveShadow = true
-                        mesh.uid = model.uid
-                        mesh.visible = model.visible
-                        mesh.category = geom.name
-                        group.add(mesh)
-                        setMeshes((prevGeoms) => [...prevGeoms, mesh])
+                            mesh.scale.set(1, 1, 1)
+                            mesh.castShadow = true
+                            mesh.receiveShadow = true
+                            mesh.uid = model.uid
+                            mesh.visible = model.visible
+                            mesh.category = geom.name
+                            group.add(mesh)
+                            //setMeshes((prevGeoms) => [...prevGeoms, mesh])
+                            setMeshes((prevMeshes) => {
+                                if (!prevMeshes.some(meshItem => meshItem.uid === mesh.uid)) {
+                                    return [...prevMeshes, mesh]
+                                }
+                                return prevMeshes
+                            })
+                        }
+                    )
+                })
+                sceneRef.current.add(group)
+                setGroups((prevGroups) => {
+                    if (!prevGroups.some(groupItem => groupItem.uid === group.uid)) {
+                        return [...prevGroups, group]
                     }
-                )
-            })
+                    return prevGroups
+                })
+            }
 
-            sceneRef.current.add(group);
-            setGroups((prevGroups) => [...prevGroups, group]);
+
             //center.divideScalar(6)
 
-            group.translateX(-147.67429780960083 / 6);
-            group.translateY(67.31102013587952 / 6);
-            group.translateZ(-58.5 / 6);
+            // group.translateX(-147.67429780960083 / 6);
+            // group.translateY(67.31102013587952 / 6);
+            // group.translateZ(-58.5 / 6);
 
-            const transformControl = new TransformControls(camera.current, renderer.current.domElement);
-            transformControl.attach(group);
-            transformControl.visible = false;
-            transformControl.uid = group.uid;
-            transformControl.position.set(147.67429780960083 / 6, -67.31102013587952 / 6, 58.5 / 6)
+            // const transformControl = new TransformControls(camera.current, renderer.current.domElement);
+            // transformControl.attach(group);
+            // transformControl.visible = false;
+            // transformControl.uid = group.uid;
+            // transformControl.position.set(147.67429780960083 / 6, -67.31102013587952 / 6, 58.5 / 6)
 
-            sceneRef.current.add(transformControl);
-            transformControl.addEventListener('dragging-changed', handleMove);
-            transformControl.addEventListener('change', () => {
-                setTransformFormData((prevData) => ({ ...prevData, position: transformControl.object.position }))
-            });
-            setTransformControls((prevControls) => [...prevControls, transformControl]);
+            // sceneRef.current.add(transformControl);
+            // transformControl.addEventListener('dragging-changed', handleMove);
+            // transformControl.addEventListener('change', () => {
+            //     setTransformFormData((prevData) => ({ ...prevData, position: transformControl.object.position }))
+            // });
+            // setTransformControls((prevControls) => [...prevControls, transformControl]);
         })
     }
 
@@ -326,7 +345,6 @@ export default function Scena({ }) {
                 }
             })
         } else if (selectionMode === 'face') {
-            console.log(meshes)
             const intersects = raycaster.intersectObjects(meshes, true)
             if (intersects.length > 0) {
                 const object = intersects[0].object
@@ -377,7 +395,6 @@ export default function Scena({ }) {
     }
 
     const handlePositionChange = (uid, newPosition) => {
-        console.log(transformFormData)
         const { x, y, z } = newPosition
         groups.forEach((group) => {
             group.uid === uid && group.position.set(x, y, z)
@@ -415,7 +432,7 @@ export default function Scena({ }) {
         const stlBlob = new Blob([stlData], { type: 'application/octet-stream' })
         const file = new File([stlBlob], 'box.stl')
 
-        setGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file })
+        addPrimitive({ 'Angle': '120', 'IdProject': projectId, 'File': file }, 'box')
     }
 
     const handleCloseBoxForm = () => {
@@ -453,7 +470,7 @@ export default function Scena({ }) {
         const stlBlob = new Blob([stlData], { type: 'application/octet-stream' })
         const file = new File([stlBlob], 'сylinder.stl')
 
-        setGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file })
+        addPrimitive({ 'Angle': '120', 'IdProject': projectId, 'File': file }, 'cylinder')
     }
 
     const handleCloseCylinderForm = () => {
@@ -461,10 +478,24 @@ export default function Scena({ }) {
         setCylinderFormData((prevData) => ({ ...prevData, visible: false }))
     }
 
-    const setGeometry = async (geometryData) => {
+    const addPrimitive = async (geometryData, primitiveType) => {
+        dispatch(setLoader(true))
         const result = await addGeometry(geometryData)
         if (result.success) {
-            loadGeoms()
+            loadGeoms().then(() => {
+                setTimeout(() => {
+                    switch (primitiveType) {
+                        case 'box': {
+                            sceneRef.current.remove(boxPatternMesh.current)
+                            break
+                        }
+                        case 'cylinder': {
+                            sceneRef.current.remove(cylinderPatternMesh.current)
+                            break
+                        }
+                    }
+                }, 1000)
+            })
         } else {
             alert(result.message)
         }
@@ -555,7 +586,7 @@ export default function Scena({ }) {
                                 <div className='bg-day-00 rounded-md shadow absolute 
                                     top-[25px] border border-day-200 -left-[6px] w-[95px] text-base z-20 duration-100 
                                     ease-linear transition-all group-hover:translate-y-[10px]
-                                    opacity-0 group-hover:opacity-100 '>
+                                    opacity-0 group-hover:opacity-95 '>
                                     <div className='flex flex-col justify-center h-fit'>
                                         <button className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
                                         hover:bg-day-100 rounded-md h-fit'

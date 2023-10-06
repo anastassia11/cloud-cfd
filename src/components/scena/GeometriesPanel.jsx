@@ -21,13 +21,13 @@ export default function GeometriesPanel({ onHidePartObject }) {
 
                         <span className="block text-base font-semibold pt-[2px]">
                             <p className='text-ellipsis whitespace-nowrap overflow-hidden'>
-                                GEOMETRIES {`(${loader ? 0 : geoms.length})`}
+                                GEOMETRIES {`(${geoms.length})`}
                             </p>
                         </span>
                     </div>
                 </div>
                 {geoms.length > 0 ? <ul className='mt-2 pt-2 border-t'>
-                    {!loader && geoms.map((geom) => (
+                    {geoms.map((geom) => (
                         <li className="" key={geom.uid}>
                             <Geometry geom={geom} hidePartObject={(model) => onHidePartObject(model)} />
                         </li>

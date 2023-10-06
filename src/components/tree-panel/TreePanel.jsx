@@ -41,7 +41,7 @@ export default function TreePanel() {
 
     return (
         <nav className="max-h-[calc(100vh-73px)] bg-day-00 overflow-y-auto pb-2 rounded-md 
-            shadow h-fit">
+            shadow h-fit opacity-95">
             <div className="flex flex-col h-full px-2 ">
                 <div className="text-day-350 flex items-center justify-between pt-[10px] 
                     pl-[6px] pr-[1px] overflow-hidden">
