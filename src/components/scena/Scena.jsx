@@ -86,7 +86,9 @@ export default function Scena({ }) {
         }
         init()
         animate()
+        addTransformListeners()
         return () => {
+            removeTransformListeners()
             //renderer.current.dispose()
         }
     }, [])
@@ -170,26 +172,11 @@ export default function Scena({ }) {
                     return prevGroups
                 })
             }
-
-
             //center.divideScalar(6)
 
             // group.translateX(-147.67429780960083 / 6);
             // group.translateY(67.31102013587952 / 6);
             // group.translateZ(-58.5 / 6);
-
-            // const transformControl = new TransformControls(camera.current, renderer.current.domElement);
-            // transformControl.attach(group);
-            // transformControl.visible = false;
-            // transformControl.uid = group.uid;
-            // transformControl.position.set(147.67429780960083 / 6, -67.31102013587952 / 6, 58.5 / 6)
-
-            // sceneRef.current.add(transformControl);
-            // transformControl.addEventListener('dragging-changed', handleMove);
-            // transformControl.addEventListener('change', () => {
-            //     setTransformFormData((prevData) => ({ ...prevData, position: transformControl.object.position }))
-            // });
-            // setTransformControls((prevControls) => [...prevControls, transformControl]);
         })
     }
 
@@ -198,7 +185,7 @@ export default function Scena({ }) {
         camera.current.updateProjectionMatrix();
         renderer.current.setSize(window.innerWidth, window.innerHeight - 56);
     }
-
+    const transformControl = useRef(null)
     function init() {
         window.addEventListener('resize', onWindowResize)
         stlLoader.current = new STLLoader();
@@ -267,6 +254,7 @@ export default function Scena({ }) {
         );
         composer.current.addPass(renderPass);
         composer.current.addPass(outlinePass.current);
+        transformControl.current = new TransformControls(camera.current, renderer.current.domElement);
     }
 
     function animate() {
@@ -284,6 +272,21 @@ export default function Scena({ }) {
     function removeListeners() {
         renderer.current.domElement.removeEventListener("click", handleClick);
         renderer.current.domElement.removeEventListener("pointermove", handleHover);
+    }
+
+    function addTransformListeners() {
+        transformControl.current.addEventListener('dragging-changed', handleTransformMove);
+        transformControl.current.addEventListener('change', () => {
+            setTransformFormData((prevData) => ({ ...prevData, position: transformControl.current.object.position }))
+        })
+    }
+    function removeTransformListeners() {
+        transformControl.current.removeEventListener('dragging-changed', handleTransformMove);
+        transformControl.current.removeEventListener('change', handleTransformChange)
+    }
+
+    function handleTransformChange() {
+        setTransformFormData((prevData) => ({ ...prevData, position: transformControl.current.object.position }))
     }
 
     const handleClick = (event) => {
@@ -320,21 +323,15 @@ export default function Scena({ }) {
                                 if (prevGeoms?.length > 0 && prevGeoms.some((prevGeom) => prevGeom.uid === object.uid)) {
                                     object.material = base_material
                                     dispatch(deleteSelectedPart({ deletedPart: object.uid }))
-                                    transformControls.forEach((transformControl) => {
-                                        if (transformControl.uid === group.uid) {
-                                            transformControl.visible = false
-                                        }
-                                    })
+                                    sceneRef.current.remove(transformControl.current)
                                     setTransformFormData((prevData) => ({ ...prevData, visible: false }))
                                     return prevGeoms.filter((prevGeom) => prevGeom.uid !== object.uid)
                                 } else {
                                     object.material = selected_material
                                     dispatch(addSelectedPart({ addedPart: object.uid }))
-                                    transformControls.forEach((transformControl) => {
-                                        if (transformControl.uid === group.uid) {
-                                            transformControl.visible = true
-                                        }
-                                    })
+                                    transformControl.current.attach(group)
+                                    transformControl.current.uid = group.uid
+                                    sceneRef.current.add(transformControl.current)
                                     setTransformFormData({ visible: true, uid: group.uid, name: group.name, position: group.position })
                                     return [...prevGeoms, object]
                                 }
@@ -344,6 +341,7 @@ export default function Scena({ }) {
 
                 }
             })
+
         } else if (selectionMode === 'face') {
             const intersects = raycaster.intersectObjects(meshes, true)
             if (intersects.length > 0) {
@@ -390,7 +388,7 @@ export default function Scena({ }) {
         }
     }
 
-    const handleMove = (event) => {
+    const handleTransformMove = (event) => {
         orbitControls.current.enabled = !event.value;
     }
 
