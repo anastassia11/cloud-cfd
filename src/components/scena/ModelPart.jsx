@@ -27,10 +27,10 @@ export default function ModelPart({ model, handleHideClick, updateModelPart }) {
         // }
     }, [input])
 
-    useEffect(() => {
-        const x = selectedModelPart.some((item) => item === model.uid)
-        console.log(x)
-    }, [modelPart.visible])
+    // useEffect(() => {
+    //     const x = selectedModelPart.some((item) => item === model.uid)
+    //     console.log(x)
+    // }, [modelPart.visible])
 
     useEffect(() => {
         updateModelPart(modelPart)

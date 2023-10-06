@@ -76,12 +76,6 @@ export default function Scena({ }) {
     const cylinderPatternMesh = useRef(null)
 
     const sceneRef = useRef(null)
-    const material = new THREE.MeshPhongMaterial({
-        color: 0xa0a0a0,
-        specular: 0x494949,
-        shininess: 100,
-        side: THREE.DoubleSide,
-    });
 
     useEffect(() => {
         sceneRef.current = new THREE.Scene()
@@ -91,11 +85,9 @@ export default function Scena({ }) {
         }
         init()
         animate()
-        // addPrimitiveListeners()
         return () => {
             setGroups([])
             setMeshes([])
-            // removePrimitiveListeners()
             renderer.current.dispose()
         }
     }, [])
@@ -104,6 +96,14 @@ export default function Scena({ }) {
         addListeners()
         return () => removeListeners()
     }, [meshes, groups, selectionMode])
+
+    useEffect(() => {
+        console.log(meshes)
+    }, [meshes])
+
+    useEffect(() => {
+        console.log(groups)
+    }, [groups])
 
 
     const loadGeoms = async () => {
@@ -121,27 +121,32 @@ export default function Scena({ }) {
 
     function loadSTL(geoms) {
         geoms?.forEach((geom) => {
-            const group = new THREE.Group();
-            group.name = geom.name;
-            group.uid = geom.uid;
-            let center = new THREE.Vector3();
+            const group = new THREE.Group()
+            group.name = geom.name
+            group.uid = geom.uid
+            let center = new THREE.Vector3()
             geom.models.forEach((model) => {
                 stlLoader.current.load(
                     BASE_SERVER_URL + model.link,
                     (geometry) => {
-                        geometry.computeBoundingSphere();
-                        center.add(geometry.boundingSphere.center);
+                        geometry.computeBoundingSphere()
+                        center.add(geometry.boundingSphere.center)
+                        const meshMaterial = new THREE.MeshPhongMaterial({
+                            color: 0xa0a0a0,
+                            specular: 0x494949,
+                            shininess: 100,
+                            side: THREE.DoubleSide,
+                        });
+                        const mesh = new THREE.Mesh(geometry, meshMaterial)
 
-                        const mesh = new THREE.Mesh(geometry, material);
-
-                        mesh.scale.set(1, 1, 1);
-                        mesh.castShadow = true;
-                        mesh.receiveShadow = true;
-                        mesh.uid = model.uid;
+                        mesh.scale.set(1, 1, 1)
+                        mesh.castShadow = true
+                        mesh.receiveShadow = true
+                        mesh.uid = model.uid
                         mesh.visible = model.visible
-                        mesh.category = geom.name;
-                        group.add(mesh);
-                        setMeshes((prevGeoms) => [...prevGeoms, mesh]);
+                        mesh.category = geom.name
+                        group.add(mesh)
+                        setMeshes((prevGeoms) => [...prevGeoms, mesh])
                     }
                 )
             })
@@ -275,7 +280,15 @@ export default function Scena({ }) {
             color: 0x404080,
             specular: 0x494949,
             shininess: 100,
+            side: THREE.DoubleSide,
         })
+
+        const base_material = new THREE.MeshPhongMaterial({
+            color: 0xa0a0a0,
+            specular: 0x494949,
+            shininess: 100,
+            side: THREE.DoubleSide,
+        });
 
         if (selectionMode === 'volume') {
             groups.forEach((group) => {
@@ -286,7 +299,7 @@ export default function Scena({ }) {
                         if (object.isMesh) {
                             setSelectedFaces((prevGeoms) => {
                                 if (prevGeoms?.length > 0 && prevGeoms.some((prevGeom) => prevGeom.uid === object.uid)) {
-                                    object.material = material
+                                    object.material = base_material
                                     dispatch(deleteSelectedPart({ deletedPart: object.uid }))
                                     transformControls.forEach((transformControl) => {
                                         if (transformControl.uid === group.uid) {
@@ -319,7 +332,7 @@ export default function Scena({ }) {
                 const object = intersects[0].object
                 setSelectedFaces((prevGeoms) => {
                     if (prevGeoms?.length > 0 && prevGeoms.some((prevGeom) => prevGeom.uid === object.uid)) {
-                        object.material = material
+                        object.material = base_material
                         dispatch(deleteSelectedPart({ deletedPart: object.uid }))
                         return prevGeoms.filter((prevGeom) => prevGeom.uid !== object.uid)
                     } else {
@@ -388,7 +401,13 @@ export default function Scena({ }) {
     }
 
     const handleBoxCreate = () => {
-        boxPatternMesh.current.material = material;
+        const boxMaterial = new THREE.MeshPhongMaterial({
+            color: 0xa0a0a0,
+            specular: 0x494949,
+            shininess: 100,
+            side: THREE.DoubleSide,
+        });
+        boxPatternMesh.current.material = boxMaterial;
         setBoxFormData((prevData) => ({ ...prevData, visible: false }))
 
         const stlExporter = new STLExporter()
@@ -420,7 +439,13 @@ export default function Scena({ }) {
     }
 
     const handleCylinderCreate = () => {
-        cylinderPatternMesh.current.material = material;
+        const cylinderMaterial = new THREE.MeshPhongMaterial({
+            color: 0xa0a0a0,
+            specular: 0x494949,
+            shininess: 100,
+            side: THREE.DoubleSide,
+        });
+        cylinderPatternMesh.current.material = cylinderMaterial;
         setCylinderFormData((prevData) => ({ ...prevData, visible: false }))
 
         const stlExporter = new STLExporter()

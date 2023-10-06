@@ -33,8 +33,10 @@ const projectSlice = createSlice({
                 if (geom.uid === updatedGeom.uid) {
                     return updatedGeom
                 } else return geom
-            })
+            });
+
             const result = updateGeometry(1, JSON.stringify(state.geometries))
+
         },
 
         deleteGeometries(state, action) {
