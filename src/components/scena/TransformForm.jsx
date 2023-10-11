@@ -2,16 +2,20 @@ import { useEffect, useState } from 'react'
 import SvgSelector from '../SvgSelector'
 
 
-export default function TransformForm({ geomName, position, onPositionChange }) {
+export default function TransformForm({ geomName, position, onPositionChange, onCloseForm }) {
     const [coordinates, setCoordinates] = useState(position)
 
     useEffect(() => {
         setCoordinates(position)
     }, [position])
 
+    useEffect(() => {
+        onPositionChange(coordinates)
+    }, [coordinates])
+
     const handleFormSubmit = (e) => {
         e.preventDefault()
-        onPositionChange(coordinates)
+        onCloseForm()
     }
 
     const positionXChange = (e) => {
@@ -59,11 +63,10 @@ export default function TransformForm({ geomName, position, onPositionChange }) 
                 <div className='flex flex-row space-x-[6px]'>
                     <button type="submit" className="text-base font-medium text-white 
                             bg-orange-200 hover:bg-orange-100 active:bg-orange-150 duration-300 
-                            rounded-md  w-8 h-8 border flex items-center justify-center"
-                        onClick={handleFormSubmit}>
+                            rounded-md  w-8 h-8 border flex items-center justify-center">
                         <SvgSelector id='check' />
                     </button>
-                    <button className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 
+                    <button type="submit" className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 
                             active:bg-day-150 flex items-center justify-center">
                         <SvgSelector id='close' />
                     </button>

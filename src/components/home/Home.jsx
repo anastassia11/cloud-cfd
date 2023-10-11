@@ -3,8 +3,9 @@ import demo_img from '@/../public/demo_img.png'
 import Image from 'next/image';
 
 export default function Home() {
-    return (
+    const token = localStorage.getItem('token')
 
+    return (
         <section className="pt-24 mx-auto max-w-screen-xl pb-12 px-4 items-center lg:flex md:px-8 bg-day-50">
             <div className="space-y-4 flex-1 sm:text-center lg:text-left">
                 <h1 className="text-day-350 font-bold text-4xl xl:text-5xl">
@@ -16,7 +17,7 @@ export default function Home() {
                     Run hard simulations right on your laptop.
                 </p>
                 <div className="pt-10 items-center justify-center space-y-3 sm:space-x-6 sm:space-y-0 sm:flex lg:justify-start">
-                    <Link href='/login'
+                    <Link href={token ? '/dashboard' : '/login'}
                         className="cursor-pointer px-7 py-3 w-full text-center shadow-md block sm:w-auto
                     text-white bg-orange-100 hover:bg-orange-150 hover:shadow-lg active:bg-orange-200 rounded-lg duration-300">
                         Start Simulation Now
