@@ -111,8 +111,7 @@ export default function Simulation({ id, name }) {
                                     <li key={item.setting}>
                                         {item.setting}
                                     </li>
-                            }
-                            )}
+                            })}
                             <button className="flex w-full items-center gap-2 rounded-lg px-2 h-9 text-base font-normal 
                             text-[#ef7931] hover:bg-day-150 active:bg-day-200 duration-300 "
                                 onClick={handleRunClick}>
@@ -125,9 +124,10 @@ export default function Simulation({ id, name }) {
                     </div>
                 ) : ""
             }
-            {deleteModal ? <DeleteSimulation simulationName={name} simulationId={id}
+            <div className='absolute z-20'>{deleteModal ? <DeleteSimulation simulationName={name} simulationId={id}
                 onCloseClick={() => setDeleteModal(false)}
                 onDeleteClick={() => deleteSimulation()} /> : ''}
+            </div>
         </div>
     )
 }

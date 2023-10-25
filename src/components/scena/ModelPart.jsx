@@ -8,31 +8,6 @@ export default function ModelPart({ model, handleHideClick, updateModelPart }) {
     const selectedModelPart = useSelector(state => state.project.selectedPart)
 
     useEffect(() => {
-        // const handleClick = (event) => {
-        //     const inputElement = document.getElementById("inputId")
-        //     const button = document.getElementById('button')
-        //     if (button && inputElement && !button.contains(event.target) && !inputElement.contains(event.target)) {
-        //         setInput(false)
-        //     }
-        // }
-        // document.addEventListener('mousedown', handleClick)
-        // const inputElement = document.getElementById("inputId")
-
-        // if (inputElement) {
-        //     inputElement.addEventListener("keydown", function (event) {
-        //         if (event.key === "Enter") {
-        //             handleDoneClick()
-        //         }
-        //     })
-        // }
-    }, [input])
-
-    // useEffect(() => {
-    //     const x = selectedModelPart.some((item) => item === model.uid)
-    //     console.log(x)
-    // }, [modelPart.visible])
-
-    useEffect(() => {
         updateModelPart(modelPart)
     }, [modelPart.visible])
 

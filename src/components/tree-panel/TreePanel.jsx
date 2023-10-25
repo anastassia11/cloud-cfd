@@ -40,35 +40,69 @@ export default function TreePanel() {
     }, [])
 
     return (
-        <nav className="max-h-[calc(100vh-73px)] bg-day-00 overflow-y-auto pb-2 rounded-md 
-            shadow h-fit opacity-95">
-            <div className="flex flex-col h-full px-2 ">
-                <div className="text-day-350 flex items-center justify-between pt-[10px] 
-                    pl-[6px] pr-[1px] overflow-hidden">
-                    <div className="flex items-center gap-x-1 ">
-                        <span className='min-w-[24px]'>
-                            <SvgSelector id='simulations' />
-                        </span>
+        <>
+            <div className='flex flex-col bg-day-00 rounded-md max-h-[calc(100vh-73px)]
+                shadow'>
+                <div className='p-3 pb-0'>
+                    <div className="text-day-350 flex items-center justify-between border-b pb-2 overflow-x-hidden">
+                        <div className="flex items-center gap-x-1 ">
+                            <span className='min-w-[24px]'>
+                                <SvgSelector id='simulations' />
+                            </span>
 
-                        <span className="block text-base font-semibold pt-[2px]">
-                            <p className='text-ellipsis whitespace-nowrap overflow-hidden'>
-                                SIMULATIONS {`(${simulations.length})`}
-                            </p>
-                        </span>
-                    </div>
-                    <button className="rounded-md min-h-[32px] min-w-[32px] w-8 h-8 border bg-day-50 
+                            <span className="block text-base font-semibold pt-[2px]">
+                                <p className='text-ellipsis whitespace-nowrap'>
+                                    SIMULATIONS {`(${simulations.length})`}
+                                </p>
+                            </span>
+                        </div>
+                        <button className="rounded-md min-h-[32px] min-w-[32px] w-8 h-8 border bg-day-50 
                         hover:bg-day-100 active:bg-day-150 flex items-center justify-center"
-                        onClick={handleAddClick} >
-                        <SvgSelector id='plus' />
-                    </button>
+                            onClick={handleAddClick} >
+                            <SvgSelector id='plus' />
+                        </button>
+                    </div>
                 </div>
-                {simulations.length > 0 ? <ul className='mt-[9px] pt-2 border-t'>
-                    {simulations.map((simulation) =>
-                        <li key={simulation.id} className=''>
-                            <Simulation id={simulation.id} name={simulation.name} />
-                        </li>)}
-                </ul> : ''}
-            </div>
-        </nav>
+                <div className='overflow-y-auto '>
+                    {simulations.length > 0 ? <ul className='m-2'>
+                        {simulations.map((simulation) =>
+                            <li key={simulation.id} className=''>
+                                <Simulation id={simulation.id} name={simulation.name} />
+                            </li>)}
+                    </ul> : ''}
+                </div>
+            </div >
+
+            {/* <nav className="max-h-[calc(100vh-73px)] bg-day-00 pb-2 rounded-md 
+            shadow h-fit">
+                <div className="flex flex-col h-full px-2 ">
+                    <div className="text-day-350 flex items-center justify-between pt-[10px] 
+                    pl-[6px] pr-[1px] overflow-hidden">
+                        <div className="flex items-center gap-x-1 ">
+                            <span className='min-w-[24px]'>
+                                <SvgSelector id='simulations' />
+                            </span>
+
+                            <span className="block text-base font-semibold pt-[2px]">
+                                <p className='text-ellipsis whitespace-nowrap overflow-hidden'>
+                                    SIMULATIONS {`(${simulations.length})`}
+                                </p>
+                            </span>
+                        </div>
+                        <button className="rounded-md min-h-[32px] min-w-[32px] w-8 h-8 border bg-day-50 
+                        hover:bg-day-100 active:bg-day-150 flex items-center justify-center"
+                            onClick={handleAddClick} >
+                            <SvgSelector id='plus' />
+                        </button>
+                    </div>
+                    {simulations.length > 0 ? <ul className='mt-[9px] pt-2 border-t overflow-y-auto '>
+                        {simulations.map((simulation) =>
+                            <li key={simulation.id} className=''>
+                                <Simulation id={simulation.id} name={simulation.name} />
+                            </li>)}
+                    </ul> : ''}
+                </div>
+            </nav> */}
+        </>
     )
 }

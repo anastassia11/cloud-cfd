@@ -17,7 +17,6 @@ export default function DeleteModal({ onCloseClick, geometry }) {
     }
 
     const handleKeyDown = (e) => {
-        console.log('Enter')
         if (e.key === "Enter") {
             handleDeleteClick()
         }
@@ -31,7 +30,7 @@ export default function DeleteModal({ onCloseClick, geometry }) {
         <div ref={deleteFormRef}
             className="fixed inset-0 z-20 overflow-y-auto" onKeyDown={(e) => handleKeyDown(e)} tabIndex={0}>
             <div className="fixed inset-0 w-full h-full bg-black opacity-40" onClick={() => onCloseClick()}></div>
-            <div className="flex items-center min-h-screen px-4 py-8">
+            <div className="flex items-center min-h-screen px-4 py-8 ">
                 <div className="relative w-full max-w-lg mx-auto bg-white rounded-md shadow-lg">
                     <div className="flex items-center justify-between py-2 pl-4 pr-2 border-b">
                         <h4 className="text-base font-medium text-day-350">

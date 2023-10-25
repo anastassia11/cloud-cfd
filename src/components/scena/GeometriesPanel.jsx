@@ -9,24 +9,22 @@ export default function GeometriesPanel({ onHidePartObject }) {
     const loader = useSelector(state => state.loader.loader)
 
     return (
-        <div className='max-h-[calc(100vh-73px)] bg-day-00 overflow-y-auto pb-2 rounded-md opacity-95
-                shadow h-fit'>
-            <div className="flex flex-col h-full px-2 ">
-                <div className="text-day-350 flex items-center justify-between pt-[10px]  
-                    pl-[6px] pr-[1px] overflow-hidden">
-                    <div className="flex items-center gap-x-1 ">
-                        <span className='min-w-[24px]'>
-                            <SvgSelector id='geometry' className='' />
-                        </span>
-
-                        <span className="block text-base font-semibold pt-[2px]">
-                            <p className='text-ellipsis whitespace-nowrap overflow-hidden'>
-                                GEOMETRIES {`(${geoms.length})`}
-                            </p>
-                        </span>
-                    </div>
+        <div className='flex flex-col z-10 bg-day-00 rounded-md max-h-full
+                shadow'>
+            <div className='p-3 pb-0'>
+                <div className="text-day-350 flex items-center border-b pb-3">
+                    <span className='min-w-[24px] mr-1'>
+                        <SvgSelector id='geometry' className='' />
+                    </span>
+                    <span className="block text-base font-semibold pt-[2px]">
+                        <p className='text-ellipsis whitespace-nowrap overflow-hidden'>
+                            GEOMETRIES {`(${geoms.length})`}
+                        </p>
+                    </span>
                 </div>
-                {geoms.length > 0 ? <ul className='mt-2 pt-2 border-t'>
+            </div>
+            <div className='overflow-y-auto '>
+                {geoms.length > 0 ? <ul className='m-2'>
                     {geoms.map((geom) => (
                         <li className="" key={geom.uid}>
                             <Geometry geom={geom} hidePartObject={(model) => onHidePartObject(model)} />
@@ -34,7 +32,6 @@ export default function GeometriesPanel({ onHidePartObject }) {
                     ))}
                 </ul> : ''}
             </div>
-
-        </div>
+        </div >
     )
 }

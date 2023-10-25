@@ -76,8 +76,8 @@ export default function BoxForm({ params, position, onParamsChange, onPositionCh
     }
 
     return (
-        <form className='flex flex-col bg-day-00 rounded-md shadow p-3 text-day-350'>
-            <div className='flex flex-row justify-between items-center border-b pb-2'>
+        <form className='flex flex-col bg-day-00 rounded-md shadow pl-3 pt-3 text-day-350 max-h-full'>
+            <div className='pr-3 flex flex-row justify-between items-center border-b pb-2'>
                 <p className='self-end ml-1 font-semibold'>Box</p>
                 <div className='flex flex-row space-x-[6px]'>
                     <button type="button"
@@ -94,11 +94,10 @@ export default function BoxForm({ params, position, onParamsChange, onPositionCh
                         <SvgSelector id='close' />
                     </button>
                 </div>
-
             </div>
-            <div className='flex flex-col mt-3 text-day-350'>
-                <div className='flex flex-col justify-between mt-2 space-y-2'>
-                    <div className=''>
+            <div className='flex flex-col  text-day-350 overflow-y-auto '>
+                <div className='flex flex-col justify-between'>
+                    <div className='mt-3'>
                         <div className='flex flex-row cursor-pointer'
                             onClick={() => setParamsVisible(prev => !prev)}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -114,7 +113,7 @@ export default function BoxForm({ params, position, onParamsChange, onPositionCh
                             <Input label='Depth' value={boxParams.depth} onChange={depthChange} />
                         </div> : ''}
                     </div>
-                    <div>
+                    <div className='my-3'>
                         <div className='flex flex-row cursor-pointer'
                             onClick={() => setPositionVisible(prev => !prev)}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"

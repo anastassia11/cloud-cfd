@@ -4,16 +4,19 @@ import addGeometry from '@/pages/api/set_geometry'
 import { useDispatch, useSelector } from 'react-redux'
 import getGeometries from '@/pages/api/get_geometries'
 import { setGeometries } from '@/store/slices/projectSlice'
-import GeometryRow from './GeometryRow'
 import { resetSetting } from '@/store/slices/settingSlice'
+import { Oval } from 'react-loader-spinner'
+import DeleteModal from '../scena/DeleteModal'
 
 export default function GeometryForm({ }) {
-    const [drag, setDrag] = useState(false)
-    const [loading, setLoading] = useState([])
     const geoms = useSelector(state => state.project.geometries)
     const projectId = useSelector(state => state.project.projectId)
+
+    const [drag, setDrag] = useState(false)
+    const [loading, setLoading] = useState([])
     const [files, setFiles] = useState(geoms || [])
     const [fileCount, setFileCount] = useState(geoms?.length)
+
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -65,7 +68,7 @@ export default function GeometryForm({ }) {
             newLoading[index] = true
             return newLoading
         })
-        console.log(geometryData)
+
         const result = await addGeometry(geometryData)
         if (result.success) {
             loadGeoms()
@@ -90,13 +93,43 @@ export default function GeometryForm({ }) {
         })
     }
 
+    const Geometry = ({ geometry, loading }) => {
+        const [modal, setModal] = useState(false)
+        const handleDeleteClick = (e) => {
+            e.stopPropagation()
+            setModal(true)
+        }
+        return (
+            <div className='w-full flex items-center justify-between rounded-md text-day-350 h-9 
+            hover:bg-day-100 duration-300 ' >
+                <p className='pl-2'>{geometry.name}</p>
+                <div className='pr-2 flex flex-row items-center'>
+                    {loading ?
+                        <Oval
+                            height={18}
+                            width={18}
+                            color="#6a6a6a"
+                            visible={true}
+                            ariaLabel='oval-loading'
+                            secondaryColor="#6a6a6a"
+                            strokeWidth={4}
+                            strokeWidthSecondary={4} /> : ''
+                    }
+                    <button className="pl-1" id='button' type='button'
+                        onClick={(e) => handleDeleteClick(e)}>
+                        <SvgSelector id='delete' className='w-5 h-5' stroke-width={1.3} />
+                    </button>
+                </div>
+                {modal ? <DeleteModal onCloseClick={() => setModal(false)} geometry={geometry} /> : ''}
+            </div>
+        )
+    }
     const filesArray = <div className='mt-2'>
         {files?.map((file, index) => (
             <div key={index}>
-                <GeometryRow geometry={file} loading={loading[index]} />
+                <Geometry geometry={file} loading={loading[index]} />
             </div>
-        )
-        )}
+        ))}
     </div>
 
     const upload = <div className='h-36 pt-3'>
@@ -127,7 +160,7 @@ export default function GeometryForm({ }) {
 
     return (
         <>
-            <form onSubmit={handleGeometrySubmit} className='flex flex-col bg-white p-3 shadow rounded-md'>
+            <form onSubmit={handleGeometrySubmit} className='flex flex-col bg-white p-3 shadow rounded-md h-fit'>
                 <div className='flex flex-row justify-between items-center border-b pb-2'>
                     <p className='self-end font-medium text-day-350'>Geomerty</p>
                     <div className='flex flex-row space-x-[6px]'>

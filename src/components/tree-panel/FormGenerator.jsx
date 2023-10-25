@@ -61,7 +61,7 @@ export default function FormGenerator({ formName, formTitle }) {
     })
 
     return (
-        <form onSubmit={handleFormSubmit} className='flex flex-col bg-day-00 rounded-md shadow p-3'>
+        <form onSubmit={handleFormSubmit} className='flex flex-col bg-day-00 rounded-md shadow p-3 h-fit'>
             <div className='flex flex-row justify-between items-center border-b pb-2'>
                 <p className='self-end'>{formTitle}</p>
                 <div className='flex flex-row space-x-[6px]'>

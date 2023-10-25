@@ -8,12 +8,10 @@ export default function SettingForm({ }) {
     const formName = useSelector(state => state.setting.formName)
     const inputs = useSelector(state => state.setting.inputs)
 
-    const form = formName === 'geomerty' ? <GeometryForm /> :
-        <FormGenerator value={inputs} formName={formName} formTitle={formTitle} />
-
     return (
-        <div className=''>
-            {form}
+        <div className='h-fit max-h-[calc(100vh-73px)]'>
+            {formName === 'geomerty' ? <GeometryForm /> :
+                <FormGenerator value={inputs} formName={formName} formTitle={formTitle} />}
         </div>
     )
 }
