@@ -39,6 +39,21 @@ export default function CylinderForm({ params, position, onParamsChange, onPosit
         setCylinderParams((prevParams) => ({ ...prevParams, radiusTop: Number(value), radiusBottom: Number(value) }))
     }
 
+    const positionXChange = (e) => {
+        const { value } = e.target
+        setCoordinates((prevCoordinates) => ({ ...prevCoordinates, x: Number(value) }))
+    }
+
+    const positionYChange = (e) => {
+        const { value } = e.target
+        setCoordinates((prevCoordinates) => ({ ...prevCoordinates, y: Number(value) }))
+    }
+
+    const positionZChange = (e) => {
+        const { value } = e.target
+        setCoordinates((prevCoordinates) => ({ ...prevCoordinates, z: Number(value) }))
+    }
+
     const Input = ({ label, value, onChange }) => {
         return (
             <div className='flex flex-row items-center justify-between'>
@@ -58,15 +73,17 @@ export default function CylinderForm({ params, position, onParamsChange, onPosit
             <div className='flex flex-row justify-between items-center border-b pb-2'>
                 <p className='self-end font-semibold'>Cylinder</p>
                 <div className='flex flex-row space-x-[6px]'>
-                    <button type="submit"
+                    <button type="button"
                         className="text-base font-medium text-white 
                             bg-orange-200 hover:bg-orange-100 active:bg-orange-150 duration-300 
-                            rounded-md  w-8 h-8 border flex items-center justify-center">
+                            rounded-md  w-8 h-8 border flex items-center justify-center"
+                        onClick={handleFormSubmit}>
                         <SvgSelector id='check' />
                     </button>
-                    <button type="submit"
+                    <button type="button"
                         className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 
-                            active:bg-day-150 flex items-center justify-center">
+                            active:bg-day-150 flex items-center justify-center"
+                        onClick={onCloseForm}>
                         <SvgSelector id='close' />
                     </button>
                 </div>
@@ -107,9 +124,9 @@ export default function CylinderForm({ params, position, onParamsChange, onPosit
                             <p className='font-semibold ml-[7px]'>Position</p>
                         </div>
                         {positionVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
-                            <Input label='X' value={cylinderParams.height} onChange={heightChange} />
-                            <Input label='Y' value={cylinderParams.height} onChange={heightChange} />
-                            <Input label='Z' value={cylinderParams.height} onChange={heightChange} />
+                            <Input label='X' value={coordinates.x} onChange={positionXChange} />
+                            <Input label='Y' value={coordinates.y} onChange={positionYChange} />
+                            <Input label='Z' value={coordinates.z} onChange={positionZChange} />
                         </div> : ''}
                     </div>
                 </div>
