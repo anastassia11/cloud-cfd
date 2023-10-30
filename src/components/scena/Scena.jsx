@@ -14,13 +14,13 @@ import GeometriesPanel from './GeometriesPanel'
 import SettingForm from '../tree-panel/SettingForm'
 import { setLoader } from '@/store/slices/loaderSlice'
 import { Resizable } from 're-resizable'
-import { TransformControls } from "three/examples/jsm/controls/TransformControls";
-import SvgSelector from '../SvgSelector'
+import { TransformControls } from "three/examples/jsm/controls/TransformControls"
 import TransformForm from './TransformForm'
 import CylinderForm from './CylinderForm'
 import BoxForm from './BoxForm'
-import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
 import addGeometry from '@/pages/api/set_geometry'
+import { Lut } from 'three/addons/math/Lut.js';
+import ControlPanel from './ControlPanel'
 
 export default function Scena({ }) {
     const containerRef = useRef(null)
@@ -54,15 +54,17 @@ export default function Scena({ }) {
         position: {},
         angle: {}
     })
-    const [cylinderFormData, setCylinderFormData] = useState({
+    const [cylinderData, setCylinderData] = useState({
         visible: false,
         name: '',
+        cylinderMesh: {},
         params: {},
         position: {}
     })
-    const [boxFormData, setBoxFormData] = useState({
+    const [boxData, setBoxData] = useState({
         visible: false,
         name: '',
+        boxMesh: {},
         params: {},
         position: {}
     })
@@ -76,9 +78,6 @@ export default function Scena({ }) {
     const composer = useRef(null)
     const outlinePass = useRef(null)
 
-    const boxPatternMesh = useRef(null)
-    const cylinderPatternMesh = useRef(null)
-
     const sceneRef = useRef(null)
     const geomsState = useSelector(state => state.project.geometries)
     const dataUrl = useRef(null)
@@ -90,7 +89,6 @@ export default function Scena({ }) {
             loadGeoms()
         }
         init()
-
         animate()
         addTransformListeners()
         //takeSnapshot()
@@ -180,11 +178,6 @@ export default function Scena({ }) {
                     return prevGroups
                 })
             }
-            //center.divideScalar(6)
-
-            // group.translateX(-147.67429780960083 / 6);
-            // group.translateY(67.31102013587952 / 6);
-            // group.translateZ(-58.5 / 6);
         })
     }
 
@@ -240,6 +233,7 @@ export default function Scena({ }) {
 
         renderer.current = new THREE.WebGLRenderer({
             canvas: containerRef.current,
+            antialias: true,
             preserveDrawingBuffer: true
         });
         renderer.current.setClearColor("#f0f0f0");
@@ -251,14 +245,17 @@ export default function Scena({ }) {
         );
 
         composer.current = new EffectComposer(renderer.current);
+
         const renderPass = new RenderPass(sceneRef.current, camera.current);
+        composer.current.addPass(renderPass);
+
         outlinePass.current = new OutlinePass(
             new THREE.Vector2(window.innerWidth, window.innerHeight),
             sceneRef.current,
             camera.current
         );
-        composer.current.addPass(renderPass);
         composer.current.addPass(outlinePass.current);
+
         transformControl.current = new TransformControls(camera.current, renderer.current.domElement);
 
     }
@@ -415,109 +412,6 @@ export default function Scena({ }) {
         setTransformFormData((prevData) => ({ ...prevData, position: newPosition }))
     }
 
-    const handleBoxClick = () => {
-        const boxPatternGeom = new THREE.BoxGeometry(30, 30, 30);
-        const boxPatternMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
-        boxPatternMesh.current = new THREE.Mesh(boxPatternGeom, boxPatternMaterial);
-        sceneRef.current.add(boxPatternMesh.current);
-
-        setBoxFormData({ visible: true, name: 'box', params: boxPatternGeom.parameters, position: boxPatternMesh.current.position })
-        transformControl.current.attach(boxPatternMesh.current)
-        transformControl.current.uid = boxPatternMesh.current.uid
-        sceneRef.current.add(transformControl.current)
-    }
-
-    const handleBoxParamsChange = (newParams) => {
-        const { width, height, depth } = newParams
-        const newBoxPatternGeom = new THREE.BoxGeometry(width, height, depth);
-        boxPatternMesh.current.geometry = newBoxPatternGeom;
-        setBoxFormData((prevData) => ({ ...prevData, params: newParams }))
-    }
-
-    const handleBoxPositionChange = (newPosition) => {
-        const { x, y, z } = newPosition
-        setBoxFormData((prevData) => ({ ...prevData, position: newPosition }))
-        boxPatternMesh.current.position.set(x, y, z)
-    }
-
-    const handleBoxCreate = () => {
-        const boxMaterial = new THREE.MeshPhongMaterial({
-            color: 0xa0a0a0,
-            specular: 0x494949,
-            shininess: 100,
-            side: THREE.DoubleSide,
-        });
-        boxPatternMesh.current.material = boxMaterial;
-        setBoxFormData((prevData) => ({ ...prevData, visible: false }))
-
-        // ПОЗИЦИЮ БОКСА НА СЕРВЕР 
-        sceneRef.current.remove(transformControl.current)
-        const stlExporter = new STLExporter()
-        const stlData = stlExporter.parse(boxPatternMesh.current, { binary: true })
-        const stlBlob = new Blob([stlData], { type: 'application/octet-stream' })
-        const file = new File([stlBlob], 'box.stl')
-
-        addPrimitive({ 'Angle': '120', 'IdProject': projectId, 'File': file }, 'box')
-    }
-
-    const handleCloseBoxForm = () => {
-        sceneRef.current.remove(boxPatternMesh.current)
-        setBoxFormData((prevData) => ({ ...prevData, visible: false }))
-        sceneRef.current.remove(transformControl.current)
-    }
-
-    const handleCylinderClick = () => {
-        const cylinderGeom = new THREE.CylinderGeometry(5, 5, 20)
-        const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true })
-        cylinderPatternMesh.current = new THREE.Mesh(cylinderGeom, cylinderMaterial)
-        sceneRef.current.add(cylinderPatternMesh.current)
-
-        setCylinderFormData({ visible: true, name: 'cylinder', params: cylinderGeom.parameters, position: cylinderPatternMesh.current.position })
-
-        transformControl.current.attach(cylinderPatternMesh.current)
-        transformControl.current.uid = cylinderPatternMesh.current.uid
-        sceneRef.current.add(transformControl.current)
-    }
-
-    const handleCylinderParamsChange = (newParams) => {
-        const { radiusTop, radiusBottom, height } = newParams
-        const newCylinderPatternGeom = new THREE.CylinderGeometry(radiusTop, radiusBottom, height);
-        cylinderPatternMesh.current.geometry = newCylinderPatternGeom;
-        setCylinderFormData((prevData) => ({ ...prevData, params: newParams }))
-    }
-
-    const handleCylinderPositionChange = (newPosition) => {
-        const { x, y, z } = newPosition
-        setCylinderFormData((prevData) => ({ ...prevData, position: newPosition }))
-        cylinderPatternMesh.current.position.set(x, y, z)
-    }
-
-    const handleCylinderCreate = () => {
-        const cylinderMaterial = new THREE.MeshPhongMaterial({
-            color: 0xa0a0a0,
-            specular: 0x494949,
-            shininess: 100,
-            side: THREE.DoubleSide,
-        });
-        cylinderPatternMesh.current.material = cylinderMaterial;
-        setCylinderFormData((prevData) => ({ ...prevData, visible: false }))
-
-        // ПОЗИЦИЮ ЦИЛИНДРА НА СЕРВЕР 
-        sceneRef.current.remove(transformControl.current)
-        const stlExporter = new STLExporter()
-        const stlData = stlExporter.parse(cylinderPatternMesh.current, { binary: true })
-        const stlBlob = new Blob([stlData], { type: 'application/octet-stream' })
-        const file = new File([stlBlob], 'сylinder.stl')
-
-        addPrimitive({ 'Angle': '120', 'IdProject': projectId, 'File': file }, 'cylinder')
-    }
-
-    const handleCloseCylinderForm = () => {
-        sceneRef.current.remove(cylinderPatternMesh.current)
-        setCylinderFormData((prevData) => ({ ...prevData, visible: false }))
-        sceneRef.current.remove(transformControl.current)
-    }
-
     const addPrimitive = async (geometryData, primitiveType) => {
         dispatch(setLoader(true))
         const result = await addGeometry(geometryData)
@@ -526,11 +420,11 @@ export default function Scena({ }) {
                 setTimeout(() => {
                     switch (primitiveType) {
                         case 'box': {
-                            sceneRef.current.remove(boxPatternMesh.current)
+                            sceneRef.current.remove(boxData.boxMesh)
                             break
                         }
                         case 'cylinder': {
-                            sceneRef.current.remove(cylinderPatternMesh.current)
+                            sceneRef.current.remove(cylinderData.cylinderMesh)
                             break
                         }
                     }
@@ -569,6 +463,32 @@ export default function Scena({ }) {
                 </div>
             </div>
         )
+    };
+
+    const boxDataChange = (newData) => {
+        sceneRef.current.children.forEach((object) => {
+            if (object.isMesh && object.uuid === newData.boxMesh.uuid) {
+                object.geometry.dispose()
+                object.geometry = newData.boxMesh.geometry
+            }
+        })
+        const { x, y, z } = newData.position
+        boxData.boxMesh.position.set(x, y, z)
+        boxData.boxMesh.material = newData.boxMesh.material
+        setBoxData(newData)
+    }
+
+    const cylinderDataChange = (newData) => {
+        sceneRef.current.children.forEach((object) => {
+            if (object.isMesh && object.uuid === newData.cylinderMesh.uuid) {
+                object.geometry.dispose()
+                object.geometry = newData.cylinderMesh.geometry
+            }
+        })
+        const { x, y, z } = newData.position
+        cylinderData.cylinderMesh.position.set(x, y, z)
+        cylinderData.cylinderMesh.material = newData.cylinderMesh.material
+        setCylinderData(newData)
     }
 
     return (
@@ -592,7 +512,6 @@ export default function Scena({ }) {
                             <TreePanel />
                         </Resizable> */}
                         <TreePanel />
-
                     </div>
 
                     <div className={` w-[335px] mr-[10px] h-fit relative
@@ -600,51 +519,13 @@ export default function Scena({ }) {
                         <SettingForm />
                     </div>
 
-                    <div className='h-[40px] items-center flex justify-end grow justify-self-end'>
-                        <div className='border-r border-[#a4a4a4] px-2 h-[40px] flex flex-row items-center relative'>
-                            <button className={`rounded-md w-8 h-8 flex items-center justify-center
-                        ${selectionMode === 'volume' ? 'border border-orange-100' : 'hover:bg-day-150 hover:shadow  active:bg-day-100'}`}
-                                onClick={() => setSelectionMode('volume')}>
-                                <SvgSelector id='select-volume' className='w-6' />
-                            </button>
-                        </div>
-                        <div className='border-r border-[#a4a4a4] px-2 h-[40px] flex flex-row items-center relative'>
-                            <button className={`rounded-md w-8 h-8 flex items-center justify-center
-                        ${selectionMode === 'face' ? 'border border-orange-100' : 'hover:bg-day-150 hover:shadow active:bg-day-100'}`}
-                                onClick={() => setSelectionMode('face')}>
-                                <SvgSelector id='select-face' className='w-6' />
-                            </button>
-                        </div>
-                        <div className='relative group text-day-1000 flex flex-row items-center cursor-pointer 
-                            w-[100px] h-8 ml-2 pl-2 justify-start'>
-                            <p className='text-[13px] pt-[2px] mr-[2px] tracking-wide'>CREATE</p>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                className='w-5 h-5 duration-300 group-hover:rotate-180'>
-                                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                            </svg>
+                    <ControlPanel scene={sceneRef.current}
+                        transformControl={transformControl.current}
+                        selectionMode={selectionMode}
+                        onModeChange={(mode) => setSelectionMode(mode)}
+                        onBoxDataChange={(newData) => setBoxData(newData)}
+                        onCylinderDataChange={(newData) => setCylinderData(newData)} />
 
-                            <div className='bg-day-00 rounded-md shadow absolute 
-                                    top-[25px] border border-day-200 -left-[6px] w-[95px] text-base duration-100 
-                                    ease-linear transition-all group-hover:translate-y-[10px]
-                                    opacity-0 group-hover:opacity-100 '>
-                                <div className='flex flex-col justify-center h-fit'>
-
-                                    <button className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
-                                        hover:bg-day-100 rounded-md h-fit'
-                                        onClick={handleBoxClick}>
-                                        <SvgSelector id='cube' className='w-[20px] text-day-350' />
-                                        <p className='text-[11px] tracking-wide'>Box</p>
-                                    </button>
-                                    <button className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
-                                        hover:bg-day-100 rounded-md h-fit'
-                                        onClick={handleCylinderClick}>
-                                        <SvgSelector id='cylinder' className='w-[20px] text-day-350' />
-                                        <p className='text-[11px] tracking-wide'>Cylinder</p>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <div className='flex flex-col max-h-[calc(100vh-73px)] overflow-hidden'>
                         <div ref={geomRef} className={`min-w-0 w-[${geomSize}px] ml-[12px] relative 
                         max-h-[calc(100vh-73px-${(boxRef.current ? boxRef.current.offsetHeight : 0)}px-
@@ -668,6 +549,7 @@ export default function Scena({ }) {
                             </Resizable> */}
                             <GeometriesPanel onHidePartObject={(model) => hidePartObject(model)} />
                         </div>
+
                         {transformFormData.visible ? <div ref={transformRef} className={`min-w-0 w-[300px] self-end 
                             mt-[10px] relative`}>
                             <TransformForm geomName={transformFormData.name} position={transformFormData.position}
@@ -678,24 +560,24 @@ export default function Scena({ }) {
                                 }} />
                         </div> : ''}
 
-                        {cylinderFormData.visible ? <div ref={cylinderRef} className={`w-[300px] self-end mt-[10px] 
-                            relative`}>
-                            <CylinderForm params={cylinderFormData.params}
-                                position={cylinderFormData.position}
-                                onParamsChange={(newParams) => handleCylinderParamsChange(newParams)}
-                                onPositionChange={(newPosition) => handleCylinderPositionChange(newPosition)}
-                                onCreate={handleCylinderCreate}
-                                onCloseForm={handleCloseCylinderForm} />
+                        {boxData.visible ? <div ref={boxRef} className={`min-w-0 w-[300px] self-end mt-[10px] 
+                        relative`}>
+                            <BoxForm scene={sceneRef.current}
+                                transformControl={transformControl.current}
+                                boxData={boxData}
+                                onBoxDataChange={boxDataChange}
+                                onCreate={addPrimitive}
+                            />
                         </div> : ''}
 
-                        {boxFormData.visible ? <div ref={boxRef} className={`w-[300px] self-end mt-[10px] relative 
-                        `}>
-                            <BoxForm params={boxFormData.params} position={transformFormData.position}
-                                onParamsChange={(newParams) => handleBoxParamsChange(newParams)}
-                                onPositionChange={(newPosition) => handleBoxPositionChange(newPosition)}
-                                onCreate={handleBoxCreate}
-                                onCloseForm={handleCloseBoxForm}
-                            />
+                        {cylinderData.visible ? <div ref={cylinderRef} className={`min-w-0 w-[300px] self-end mt-[10px] 
+                            relative`}>
+                            <CylinderForm
+                                scene={sceneRef.current}
+                                transformControl={transformControl.current}
+                                cylinderData={cylinderData}
+                                onCylinderDataChange={cylinderDataChange}
+                                onCreate={addPrimitive} />
                         </div> : ''}
                     </div>
                 </div>

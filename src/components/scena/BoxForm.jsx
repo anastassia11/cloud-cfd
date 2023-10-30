@@ -1,72 +1,111 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import SvgSelector from '../SvgSelector'
+import * as THREE from "three"
+import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
+import { useSelector } from 'react-redux'
 
+export default function BoxForm({ scene, transformControl, boxData, onBoxDataChange, onCreate }) {
+    const projectId = useSelector(state => state.project.projectId)
 
-export default function BoxForm({ params, position, onParamsChange, onPositionChange, onCreate, onCloseForm }) {
-    const [boxParams, setBoxParams] = useState(params)
-    const [coordinates, setCoordinates] = useState(position)
+    const [boxParams, setBoxParams] = useState(boxData)
     const [paramsVisible, setParamsVisible] = useState(true)
     const [positionVisible, setPositionVisible] = useState(true)
 
+    useEffect(() => {
+        setBoxParams(boxData)
+    }, [boxData])
 
     useEffect(() => {
-        setBoxParams(params)
-    }, [params])
-
-    useEffect(() => {
-        setCoordinates(position)
-    }, [position])
-
-    useEffect(() => {
-        onParamsChange(boxParams)
+        onBoxDataChange(boxParams)
     }, [boxParams])
-
-    useEffect(() => {
-        onPositionChange(coordinates)
-    }, [coordinates])
-
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
-        onCreate()
+        handleBoxCreate()
     }
 
     const widthChange = (e) => {
         const { value } = e.target
-        setBoxParams((prevParams) => ({ ...prevParams, width: Number(value) }))
+        const { width, height, depth } = boxParams.params
+        const newBoxPatternGeom = new THREE.BoxGeometry(Number(value), height, depth);
+        setBoxParams((prev) => ({
+            ...prev, params: { ...prev.params, width: Number(value) },
+            boxMesh: { ...prev.boxMesh, geometry: newBoxPatternGeom }
+        }))
     }
 
     const heightChange = (e) => {
         const { value } = e.target
-        setBoxParams((prevParams) => ({ ...prevParams, height: Number(value) }))
+        const { width, height, depth } = boxParams.params
+        const newBoxPatternGeom = new THREE.BoxGeometry(width, Number(value), depth);
+        setBoxParams((prev) => ({
+            ...prev, params: { ...prev.params, height: Number(value) },
+            boxMesh: { ...prev.boxMesh, geometry: newBoxPatternGeom }
+        }))
     }
 
     const depthChange = (e) => {
         const { value } = e.target
-        setBoxParams((prevParams) => ({ ...prevParams, depth: Number(value) }))
+        const { width, height, depth } = boxParams.params
+        const newBoxPatternGeom = new THREE.BoxGeometry(width, height, Number(value));
+        setBoxParams((prev) => ({
+            ...prev, params: { ...prev.params, depth: Number(value) },
+            boxMesh: { ...prev.boxMesh, geometry: newBoxPatternGeom }
+        }))
     }
 
     const positionXChange = (e) => {
         const { value } = e.target
-        setCoordinates((prevCoordinates) => ({ ...prevCoordinates, x: Number(value) }))
+        setBoxParams((prev) => ({ ...prev, position: { ...prev.position, x: Number(value) } }))
     }
 
     const positionYChange = (e) => {
         const { value } = e.target
-        setCoordinates((prevCoordinates) => ({ ...prevCoordinates, y: Number(value) }))
+        setBoxParams((prev) => ({ ...prev, position: { ...prev.position, y: Number(value) } }))
     }
 
     const positionZChange = (e) => {
         const { value } = e.target
-        setCoordinates((prevCoordinates) => ({ ...prevCoordinates, z: Number(value) }))
+        setBoxParams((prev) => ({ ...prev, position: { ...prev.position, z: Number(value) } }))
+    }
+
+    const handleBoxCreate = () => {
+        const boxMaterial = new THREE.MeshPhongMaterial({
+            color: 0xa0a0a0,
+            specular: 0x494949,
+            shininess: 100,
+            side: THREE.DoubleSide,
+        });
+
+        setBoxParams((prev) => ({ ...prev, visible: false, boxMesh: { ...prev.boxMesh, material: boxMaterial } }))
+
+        scene.remove(transformControl)
+
+        // + ПОЗИЦИЮ БОКСА НА СЕРВЕР 
+        const stlExporter = new STLExporter()
+        const stlData = stlExporter.parse(boxData.boxMesh, { binary: true })
+        const stlBlob = new Blob([stlData], { type: 'application/octet-stream' })
+        const file = new File([stlBlob], 'box.stl')
+        onCreate({ 'Angle': '120', 'IdProject': projectId, 'File': file }, 'box')
+    }
+
+    const handleCloseForm = () => {
+        setBoxParams((prev) => ({ ...prev, visible: false }))
+        scene.children.forEach((object) => {
+            if (object.isMesh && object.uuid === boxParams.boxMesh.uuid) {
+                scene.remove(object)
+                transformControl.detach()
+            }
+        });
+        scene.remove(transformControl)
     }
 
     const Input = ({ label, value, onChange }) => {
         return (
             <div className='flex flex-row items-center justify-between'>
-                <label className=''>{label}</label>
+                <label htmlFor={label}>{label}</label>
                 <div className='flex flex-row items-center mr-2 '>
-                    <input type='number' value={value} onChange={onChange}
+                    <input id={label} type='number' value={value} onChange={onChange}
                         className='h-8 w-[140px] p-2 focus:outline-[0] text-day-350 border rounded-md outline-none 
                             bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]'/>
                     <p className='ml-2'>m</p>
@@ -90,7 +129,7 @@ export default function BoxForm({ params, position, onParamsChange, onPositionCh
                     <button type="button"
                         className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 
                             active:bg-day-150 flex items-center justify-center"
-                        onClick={onCloseForm}>
+                        onClick={handleCloseForm}>
                         <SvgSelector id='close' />
                     </button>
                 </div>
@@ -108,9 +147,9 @@ export default function BoxForm({ params, position, onParamsChange, onPositionCh
                             <p className='font-semibold ml-[7px]'>Parameters</p>
                         </div>
                         {paramsVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
-                            <Input label='Width' value={boxParams.width} onChange={widthChange} />
-                            <Input label='Height' value={boxParams.height} onChange={heightChange} />
-                            <Input label='Depth' value={boxParams.depth} onChange={depthChange} />
+                            <Input label='Width' value={boxParams.params.width} onChange={widthChange} />
+                            <Input label='Height' value={boxParams.params.height} onChange={heightChange} />
+                            <Input label='Depth' value={boxParams.params.depth} onChange={depthChange} />
                         </div> : ''}
                     </div>
                     <div className='my-3'>
@@ -124,9 +163,9 @@ export default function BoxForm({ params, position, onParamsChange, onPositionCh
                             <p className='font-semibold ml-[7px]'>Position</p>
                         </div>
                         {positionVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
-                            <Input label='X' value={coordinates.x} onChange={positionXChange} />
-                            <Input label='Y' value={coordinates.y} onChange={positionYChange} />
-                            <Input label='Z' value={coordinates.z} onChange={positionZChange} />
+                            <Input label='X' value={boxParams.position.x} onChange={positionXChange} />
+                            <Input label='Y' value={boxParams.position.y} onChange={positionYChange} />
+                            <Input label='Z' value={boxParams.position.z} onChange={positionZChange} />
                         </div> : ''}
                     </div>
                 </div>
