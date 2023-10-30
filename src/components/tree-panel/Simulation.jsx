@@ -3,13 +3,15 @@ import SvgSelector from '../SvgSelector'
 import DropdownSettings from './DropdownSettings'
 import DeleteSimulation from './DeleteSimulation'
 import Setting from './Setting'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setUserValue } from '@/store/slices/paramsSlice'
+import { setSetting } from '@/store/slices/settingSlice'
 
 export default function Simulation({ id, name }) {
     const [simulationOpen, setSimulationOpen] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
     const userValue = useSelector(state => state.params.params)
+    const dispatch = useDispatch()
 
     const handleRunClick = async () => {
 
@@ -73,6 +75,7 @@ export default function Simulation({ id, name }) {
             </DropdownSettings>,
             child: true
         }
+
     ]
 
     return (
@@ -113,6 +116,14 @@ export default function Simulation({ id, name }) {
                                     </li>
                             })}
                             <button className="flex w-full items-center gap-2 rounded-lg px-2 h-9 text-base font-normal 
+                            text-day-350 hover:bg-day-150 active:bg-day-200 duration-300 "
+                                onClick={() => dispatch(setSetting({ formName: 'mesh', formTitle: 'Mesh' }))}>
+                                <span className='w-5'>
+                                    <SvgSelector id='mesh' />
+                                </span>
+                                <p className='text-ellipsis whitespace-nowrap overflow-hidden'>Mesh</p>
+                            </button>
+                            <button className="flex w-full items-center gap-2 rounded-lg px-2 h-9 text-base font-normal 
                             text-[#ef7931] hover:bg-day-150 active:bg-day-200 duration-300 "
                                 onClick={handleRunClick}>
                                 <span className='w-5'>
@@ -120,6 +131,7 @@ export default function Simulation({ id, name }) {
                                 </span>
                                 <p className='text-ellipsis whitespace-nowrap overflow-hidden'>Simulation Run</p>
                             </button>
+
                         </ul>
                     </div>
                 ) : ""
