@@ -19,10 +19,9 @@ import TransformForm from './TransformForm'
 import CylinderForm from './CylinderForm'
 import BoxForm from './BoxForm'
 import addGeometry from '@/pages/api/set_geometry'
-import { Lut } from 'three/addons/math/Lut.js';
 import ControlPanel from './ControlPanel'
 
-export default function Scena({ }) {
+export default function Scene({ }) {
     const containerRef = useRef(null)
     const didLogRef = useRef(false)
 
@@ -514,7 +513,7 @@ export default function Scena({ }) {
                         <TreePanel />
                     </div>
 
-                    <div className={` w-[335px] mr-[10px] h-fit relative
+                    <div className={` w-[390px] mr-[10px] h-fit relative
                     ${selectedSetting !== null && selectedSetting === (formName) ? '' : 'hidden'}`}>
                         <SettingForm />
                     </div>
