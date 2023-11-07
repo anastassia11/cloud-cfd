@@ -4,7 +4,7 @@ import TreePanel from '../tree-panel/TreePanel'
 import BoxForm from './BoxForm'
 import ControlPanel from './ControlPanel'
 import CylinderForm from './CylinderForm'
-import GeometriesPanel from './GeometriesPanel'
+import GeometriesPanel from '../geometries-panel/GeometriesPanel'
 import TransformForm from './TransformForm'
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from "three"

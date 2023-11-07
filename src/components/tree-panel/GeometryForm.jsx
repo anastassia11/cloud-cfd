@@ -6,7 +6,7 @@ import getGeometries from '@/pages/api/get_geometries'
 import { setGeometries } from '@/store/slices/projectSlice'
 import { resetSetting } from '@/store/slices/settingSlice'
 import { Oval } from 'react-loader-spinner'
-import DeleteGeometry from '../scenes/DeleteGeometry'
+import DeleteGeometry from '../geometries-panel/DeleteGeometry'
 
 export default function GeometryForm({ }) {
     const geoms = useSelector(state => state.project.geometries)
