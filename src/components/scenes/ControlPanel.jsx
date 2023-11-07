@@ -2,36 +2,27 @@ import { useEffect, useState } from 'react';
 import SvgSelector from '../SvgSelector';
 import * as THREE from "three"
 
-export default function ControlPanel({ scene, transformControl, selectionMode, onModeChange,
-    onBoxDataChange, onCylinderDataChange }) {
+export default function ControlPanel({ selectionMode, onModeChange, setPrimitiveData }) {
     const [mode, setMode] = useState(selectionMode)
 
     const handleBoxClick = () => {
         const boxPatternGeom = new THREE.BoxGeometry(3, 30, 30);
         const boxPatternMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
         const box = new THREE.Mesh(boxPatternGeom, boxPatternMaterial);
-        scene.add(box)
-        onBoxDataChange({
-            visible: true, name: 'box', boxMesh: box,
+        setPrimitiveData({
+            visible: true, name: 'box', mesh: box,
             params: boxPatternGeom.parameters, position: box.position
         })
-        transformControl.attach(box)
-        transformControl.uid = box.uid
-        scene.add(transformControl)
     }
 
     const handleCylinderClick = () => {
         const cylinderGeom = new THREE.CylinderGeometry(5, 5, 20)
         const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true })
         const cylinder = new THREE.Mesh(cylinderGeom, cylinderMaterial)
-        scene.add(cylinder)
-        onCylinderDataChange({
-            visible: true, name: 'cylinder', cylinderMesh: cylinder,
+        setPrimitiveData({
+            visible: true, name: 'cylinder', mesh: cylinder,
             params: cylinderGeom.parameters, position: cylinder.position
         })
-        transformControl.attach(cylinder)
-        transformControl.uid = cylinder.uid
-        scene.add(transformControl)
     }
 
     useEffect(() => {
