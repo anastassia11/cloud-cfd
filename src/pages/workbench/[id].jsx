@@ -1,9 +1,11 @@
-import Scena from '@/components/scena/Scena'
+import MeshScene from '@/components/scenes/MeshScene'
+import GeometryScene from '@/components/scenes/GeometryScene'
 import { setLoader } from '@/store/slices/loaderSlice'
 import { setProject } from '@/store/slices/projectSlice'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import Workbench from '@/components/scenes/Workbench'
 
 export default function WorkbenchPage() {
     const router = useRouter()
@@ -27,7 +29,7 @@ export default function WorkbenchPage() {
 
     return (
         <div className=''>
-            <Scena />
+            <Workbench />
         </div>
     )
 }
