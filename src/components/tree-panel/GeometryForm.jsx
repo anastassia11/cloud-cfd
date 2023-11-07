@@ -6,7 +6,7 @@ import getGeometries from '@/pages/api/get_geometries'
 import { setGeometries } from '@/store/slices/projectSlice'
 import { resetSetting } from '@/store/slices/settingSlice'
 import { Oval } from 'react-loader-spinner'
-import DeleteModal from '../scena/DeleteModal'
+import DeleteGeometry from '../scenes/DeleteGeometry'
 
 export default function GeometryForm({ }) {
     const geoms = useSelector(state => state.project.geometries)
@@ -120,7 +120,7 @@ export default function GeometryForm({ }) {
                         <SvgSelector id='delete' className='w-5 h-5' stroke-width={1.3} />
                     </button>
                 </div>
-                {modal ? <DeleteModal onCloseClick={() => setModal(false)} geometry={geometry} /> : ''}
+                {modal ? <DeleteGeometry onCloseClick={() => setModal(false)} geometry={geometry} /> : ''}
             </div>
         )
     }

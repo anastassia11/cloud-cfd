@@ -4,7 +4,7 @@ import SvgSelector from '../SvgSelector'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteGeometries } from '@/store/slices/projectSlice'
 
-export default function DeleteModal({ onCloseClick, geometry }) {
+export default function DeleteGeometry({ onCloseClick, geometry }) {
     const [loading, setLoading] = useState(false)
     const projectId = useSelector(state => state.project.projectId)
     const deleteFormRef = useRef(null)

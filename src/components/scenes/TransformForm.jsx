@@ -15,7 +15,7 @@ export default function TransformForm({ geomName, position, onPositionChange, on
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
-        onCloseForm()
+        onCloseForm('transformForm')
     }
 
     const positionXChange = (e) => {
@@ -82,9 +82,9 @@ export default function TransformForm({ geomName, position, onPositionChange, on
 
                 <span className='mt-4'>Volume Rotation Angle, °</span>
                 <div className='flex flex-row justify-between mt-2'>
-                    <AngleInput label='X' value={0} onChange='' />
-                    <AngleInput label='Y' value={0} onChange='' />
-                    <AngleInput label='Z' value={0} onChange='' />
+                    <AngleInput label='X' value={0} onChange={() => { }} />
+                    <AngleInput label='Y' value={0} onChange={() => { }} />
+                    <AngleInput label='Z' value={0} onChange={() => { }} />
                 </div>
             </div>
         </form >

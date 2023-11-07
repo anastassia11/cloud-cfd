@@ -47,7 +47,7 @@ export default function FormGenerator({ formName, formTitle }) {
                     onChange={handleInputChange}
                     className='h-8 w-3/4 p-2 focus:outline-[0] text-day-350 border rounded-md outline-none bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]' >
                 </input>
-                <span className="px-2 w-1/4 text-center cursor-default">{formValues[key].unit}</span>
+                <span className={`px-2 w-1/4 text-center cursor-default ml-1 ${formValues[key].unit && 'border-b py-[4px]'}`}>{formValues[key].unit}</span>
             </div>
         return (
             <div key={key} className='flex flex-row items-end mt-2'>

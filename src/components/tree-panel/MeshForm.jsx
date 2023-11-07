@@ -26,14 +26,13 @@ export default function MeshForm() {
 
     const selectDataChange = (e) => {
         const { name, value } = e.target
-        console.log(e.target)
         setFormData((prev) => ({ ...prev, [name]: value }))
     }
 
     const Input = ({ label, name, unit }) => {
         return (
             <div className='flex flex-row items-end mb-2 justify-between h-8'>
-                <label htmlFor={name} className='w-full text-left'>{label}</label>
+                <label htmlFor={name} className='w-full text-left text-ellipsis overflow-hidden whitespace-nowrap'>{label}</label>
                 <div className="flex flex-row items-center w-[250px]">
                     <input type="number" id={name} name={name} value={formData[name]} onChange={inputDataChange}
                         className={`h-8 ${unit ? 'w-3/4' : 'w-full'} p-2 focus:outline-[0] text-day-350 border rounded-md 
@@ -82,9 +81,9 @@ export default function MeshForm() {
     }
 
     const thickness = {
-        "FirstLayerThickness": "First layer thickness",
-        "FinalLayerThickness": "Final layer thickness",
-        "Thickness": "Thickness",
+        FirstLayerThickness: "First layer thickness",
+        FinalLayerThickness: "Final layer thickness",
+        Thickness: "Thickness",
     }
 
     return (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import ModelPart from './ModelPart'
 import SvgSelector from '../SvgSelector'
-import DeleteModal from './DeleteModal'
+import DeleteGeometry from './DeleteGeometry'
 import { useDispatch } from 'react-redux'
 import { updateGeometries } from '@/store/slices/projectSlice'
 
@@ -119,7 +119,7 @@ export default function Geometry({ geom = [], hidePartObject }) {
                     </ul>
                 ) : ""
             }
-            {modal ? <DeleteModal onCloseClick={() => setModal(false)} geometry={geometry} /> : ''}
+            {modal ? <DeleteGeometry onCloseClick={() => setModal(false)} geometry={geometry} /> : ''}
         </div >
     )
 }
