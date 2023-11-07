@@ -1,103 +1,62 @@
 import { useEffect, useState } from 'react'
 import SvgSelector from '../SvgSelector'
-import * as THREE from "three"
-import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
-import { useSelector } from 'react-redux'
 
-export default function BoxForm({ scene, transformControl, boxData, onBoxDataChange, onCreate }) {
-    const projectId = useSelector(state => state.project.projectId)
-
-    const [boxParams, setBoxParams] = useState(boxData)
+export default function BoxForm({ boxParams, boxPosition, onBoxDataChange, onCloseForm, onCreate }) {
+    const [boxData, setBoxData] = useState({ params: boxParams, position: boxPosition })
     const [paramsVisible, setParamsVisible] = useState(true)
     const [positionVisible, setPositionVisible] = useState(true)
 
     useEffect(() => {
-        setBoxParams(boxData)
-    }, [boxData])
+        setBoxData({ params: boxParams, position: boxPosition })
+    }, [boxParams, boxPosition])
 
     useEffect(() => {
-        onBoxDataChange(boxParams)
-    }, [boxParams])
+        onBoxDataChange(boxData)
+    }, [boxData])
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
-        handleBoxCreate()
+        onCreate()
     }
 
     const widthChange = (e) => {
         const { value } = e.target
-        const { width, height, depth } = boxParams.params
-        const newBoxPatternGeom = new THREE.BoxGeometry(Number(value), height, depth);
-        setBoxParams((prev) => ({
-            ...prev, params: { ...prev.params, width: Number(value) },
-            boxMesh: { ...prev.boxMesh, geometry: newBoxPatternGeom }
+        setBoxData((prev) => ({
+            ...prev, params: { ...prev.params, width: Number(value) }
         }))
     }
 
     const heightChange = (e) => {
         const { value } = e.target
-        const { width, height, depth } = boxParams.params
-        const newBoxPatternGeom = new THREE.BoxGeometry(width, Number(value), depth);
-        setBoxParams((prev) => ({
-            ...prev, params: { ...prev.params, height: Number(value) },
-            boxMesh: { ...prev.boxMesh, geometry: newBoxPatternGeom }
+        setBoxData((prev) => ({
+            ...prev, params: { ...prev.params, height: Number(value) }
         }))
     }
 
     const depthChange = (e) => {
         const { value } = e.target
-        const { width, height, depth } = boxParams.params
-        const newBoxPatternGeom = new THREE.BoxGeometry(width, height, Number(value));
-        setBoxParams((prev) => ({
-            ...prev, params: { ...prev.params, depth: Number(value) },
-            boxMesh: { ...prev.boxMesh, geometry: newBoxPatternGeom }
+        setBoxData((prev) => ({
+            ...prev, params: { ...prev.params, depth: Number(value) }
         }))
     }
 
     const positionXChange = (e) => {
         const { value } = e.target
-        setBoxParams((prev) => ({ ...prev, position: { ...prev.position, x: Number(value) } }))
+        setBoxData((prev) => ({ ...prev, position: { ...prev.position, x: Number(value) } }))
     }
 
     const positionYChange = (e) => {
         const { value } = e.target
-        setBoxParams((prev) => ({ ...prev, position: { ...prev.position, y: Number(value) } }))
+        setBoxData((prev) => ({ ...prev, position: { ...prev.position, y: Number(value) } }))
     }
 
     const positionZChange = (e) => {
         const { value } = e.target
-        setBoxParams((prev) => ({ ...prev, position: { ...prev.position, z: Number(value) } }))
-    }
-
-    const handleBoxCreate = () => {
-        const boxMaterial = new THREE.MeshPhongMaterial({
-            color: 0xa0a0a0,
-            specular: 0x494949,
-            shininess: 100,
-            side: THREE.DoubleSide,
-        });
-
-        setBoxParams((prev) => ({ ...prev, visible: false, boxMesh: { ...prev.boxMesh, material: boxMaterial } }))
-
-        scene.remove(transformControl)
-
-        // + ПОЗИЦИЮ БОКСА НА СЕРВЕР 
-        const stlExporter = new STLExporter()
-        const stlData = stlExporter.parse(boxData.boxMesh, { binary: true })
-        const stlBlob = new Blob([stlData], { type: 'application/octet-stream' })
-        const file = new File([stlBlob], 'box.stl')
-        onCreate({ 'Angle': '120', 'IdProject': projectId, 'File': file }, 'box')
+        setBoxData((prev) => ({ ...prev, position: { ...prev.position, z: Number(value) } }))
     }
 
     const handleCloseForm = () => {
-        setBoxParams((prev) => ({ ...prev, visible: false }))
-        scene.children.forEach((object) => {
-            if (object.isMesh && object.uuid === boxParams.boxMesh.uuid) {
-                scene.remove(object)
-                transformControl.detach()
-            }
-        });
-        scene.remove(transformControl)
+        onCloseForm('primitiveForm')
     }
 
     const Input = ({ label, value, onChange }) => {
@@ -147,9 +106,9 @@ export default function BoxForm({ scene, transformControl, boxData, onBoxDataCha
                             <p className='font-semibold ml-[7px]'>Parameters</p>
                         </div>
                         {paramsVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
-                            <Input label='Width' value={boxParams.params.width} onChange={widthChange} />
-                            <Input label='Height' value={boxParams.params.height} onChange={heightChange} />
-                            <Input label='Depth' value={boxParams.params.depth} onChange={depthChange} />
+                            <Input label='Width' value={boxData.params.width} onChange={widthChange} />
+                            <Input label='Height' value={boxData.params.height} onChange={heightChange} />
+                            <Input label='Depth' value={boxData.params.depth} onChange={depthChange} />
                         </div> : ''}
                     </div>
                     <div className='my-3'>
@@ -163,9 +122,9 @@ export default function BoxForm({ scene, transformControl, boxData, onBoxDataCha
                             <p className='font-semibold ml-[7px]'>Position</p>
                         </div>
                         {positionVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
-                            <Input label='X' value={boxParams.position.x} onChange={positionXChange} />
-                            <Input label='Y' value={boxParams.position.y} onChange={positionYChange} />
-                            <Input label='Z' value={boxParams.position.z} onChange={positionZChange} />
+                            <Input label='X' value={boxData.position.x} onChange={positionXChange} />
+                            <Input label='Y' value={boxData.position.y} onChange={positionYChange} />
+                            <Input label='Z' value={boxData.position.z} onChange={positionZChange} />
                         </div> : ''}
                     </div>
                 </div>

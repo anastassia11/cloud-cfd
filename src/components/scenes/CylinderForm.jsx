@@ -1,91 +1,55 @@
 import { useEffect, useState } from 'react'
 import SvgSelector from '../SvgSelector'
-import { useSelector } from 'react-redux'
-import * as THREE from "three"
-import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
 
-export default function CylinderForm({ scene, transformControl, cylinderData, onCylinderDataChange, onCreate }) {
-    const projectId = useSelector(state => state.project.projectId)
-
-    const [cylinderParams, setCylinderParams] = useState(cylinderData)
+export default function CylinderForm({ cylinderParams, cylinderPosition, onCylinderDataChange, onCloseForm, onCreate }) {
+    const [cylinderData, setCylinderData] = useState({ params: cylinderParams, position: cylinderPosition })
     const [paramsVisible, setParamsVisible] = useState(true)
     const [positionVisible, setPositionVisible] = useState(true)
 
     useEffect(() => {
-        setCylinderParams(cylinderData)
-    }, [cylinderData])
+        setCylinderData({ params: cylinderParams, position: cylinderPosition })
+    }, [cylinderParams, cylinderPosition])
 
     useEffect(() => {
-        onCylinderDataChange(cylinderParams)
-    }, [cylinderParams])
+        onCylinderDataChange(cylinderData)
+    }, [cylinderData])
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
-        handleCylinderCreate()
+        onCreate()
     }
 
     const heightChange = (e) => {
         const { value } = e.target
-        const { radiusTop, radiusBottom, height } = cylinderParams.params
-        const newCylinderPatternGeom = new THREE.CylinderGeometry(radiusTop, radiusBottom, value);
-        setCylinderParams((prev) => ({
-            ...prev, params: { ...prev.params, height: Number(value) },
-            cylinderMesh: { ...prev.cylinderMesh, geometry: newCylinderPatternGeom }
+        setCylinderData((prev) => ({
+            ...prev, params: { ...prev.params, height: Number(value) }
         }))
     }
 
     const radiusChange = (e) => {
         const { value } = e.target
-        const { radiusTop, radiusBottom, height } = cylinderParams.params
-        const newCylinderPatternGeom = new THREE.CylinderGeometry(value, value, height);
-        setCylinderParams((prev) => ({
-            ...prev, params: { ...prev.params, radiusTop: Number(value), radiusBottom: Number(value) },
-            cylinderMesh: { ...prev.cylinderMesh, geometry: newCylinderPatternGeom }
+        setCylinderData((prev) => ({
+            ...prev, params: { ...prev.params, radiusTop: Number(value), radiusBottom: Number(value) }
         }))
     }
 
     const positionXChange = (e) => {
         const { value } = e.target
-        setCylinderParams((prev) => ({ ...prev, position: { ...prev.position, x: Number(value) } }))
+        setCylinderData((prev) => ({ ...prev, position: { ...prev.position, x: Number(value) } }))
     }
 
     const positionYChange = (e) => {
         const { value } = e.target
-        setCylinderParams((prev) => ({ ...prev, position: { ...prev.position, y: Number(value) } }))
+        setCylinderData((prev) => ({ ...prev, position: { ...prev.position, y: Number(value) } }))
     }
 
     const positionZChange = (e) => {
         const { value } = e.target
-        setCylinderParams((prev) => ({ ...prev, position: { ...prev.position, z: Number(value) } }))
-    }
-
-    const handleCylinderCreate = () => {
-        const cylinderMaterial = new THREE.MeshPhongMaterial({
-            color: 0xa0a0a0,
-            specular: 0x494949,
-            shininess: 100,
-            side: THREE.DoubleSide,
-        });
-
-        setCylinderParams((prev) => ({
-            ...prev, visible: false,
-            cylinderMesh: { ...prev.cylinderMesh, material: cylinderMaterial }
-        }))
-
-        scene.remove(transformControl)
-
-        // + ПОЗИЦИЮ БОКСА НА СЕРВЕР 
-        const stlExporter = new STLExporter()
-        const stlData = stlExporter.parse(cylinderData.cylinderMesh, { binary: true })
-        const stlBlob = new Blob([stlData], { type: 'application/octet-stream' })
-        const file = new File([stlBlob], 'cylinder.stl')
-        onCreate({ 'Angle': '120', 'IdProject': projectId, 'File': file }, 'cylinder')
+        setCylinderData((prev) => ({ ...prev, position: { ...prev.position, z: Number(value) } }))
     }
 
     const handleCloseForm = () => {
-        scene.remove(cylinderParams.cylinderMesh)
-        setCylinderParams((prev) => ({ ...prev, visible: false }))
-        scene.remove(transformControl)
+        onCloseForm('primitiveForm')
     }
 
     const Input = ({ label, value, onChange }) => {
@@ -135,8 +99,8 @@ export default function CylinderForm({ scene, transformControl, cylinderData, on
                             <p className='font-semibold ml-[7px]'>Parameters</p>
                         </div>
                         {paramsVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
-                            <Input label='Height' value={cylinderParams.params.height} onChange={heightChange} />
-                            <Input label='Radius' value={cylinderParams.params.radiusTop} onChange={radiusChange} />
+                            <Input label='Height' value={cylinderData.params.height} onChange={heightChange} />
+                            <Input label='Radius' value={cylinderData.params.radiusTop} onChange={radiusChange} />
                         </div> : ''}
                     </div>
                     <div>
@@ -150,9 +114,9 @@ export default function CylinderForm({ scene, transformControl, cylinderData, on
                             <p className='font-semibold ml-[7px]'>Position</p>
                         </div>
                         {positionVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
-                            <Input label='X' value={cylinderParams.position.x} onChange={positionXChange} />
-                            <Input label='Y' value={cylinderParams.position.y} onChange={positionYChange} />
-                            <Input label='Z' value={cylinderParams.position.z} onChange={positionZChange} />
+                            <Input label='X' value={cylinderData.position.x} onChange={positionXChange} />
+                            <Input label='Y' value={cylinderData.position.y} onChange={positionYChange} />
+                            <Input label='Z' value={cylinderData.position.z} onChange={positionZChange} />
                         </div> : ''}
                     </div>
                 </div>
