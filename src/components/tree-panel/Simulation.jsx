@@ -33,21 +33,25 @@ export default function Simulation({ id, name }) {
 
     const initialChildren = [
         {
+            id: 'gaudePressure',
             setting: <Setting formTitle='(P) Gaude pressure' formName='gaudePressureForm'
                 inputs={userValue.gaudePressureForm} />,
             child: false
         },
         {
+            id: 'velocityF',
             setting: <Setting formTitle='(U) Velocity' formName='velocityForm'
                 inputs={userValue.velocityForm} />,
             child: false
         },
         {
+            id: 'turbKinetic',
             setting: <Setting formTitle='(k) Turb. kinetic energy' formName='turbKineticForm'
                 inputs={userValue.turbKineticForm} />,
             child: false
         },
         {
+            id: 'dissipation',
             setting: <Setting formTitle='(ω) Specific dissipation rate' formName='dissipationForm'
                 inputs={userValue.dissipationForm} />,
             child: false
@@ -55,21 +59,24 @@ export default function Simulation({ id, name }) {
     ]
     const advancedChildren = [
         {
+            id: 'simulationControl',
             setting: <Setting formTitle='Simulation control' formName='simulationControlForm'
                 inputs={userValue.simulationControlForm} />,
             child: false
         },
     ]
     const settings = [
-        { setting: <Setting formTitle='Geomerty' formName='geomerty' />, child: false },
-        { setting: <Setting formTitle='Materials' formName='materials' />, child: false },
+        { id: 'geomerty', setting: <Setting formTitle='Geomerty' formName='geomerty' />, child: false },
+        { id: 'materials', setting: <Setting formTitle='Materials' formName='materials' />, child: false },
         {
+            id: 'initialConditions',
             setting: <DropdownSettings items={initialChildren}>
                 Initial conditions
             </DropdownSettings>,
             child: true
         },
         {
+            id: 'advancedConcept',
             setting: <DropdownSettings items={advancedChildren}>
                 Advanced concept
             </DropdownSettings>,
@@ -110,8 +117,8 @@ export default function Simulation({ id, name }) {
                     <div className="border-l ml-[17px]">
                         <ul className="text-base font-normal flex-1 ml-3">
                             {settings.map((item) => {
-                                return item.child ? <li key={item.setting}>{item.setting}</li> :
-                                    <li key={item.setting}>
+                                return item.child ? <li key={item.id}>{item.setting}</li> :
+                                    <li key={item.id}>
                                         {item.setting}
                                     </li>
                             })}

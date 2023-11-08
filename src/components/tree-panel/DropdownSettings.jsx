@@ -22,7 +22,7 @@ export default function DropdownSettings({ children, items }) {
                     <ul className="ml-4 pl-2 border-l text-base font-normal">
                         {
                             items.map((item) => (
-                                <li key={item.setting}>
+                                <li key={item.id}>
                                     <button className="w-full">
                                         {item.setting}
                                     </button>

@@ -21,7 +21,6 @@ export default function Header() {
     useEffect(() => {
         email.current = localStorage.getItem('email')
         login.current = email.current?.split('@')[0]
-        console.log(email.current)
     }, [router])
 
     return (
@@ -31,7 +30,7 @@ export default function Header() {
                 <Image src={logo} width={500} height={500} alt='cloudCFD'
                     className='w-32 cursor-pointer' onClick={() => router.push(' /')} />
                 <div className='flex flex-row items-center space-x-1'>
-                    {email.current && <Link href="/dashboard" prefetch={true}
+                    {email.current && <Link href="/dashboard"
                         className='text-day-350 hover:bg-day-50 flex items-center hover:border-b-2 
                             hover:border-orange-100 duration-100 h-[56px] px-3'
                         onClick={() => router.push('/dashboard')}>

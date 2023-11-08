@@ -20,7 +20,7 @@ export default function GeometryForm({ }) {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        setFiles(geoms)
+        geoms && setFiles(geoms)
         setFileCount(geoms?.length)
     }, [geoms])
 
@@ -117,7 +117,7 @@ export default function GeometryForm({ }) {
                     }
                     <button className="pl-1" id='button' type='button'
                         onClick={(e) => handleDeleteClick(e)}>
-                        <SvgSelector id='delete' className='w-5 h-5' stroke-width={1.3} />
+                        <SvgSelector id='delete' className='w-5 h-5' strokeWidth={1.3} />
                     </button>
                 </div>
                 {modal ? <DeleteGeometry onCloseClick={() => setModal(false)} geometry={geometry} /> : ''}
@@ -142,7 +142,7 @@ export default function GeometryForm({ }) {
                 onDrop={e => handleDrop(e)}>
                 <SvgSelector id='cloud-drop' />
                 <p className="text-sm pt-2">Add your file</p></div>
-            : <label for='geometry_file'
+            : <label htmlFor='geometry_file'
                 className="flex flex-col text-day-350 justify-start pt-4 items-center space-y-2 bg-day-50 
                     hover:bg-day-100 hover:border-gray-400 h-full rounded border-dashed border-[1.5px] 
                     border-gray-300 duration-300 cursor-pointer"
