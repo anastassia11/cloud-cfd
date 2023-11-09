@@ -8,7 +8,7 @@ import React, { useRef, useEffect, useState, useImperativeHandle, forwardRef } f
 import { BASE_SERVER_URL } from '@/utils/constants'
 import getGeometries from '@/pages/api/get_geometries'
 import { useDispatch, useSelector } from 'react-redux'
-import { addSelectedPart, deleteSelectedPart, setGeometries } from '@/store/slices/projectSlice'
+import { addSelectedPart, deleteSelectedPart, setGeometries, setMeshParams } from '@/store/slices/projectSlice'
 import { setLoader } from '@/store/slices/loaderSlice'
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
 import addGeometry from '@/pages/api/set_geometry'
@@ -66,12 +66,14 @@ function GeometryScene({ scene, camera, selectionMode, setTransformFormData, set
     }, [groups])
 
     useEffect(() => {
-        console.log(meshes)
+        const boundingBox = computeBoundingBox()
+        console.log(boundingBox)
+        dispatch(setMeshParams({ params: boundingBox }))
     }, [meshes])
 
     useImperativeHandle(ref, () => ({
         hidePartObject, handlePositionChange, handleCloseForm, addTransformControl,
-        changeBoxData, changeCylinderData, addToGeomScene, addPrimitive
+        changeBoxData, changeCylinderData, addToGeomScene, addPrimitive, computeBoundingBox
     }))
 
     async function loadGeoms() {
@@ -99,6 +101,7 @@ function GeometryScene({ scene, camera, selectionMode, setTransformFormData, set
                     stlLoader.load(
                         BASE_SERVER_URL + model.link,
                         (geometry) => {
+
                             //geometry.computeBoundingSphere()
                             //center.add(geometry.boundingSphere.center)
                             const meshMaterial = new THREE.MeshPhongMaterial({
@@ -204,9 +207,6 @@ function GeometryScene({ scene, camera, selectionMode, setTransformFormData, set
 
     function takeSnapshot() {
         dataUrl.current = renderer.current.domElement.toDataURL('image/png')
-        //console.log(snapshot); 
-
-        //cancelAnimationFrame(requestAnimationFrame(animate));
     }
 
     function addListeners() {
@@ -426,6 +426,23 @@ function GeometryScene({ scene, camera, selectionMode, setTransformFormData, set
             alert(result.message)
             dispatch(setLoader(false))
         }
+    }
+
+    const computeBoundingBox = () => {
+        const group = new THREE.Group()
+        for (let mesh of meshes) {
+            group.add(mesh.clone())
+        }
+        const box = new THREE.Box3().setFromObject(group);
+        const boundingBox = {
+            XMin: box.min.x * 1.5,
+            XMax: box.max.x * 1.5,
+            YMin: box.min.y * 1.5,
+            YMax: box.max.y * 1.5,
+            ZMin: box.min.z * 1.5,
+            ZMax: box.max.z * 1.5
+        }
+        return boundingBox
     }
 
     return (

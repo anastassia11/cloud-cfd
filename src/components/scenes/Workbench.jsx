@@ -87,6 +87,9 @@ export default function Workbench() {
     function callCloseForm(formName) {
         geometrySceneRef.current.handleCloseForm(formName)
     }
+    function callComputeBoundingBox() {
+        geometrySceneRef.current.computeBoundingBox()
+    }
 
     function addPrimitivePattern(newData) {
         setPrimitiveData(newData)
