@@ -1,5 +1,6 @@
 import updateGeometry from '@/pages/api/update_geom'
 import { createSlice } from '@reduxjs/toolkit'
+import meshFormDefault from '@/components/tree-panel/assets/meshFormData.json'
 
 const projectSlice = createSlice({
     name: 'project',
@@ -7,7 +8,8 @@ const projectSlice = createSlice({
         projectId: null,
         simulations: [],
         geometries: [],
-        selectedPart: []
+        selectedPart: [],
+        meshParams: meshFormDefault
     },
 
     reducers: {
@@ -33,16 +35,15 @@ const projectSlice = createSlice({
                 if (geom.uid === updatedGeom.uid) {
                     return updatedGeom
                 } else return geom
-            });
-
+            })
             const result = updateGeometry(1, JSON.stringify(state.geometries))
-
         },
 
         deleteGeometries(state, action) {
             const deletedGeom = action.payload.deletedGeometry
             state.geometries = state.geometries.filter((geom) => geom.uid !== deletedGeom.uid)
             const result = updateGeometry(action.payload.projectId, JSON.stringify(state.geometries))
+
         },
 
         setSimulations(state, action) {
@@ -56,10 +57,18 @@ const projectSlice = createSlice({
         deleteSimulation(state, action) {
             const deletedSimId = action.payload.deletedSimulation
             state.simulations = state.simulations.filter((sim) => sim.id !== deletedSimId)
-        }
+        },
+
+        setMeshParams(state, action) {
+            const params = action.payload.params
+            for (let key in params) {
+                state.meshParams[key] = params[key]
+            }
+        },
     }
 })
 
 export const { setProject, setGeometries, updateGeometries, deleteGeometries,
-    setSimulations, addSimulation, deleteSimulation, addSelectedPart, deleteSelectedPart } = projectSlice.actions;
+    setSimulations, addSimulation, deleteSimulation, addSelectedPart, deleteSelectedPart,
+    setMeshParams } = projectSlice.actions;
 export default projectSlice.reducer

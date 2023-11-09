@@ -1,13 +1,17 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import SvgSelector from '../SvgSelector';
 import { resetSetting } from '@/store/slices/settingSlice';
-import { useEffect, useState } from 'react';
-import meshFormDefault from '@/components/tree-panel/assets/meshFormData.json'
+import { useState } from 'react';
+import { setMeshParams } from '@/store/slices/projectSlice';
+import createMesh from '@/pages/api/create_mesh';
 
 export default function MeshForm() {
     const dispatch = useDispatch()
-    const [formData, setFormData] = useState(meshFormDefault)
-    const [advancedSettingsVisible, setAdvancedSettingsVisible] = useState(true)
+    const projectId = useSelector(state => state.project.projectId)
+    const meshFormData = useSelector(state => state.project.meshParams)
+    const [formData, setFormData] = useState(meshFormData)
+    const [advancedSettingsVisible, setAdvancedSettingsVisible] = useState(false)
+    const [meshState, setMeshState] = useState('not_generated')
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
@@ -27,6 +31,23 @@ export default function MeshForm() {
     const selectDataChange = (e) => {
         const { name, value } = e.target
         setFormData((prev) => ({ ...prev, [name]: value }))
+    }
+
+    const fetchGenerateMesh = async () => {
+        setMeshState('in_progress')
+        const result = await createMesh(projectId, meshFormData)
+        if (result.success) {
+            console.log(result.data)
+            setMeshState('successfully_generated')
+        } else {
+            setMeshState('successfully_generated')
+            alert(result.message)
+        }
+    }
+
+    const generateMesh = () => {
+        dispatch(setMeshParams({ params: formData }))
+        fetchGenerateMesh()
     }
 
     const Input = ({ label, name, unit }) => {
@@ -49,8 +70,7 @@ export default function MeshForm() {
             <div className='flex flex-row items-end mb-2 h-8'>
                 <label htmlFor={name} className='w-full text-left'>{label}</label>
                 <div className="flex flex-row items-center">
-                    <label htmlFor={name} className="relative h-[24px] w-9 cursor-pointer 
-                [-webkit-tap-highlight-color:_transparent]">
+                    <label htmlFor={name} className="relative h-[24px] w-9 cursor-pointer [-webkit-tap-highlight-color:_transparent] transition-all">
                         <input type="checkbox" name={name} id={name} className="peer sr-only" checked={formData[name]}
                             onChange={toogleDataChange} />
                         <span className="absolute inset-0 m-auto h-[6px] rounded-full bg-gray-300"></span>
@@ -78,6 +98,48 @@ export default function MeshForm() {
                 </div>
             </div>
         )
+    }
+
+    const StateBar = ({ }) => {
+        switch (meshState) {
+            case 'not_generated':
+                return (
+                    <button type="button" className="rounded-md text-gray-500  w-[170px] h-8 border bg-day-50 hover:bg-day-100 
+                        active:bg-day-150 flex items-center justify-center"
+                        onClick={generateMesh}>
+                        <SvgSelector id='play' /><p className='ml-1'>Generate Mesh</p>
+                    </button>
+                );
+            case 'in_progress':
+                return (
+                    <>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-gray-400 h-2.5 rounded-full w-[50%] animate-pulse"></div>
+                        </div>
+                        <button type="button" className="w-8 h-8 rounded-md text-gray-500 p-[5px] border bg-day-50 hover:bg-day-100 
+                        active:bg-day-150 flex items-center justify-center"
+                            onClick={() => { }}>
+                            <SvgSelector id='stop' />
+                        </button>
+                    </>
+
+                );
+            case 'successfully_generated':
+                return (
+                    <>
+                        <div class="w-full flex flex-col text-xs ">
+                            <p className='text-green-800'>Finished</p>
+                            <p className=''>Overall mesh quality: 00</p>
+                        </div>
+                        <button type="button" className="w-8 h-8 rounded-md text-gray-500 p-[5px] border bg-day-50 hover:bg-day-100 
+                        active:bg-day-150 flex items-center justify-center"
+                            onClick={generateMesh}>
+                            <SvgSelector id='update' />
+                        </button>
+                    </>
+
+                );
+        }
     }
 
     const thickness = {
@@ -172,10 +234,7 @@ export default function MeshForm() {
                 </div>
             </div>
             <div className='w-full border-t flex flex-row justify-end items-center p-3 space-x-[6px]'>
-                <button type="submit" className="rounded-md text-day-300 w-[170px] h-8 border bg-day-50 hover:bg-day-100 
-                        active:bg-day-150 flex items-center justify-center">
-                    <SvgSelector id='play' /><p className='ml-1'>Generate Mesh</p>
-                </button>
+                <StateBar />
             </div>
         </form>
     )
