@@ -2,24 +2,19 @@ import { useState } from 'react'
 import SvgSelector from '../SvgSelector'
 import DropdownSettings from './DropdownSettings'
 import DeleteSimulation from './DeleteSimulation'
-import Setting from './Setting'
 import { useDispatch, useSelector } from 'react-redux'
-import { setUserValue } from '@/store/slices/paramsSlice'
 import { setSetting } from '@/store/slices/settingSlice'
 
 export default function Simulation({ id, name }) {
     const [simulationOpen, setSimulationOpen] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
     const userValue = useSelector(state => state.params.params)
+    const selectedSetting = useSelector(state => state.setting.setting)
     const dispatch = useDispatch()
 
     const handleRunClick = async () => {
 
     }
-
-    // const handleFormChange = (formName, updatedValue) => {
-    //     dispatch(setUserValue(formName, updatedValue))
-    // }
 
     const handleDeleteClick = (e) => {
         e.stopPropagation()
@@ -29,6 +24,18 @@ export default function Simulation({ id, name }) {
     const deleteSimulation = async () => {
         onDeleteClick()
         setDeleteModal(false)
+    }
+
+    const Setting = ({ formName, formTitle, inputs = {} }) => {
+        return (
+            <>
+                <div className={`flex items-center rounded-md px-2 cursor-pointer text-day-1000 h-9
+                hover:bg-day-150 active:bg-day-200 duration-300 ${selectedSetting === formName && 'bg-day-150'}`}
+                    onClick={() => dispatch(setSetting({ formName, formTitle, inputs, sceneMode: 'geom' }))}>
+                    <p className='text-ellipsis whitespace-nowrap overflow-hidden'>{formTitle}</p>
+                </div>
+            </>
+        )
     }
 
     const initialChildren = [
@@ -118,13 +125,13 @@ export default function Simulation({ id, name }) {
                         <ul className="text-base font-normal flex-1 ml-3">
                             {settings.map((item) => {
                                 return item.child ? <li key={item.id}>{item.setting}</li> :
-                                    <li key={item.id}>
+                                    <li key={item.setting}>
                                         {item.setting}
                                     </li>
                             })}
-                            <button className="flex w-full items-center gap-2 rounded-lg px-2 h-9 text-base font-normal 
-                            text-day-350 hover:bg-day-150 active:bg-day-200 duration-300 "
-                                onClick={() => dispatch(setSetting({ formName: 'mesh', formTitle: 'Mesh' }))}>
+                            <button className={`flex w-full items-center gap-2 rounded-lg px-2 h-9 text-base font-normal 
+                            text-day-350 hover:bg-day-150 active:bg-day-200 duration-300 ${selectedSetting === 'mesh' && 'bg-day-150'}`}
+                                onClick={() => dispatch(setSetting({ formName: 'mesh', formTitle: 'Mesh', sceneMode: 'mesh' }))}>
                                 <span className='w-5'>
                                     <SvgSelector id='mesh' />
                                 </span>

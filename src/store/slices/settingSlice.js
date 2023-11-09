@@ -3,11 +3,11 @@ import { createSlice } from '@reduxjs/toolkit'
 const settingSlice = createSlice({
     name: 'setting',
     initialState: {
-
         setting: null,
         formName: null,
         formTitle: null,
-        inputs: []
+        inputs: [],
+        sceneMode: 'geom'
     },
 
     reducers: {
@@ -16,6 +16,8 @@ const settingSlice = createSlice({
             state.formTitle = action.payload.formTitle
             state.inputs = action.payload.inputs
             state.formName = action.payload.formName
+            state.sceneMode = action.payload.sceneMode
+            console.log(action.payload.sceneMode)
         },
 
         resetSetting(state, action) {
@@ -23,6 +25,7 @@ const settingSlice = createSlice({
             state.formTitle = null
             state.inputs = null
             state.formName = []
+            console.log(state.sceneMode)
         },
 
         setFormValues(state, action) {

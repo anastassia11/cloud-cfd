@@ -27,6 +27,7 @@ export default function Workbench() {
 
     const projectId = useSelector(state => state.project.projectId)
     const selectedSetting = useSelector(state => state.setting.setting)
+    const sceneMode = useSelector(state => state.setting.sceneMode)
     const formName = useSelector(state => state.setting.formName)
     const [selectionMode, setSelectionMode] = useState("face")
 
@@ -118,12 +119,12 @@ export default function Workbench() {
 
     return (
         <div className='min-h-[calc(100vh-56px)] flex w-full' id='for-canvas'>
-            <div className={`${selectedSetting === "mesh" && 'hidden'}`}>
+            <div className={`${sceneMode === "geom" ? 'block' : 'hidden'}`}>
                 <GeometryScene ref={geometrySceneRef} scene={geometryScene.current} camera={camera.current}
                     selectionMode={selectionMode} setTransformFormData={(newData) => setTransformFormData(newData)}
                     setPrimitiveData={(newData) => setPrimitiveData(newData)} />
             </div>
-            <div className={`${selectedSetting !== "mesh" && 'hidden'}`}>
+            <div className={`${sceneMode === "mesh" ? 'block' : 'hidden'}`}>
                 <MeshScene scene={meshScene.current} camera={camera.current} renderer={rendererMesh} />
             </div>
 
