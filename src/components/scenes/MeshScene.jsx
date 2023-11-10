@@ -213,7 +213,6 @@ export default function MeshScene({ scene, camera }) {
     }
 
     return (
-        <canvas tabIndex='1' ref={containerRef}
-            className={`${selectedSetting !== "mesh" && 'hidden'} absolute outline-none overflow-hidden`} />
+        <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
     )
 }

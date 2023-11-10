@@ -4,7 +4,7 @@ import axios from 'axios'
 export default async function createMesh(projectId, meshFormData) {
     try {
         const response = await axios.post(`${BASE_SERVER_URL}/api/Mesh/CreateMesh/${projectId}`,
-            { meshFormData },
+            meshFormData,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -12,6 +12,7 @@ export default async function createMesh(projectId, meshFormData) {
                 }
             }
         )
+
         if (response.status === 200) {
             return { success: true, data: response.data }
         } else {

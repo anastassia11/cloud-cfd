@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import SvgSelector from '../SvgSelector';
 import { resetSetting } from '@/store/slices/settingSlice';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { setMeshParams } from '@/store/slices/projectSlice';
 import createMesh from '@/pages/api/create_mesh';
 
@@ -46,9 +46,12 @@ export default function MeshForm() {
     }
 
     const generateMesh = () => {
-        dispatch(setMeshParams({ params: formData }))
         fetchGenerateMesh()
     }
+
+    useEffect(() => {
+        dispatch(setMeshParams({ params: formData }))
+    }, [formData])
 
     const Input = ({ label, name, unit }) => {
         return (

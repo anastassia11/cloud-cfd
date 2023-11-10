@@ -435,18 +435,21 @@ function GeometryScene({ scene, camera, selectionMode, setTransformFormData, set
         }
         const box = new THREE.Box3().setFromObject(group);
         const boundingBox = {
-            XMin: box.min.x * 1.5,
-            XMax: box.max.x * 1.5,
-            YMin: box.min.y * 1.5,
-            YMax: box.max.y * 1.5,
-            ZMin: box.min.z * 1.5,
-            ZMax: box.max.z * 1.5
+            XMin: box.min.x,
+            XMax: box.max.x,
+            YMin: box.min.y,
+            YMax: box.max.y,
+            ZMin: box.min.z,
+            ZMax: box.max.z,
+        }
+        for (let item in boundingBox) {
+            boundingBox[item] = Number(Math.round(boundingBox[item] * 1.5))
         }
         return boundingBox
     }
 
     return (
-        <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
+        <><canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
     )
 }
 export default forwardRef(GeometryScene)
