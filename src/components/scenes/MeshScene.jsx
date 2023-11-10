@@ -7,13 +7,14 @@ import { RenderPass } from "three/addons/postprocessing/RenderPass.js"
 import { Lut } from 'three/addons/math/Lut.js'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoader } from '@/store/slices/loaderSlice'
+import getMeshData from '@/pages/api/get_mesh_data'
+import { BASE_SERVER_URL } from '@/utils/constants'
 
-export default function MeshScene({ scene, camera }) {
+export default function MeshScene({ scene, camera, }) {
+    const projectId = useSelector(state => state.project.projectId)
     const containerRef = useRef(null)
     const sceneRef = useRef(null)
     const didLogRef = useRef(false)
-
-    const selectedSetting = useSelector(state => state.setting.setting)
 
     let renderer, orbitControls, composer, outlinePass
     let surfaseMesh, lineMesh, meshGeometryData, lut, meshFolderUrl
@@ -27,10 +28,20 @@ export default function MeshScene({ scene, camera }) {
             didLogRef.current = true
             init()
             init_mesh_components()
-            reloadMeshGeometry("../VTKFOAMmesh2/")
+            getFolderPath()
             animate()
         }
     }, [])
+
+    const getFolderPath = async () => {
+        const result = await getMeshData(projectId)
+        if (result.success) {
+            const path = result.data.replace("wwwroot", `${BASE_SERVER_URL}`)
+            reloadMeshGeometry(path)
+        } else {
+            alert(result.message)
+        }
+    }
 
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
