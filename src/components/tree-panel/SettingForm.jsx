@@ -4,7 +4,7 @@ import FormGenerator from './FormGenerator'
 import { useSelector } from 'react-redux'
 import MeshForm from './MeshForm'
 
-export default function SettingForm({ }) {
+export default function SettingForm({ computeBoundingBox }) {
     const formTitle = useSelector(state => state.setting.formTitle)
     const formName = useSelector(state => state.setting.formName)
     const inputs = useSelector(state => state.setting.inputs)
@@ -13,7 +13,7 @@ export default function SettingForm({ }) {
         if (formName === 'geomerty') {
             return <GeometryForm />
         } else if (formName === 'mesh') {
-            return <MeshForm />
+            return <MeshForm computeBoundingBox={() => computeBoundingBox()} />
         } else return <FormGenerator value={inputs} formName={formName} formTitle={formTitle} />
 
     }

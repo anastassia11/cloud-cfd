@@ -8,7 +8,7 @@ import React, { useRef, useEffect, useState, useImperativeHandle, forwardRef } f
 import { BASE_SERVER_URL } from '@/utils/constants'
 import getGeometries from '@/pages/api/get_geometries'
 import { useDispatch, useSelector } from 'react-redux'
-import { addSelectedPart, deleteSelectedPart, setGeometries, setMeshParams } from '@/store/slices/projectSlice'
+import { addSelectedPart, deleteSelectedPart, setGeometries } from '@/store/slices/projectSlice'
 import { setLoader } from '@/store/slices/loaderSlice'
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
 import addGeometry from '@/pages/api/set_geometry'
@@ -64,12 +64,6 @@ function GeometryScene({ scene, camera, selectionMode, setTransformFormData, set
         const allChildren = groups.flatMap(group => group.children)
         setMeshes(allChildren)
     }, [groups])
-
-    useEffect(() => {
-        const boundingBox = computeBoundingBox()
-        console.log(boundingBox)
-        dispatch(setMeshParams({ params: boundingBox }))
-    }, [meshes])
 
     useImperativeHandle(ref, () => ({
         hidePartObject, handlePositionChange, handleCloseForm, addTransformControl,

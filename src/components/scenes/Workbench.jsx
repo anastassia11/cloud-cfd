@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import SettingForm from '../tree-panel/SettingForm'
 import TreePanel from '../tree-panel/TreePanel'
 import BoxForm from './BoxForm'
@@ -13,6 +13,7 @@ import MeshScene from './MeshScene'
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
 
 export default function Workbench() {
+    const dispatch = useDispatch()
     const transformRef = useRef(null)
     const boxRef = useRef(null)
     const cylinderRef = useRef(null)
@@ -89,7 +90,8 @@ export default function Workbench() {
         geometrySceneRef.current.handleCloseForm(formName)
     }
     function callComputeBoundingBox() {
-        geometrySceneRef.current.computeBoundingBox()
+        const boundingBox = geometrySceneRef.current.computeBoundingBox()
+        return boundingBox
     }
 
     function addPrimitivePattern(newData) {
@@ -136,7 +138,7 @@ export default function Workbench() {
 
                     <div className={`w-[350px] mr-[10px] h-fit relative
                     ${selectedSetting !== null && selectedSetting === (formName) ? '' : 'hidden'}`}>
-                        <SettingForm />
+                        <SettingForm computeBoundingBox={callComputeBoundingBox} />
                     </div>
 
                     <ControlPanel selectionMode={selectionMode}

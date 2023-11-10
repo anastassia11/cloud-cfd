@@ -2,16 +2,29 @@ import { useDispatch, useSelector } from 'react-redux';
 import SvgSelector from '../SvgSelector';
 import { resetSetting } from '@/store/slices/settingSlice';
 import { useEffect, useState } from 'react';
-import { setMeshParams } from '@/store/slices/projectSlice';
 import createMesh from '@/pages/api/create_mesh';
+import getSettingsMesh from '@/pages/api/get_settings_mesh';
 
-export default function MeshForm() {
+export default function MeshForm({ computeBoundingBox }) {
     const dispatch = useDispatch()
     const projectId = useSelector(state => state.project.projectId)
-    const meshFormData = useSelector(state => state.project.meshParams)
-    const [formData, setFormData] = useState(meshFormData)
+    const [formData, setFormData] = useState({})
     const [advancedSettingsVisible, setAdvancedSettingsVisible] = useState(false)
     const [meshState, setMeshState] = useState('not_generated')
+
+    useEffect(() => {
+        getMesh()
+    }, [])
+
+    const getMesh = async () => {
+        const result = await getSettingsMesh(projectId)
+        if (result.success) {
+            setFormData(result.data)
+            console.log(result.data)
+        } else {
+            alert(result.message)
+        }
+    }
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
@@ -33,9 +46,9 @@ export default function MeshForm() {
         setFormData((prev) => ({ ...prev, [name]: value }))
     }
 
-    const fetchGenerateMesh = async () => {
+    const fetchGenerateMesh = async (formData) => {
         setMeshState('in_progress')
-        const result = await createMesh(projectId, meshFormData)
+        const result = await createMesh(projectId, formData)
         if (result.success) {
             console.log(result.data)
             setMeshState('successfully_generated')
@@ -46,12 +59,15 @@ export default function MeshForm() {
     }
 
     const generateMesh = () => {
-        fetchGenerateMesh()
+        const boundingBox = computeBoundingBox()
+        const updatedFormData = { ...formData }
+        for (let item in boundingBox) {
+            updatedFormData[item] = boundingBox[item]
+        }
+        console.log(updatedFormData)
+        setFormData(updatedFormData)
+        fetchGenerateMesh(updatedFormData)
     }
-
-    useEffect(() => {
-        dispatch(setMeshParams({ params: formData }))
-    }, [formData])
 
     const Input = ({ label, name, unit }) => {
         return (
