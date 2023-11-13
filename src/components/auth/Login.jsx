@@ -7,30 +7,35 @@ import { useState } from 'react'
 export default function Login() {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState()
 
     const handleLogin = async (email, password) => {
         setLoading(true)
         const result = await auth('Login', email, password)
-
         if (result.success) {
             localStorage.setItem('email', email)
             router.push('/dashboard')
         } else {
-            alert(result.message)
+            if (result.status === 400) {
+                setLoading(false)
+                setError('Неверный логин или пароль')
+            }
         }
     }
 
     return (
-        <div className="space-y-6 w-96">
+        <div className="space-y-6 sm:w-96 w-80">
             <div className="text-center">
                 <div className="mt-5 space-y-2">
-                    <h3 className="text-day-350 text-2xl font-bold sm:text-3xl">CloudCFD Log in</h3>
-                    <p className="text-day-300">Don&apos;t have an account?
-                        <Link href="/register" className="font-medium text-orange-150 hover:text-orange-200 pl-1">Sign up</Link>
+                    <h3 className="text-day-350 text-2xl font-bold sm:text-3xl">Войти в
+                        <span className='font-semibold'> Cloud</span>
+                        <span className='font-semibold text-orange-100'>CFD</span></h3>
+                    <p className="text-day-300">Еще нет аккаунта?
+                        <button onClick={() => router.push('/register')} className="font-medium text-orange-150 hover:text-orange-200 pl-1">Регистрация</button>
                     </p>
                 </div>
             </div>
-            <Form title='Log in' handleClick={handleLogin} loading={loading} />
+            <Form title='Войти' handleClick={handleLogin} loading={loading} errorMessage={error} />
         </div>
     )
 }
