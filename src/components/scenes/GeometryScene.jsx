@@ -444,6 +444,11 @@ function GeometryScene({ scene, camera, selectionMode, setTransformFormData, set
 
     return (
         <><canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
+            {/* <div className='relative z-10'>
+                <img src={dataUrl.current} />
+            </div> */}
+        </>
+
     )
 }
 export default forwardRef(GeometryScene)

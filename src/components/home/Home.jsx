@@ -34,7 +34,5 @@ export default function Home() {
                     className="w-full mx-auto sm:w-10/12  lg:w-full" />
             </div>
         </section>
-
-
     )
 }

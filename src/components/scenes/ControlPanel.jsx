@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import SvgSelector from '../SvgSelector';
 import * as THREE from "three"
+import { useSelector } from 'react-redux';
 
 export default function ControlPanel({ selectionMode, onModeChange, setPrimitiveData }) {
+    const sceneMode = useSelector(state => state.project.sceneMode)
     const [mode, setMode] = useState(selectionMode)
 
     const handleBoxClick = () => {
@@ -30,7 +32,7 @@ export default function ControlPanel({ selectionMode, onModeChange, setPrimitive
     }, [mode])
 
     return (
-        <div className='h-[40px] items-center flex justify-end grow justify-self-end'>
+        <div className={`${sceneMode === "geom" ? 'flex' : 'hidden'} h-[40px] items-center justify-end grow justify-self-end`}>
             <div className='border-r border-[#a4a4a4] px-2 h-[40px] flex flex-row items-center relative'>
                 <button className={`rounded-md w-8 h-8 flex items-center justify-center
                         ${mode === 'volume' ? 'border border-orange-100' : 'hover:bg-day-150 hover:shadow  active:bg-day-100'}`}

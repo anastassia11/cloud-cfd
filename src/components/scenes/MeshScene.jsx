@@ -9,8 +9,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setLoader } from '@/store/slices/loaderSlice'
 import getMeshData from '@/pages/api/get_mesh_data'
 import { BASE_SERVER_URL } from '@/utils/constants'
+import { setMesh } from '@/store/slices/projectSlice'
 
 export default function MeshScene({ scene, camera, }) {
+    const dispatch = useDispatch()
     const projectId = useSelector(state => state.project.projectId)
     const containerRef = useRef(null)
     const sceneRef = useRef(null)
@@ -19,8 +21,6 @@ export default function MeshScene({ scene, camera, }) {
     let renderer, orbitControls, composer, outlinePass
     let surfaseMesh, lineMesh, meshGeometryData, lut, meshFolderUrl
     let meshValuesData = {}
-
-    const dispatch = useDispatch()
 
     useEffect(() => {
         dispatch(setLoader(false))
@@ -38,8 +38,10 @@ export default function MeshScene({ scene, camera, }) {
         if (result.success) {
             const path = result.data.replace("wwwroot", `${BASE_SERVER_URL}`)
             reloadMeshGeometry(path)
+            dispatch(setMesh(true))
         } else {
-            alert(result.message)
+            dispatch(setMesh(false))
+            // alert(result.message)
         }
     }
 
@@ -97,12 +99,12 @@ export default function MeshScene({ scene, camera, }) {
         composer = new EffectComposer(renderer);
         const renderPass = new RenderPass(scene, camera);
         composer.addPass(renderPass);
-        outlinePass = new OutlinePass(
-            new THREE.Vector2(window.innerWidth, window.innerHeight),
-            scene,
-            camera
-        );
-        composer.addPass(outlinePass)
+        // outlinePass = new OutlinePass(
+        //     new THREE.Vector2(window.innerWidth, window.innerHeight),
+        //     scene,
+        //     camera
+        // );
+        // composer.addPass(outlinePass)
     }
 
     function animate() {
@@ -181,8 +183,10 @@ export default function MeshScene({ scene, camera, }) {
     }
 
     function reloadMeshGeometry(_meshFolderUrl) {
+        console.log('surfaseJsonData')
         let fetchRes = fetch(_meshFolderUrl + "surfaseData.json");
         fetchRes.then(res => res.json()).then(surfaseJsonData => {
+            console.log(surfaseJsonData)
             meshFolderUrl = _meshFolderUrl;
             if (surfaseMesh != null) scene.remove(surfaseMesh);
             if (lineMesh != null) scene.remove(lineMesh);

@@ -7,7 +7,10 @@ const projectSlice = createSlice({
         projectId: null,
         simulations: [],
         geometries: [],
+        mesh: false,
         selectedPart: [],
+        jobStatus: null,
+        sceneMode: 'geom',
     },
 
     reducers: {
@@ -56,11 +59,24 @@ const projectSlice = createSlice({
             const deletedSimId = action.payload.deletedSimulation
             state.simulations = state.simulations.filter((sim) => sim.id !== deletedSimId)
         },
+
+        setJobStatus(state, action) {
+            state.jobStatus = action.payload
+        },
+
+        setSceneMode(state, action) {
+            state.sceneMode = action.payload
+        },
+
+        setMesh(state, action) {
+            state.mesh = action.payload
+        }
     }
 })
 
 export const { setProject,
     setGeometries, updateGeometries, deleteGeometries,
     setSimulations, addSimulation, deleteSimulation,
-    addSelectedPart, deleteSelectedPart } = projectSlice.actions;
+    addSelectedPart, deleteSelectedPart,
+    setJobStatus, setSceneMode, setMesh } = projectSlice.actions;
 export default projectSlice.reducer

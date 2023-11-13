@@ -4,6 +4,7 @@ import DropdownSettings from './DropdownSettings'
 import DeleteSimulation from './DeleteSimulation'
 import { useDispatch, useSelector } from 'react-redux'
 import { setSetting } from '@/store/slices/settingSlice'
+import { setSceneMode } from '@/store/slices/projectSlice'
 
 export default function Simulation({ id, name }) {
     const [simulationOpen, setSimulationOpen] = useState(false)
@@ -26,12 +27,21 @@ export default function Simulation({ id, name }) {
         setDeleteModal(false)
     }
 
+    const handleMeshClick = () => {
+        dispatch(setSetting({ formName: 'mesh', formTitle: 'Mesh' }))
+        dispatch(setSceneMode('mesh'))
+    }
+
     const Setting = ({ formName, formTitle, inputs = {} }) => {
+        const handleSettingClick = () => {
+            dispatch(setSetting({ formName, formTitle, inputs }))
+            dispatch(setSceneMode('geom'))
+        }
         return (
             <>
                 <div className={`flex items-center rounded-md px-2 cursor-pointer text-day-1000 h-9
                 hover:bg-day-150 active:bg-day-200 duration-300 ${selectedSetting === formName && 'bg-day-150'}`}
-                    onClick={() => dispatch(setSetting({ formName, formTitle, inputs, sceneMode: 'geom' }))}>
+                    onClick={handleSettingClick}>
                     <p className='text-ellipsis whitespace-nowrap overflow-hidden'>{formTitle}</p>
                 </div>
             </>
@@ -131,7 +141,7 @@ export default function Simulation({ id, name }) {
                             })}
                             <button className={`flex w-full items-center gap-2 rounded-lg px-2 h-9 text-base font-normal 
                             text-day-350 hover:bg-day-150 active:bg-day-200 duration-300 ${selectedSetting === 'mesh' && 'bg-day-150'}`}
-                                onClick={() => dispatch(setSetting({ formName: 'mesh', formTitle: 'Mesh', sceneMode: 'mesh' }))}>
+                                onClick={handleMeshClick}>
                                 <span className='w-5'>
                                     <SvgSelector id='mesh' />
                                 </span>

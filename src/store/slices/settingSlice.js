@@ -7,7 +7,6 @@ const settingSlice = createSlice({
         formName: null,
         formTitle: null,
         inputs: [],
-        sceneMode: 'geom'
     },
 
     reducers: {
@@ -17,7 +16,6 @@ const settingSlice = createSlice({
             state.inputs = action.payload.inputs
             state.formName = action.payload.formName
             state.sceneMode = action.payload.sceneMode
-            console.log(action.payload.sceneMode)
         },
 
         resetSetting(state, action) {
@@ -25,7 +23,6 @@ const settingSlice = createSlice({
             state.formTitle = null
             state.inputs = null
             state.formName = []
-            console.log(state.sceneMode)
         },
 
         setFormValues(state, action) {

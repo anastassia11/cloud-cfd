@@ -12,9 +12,8 @@ export default function SettingForm({ computeBoundingBox }) {
     const Form = () => {
         if (formName === 'geomerty') {
             return <GeometryForm />
-        } else if (formName === 'mesh') {
-            return <MeshForm computeBoundingBox={() => computeBoundingBox()} />
-        } else return <FormGenerator value={inputs} formName={formName} formTitle={formTitle} />
+        }
+        // else return <FormGenerator value={inputs} formName={formName} formTitle={formTitle} />
 
     }
     return (

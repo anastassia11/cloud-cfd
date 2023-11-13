@@ -11,9 +11,11 @@ import * as THREE from "three"
 import GeometryScene from './GeometryScene'
 import MeshScene from './MeshScene'
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
+import MeshForm from '../tree-panel/MeshForm'
+import { DotLoader, PuffLoader, SkewLoader } from 'react-spinners'
 
 export default function Workbench() {
-    const dispatch = useDispatch()
+    const jobStatus = useSelector(state => state.project.jobStatus)
     const transformRef = useRef(null)
     const boxRef = useRef(null)
     const cylinderRef = useRef(null)
@@ -28,8 +30,9 @@ export default function Workbench() {
 
     const projectId = useSelector(state => state.project.projectId)
     const selectedSetting = useSelector(state => state.setting.setting)
-    const sceneMode = useSelector(state => state.setting.sceneMode)
+    const sceneMode = useSelector(state => state.project.sceneMode)
     const formName = useSelector(state => state.setting.formName)
+    const mesh = useSelector(state => state.project.mesh)
     const [selectionMode, setSelectionMode] = useState("face")
 
     const [transformFormData, setTransformFormData] = useState({
@@ -121,31 +124,47 @@ export default function Workbench() {
 
     return (
         <div className='min-h-[calc(100vh-56px)] flex w-full' id='for-canvas'>
-            <div className={`${sceneMode === "geom" ? 'block' : 'hidden'}`}>
+            <div className={`${sceneMode === "geom" || !mesh ? 'block' : 'hidden'}`}>
                 <GeometryScene ref={geometrySceneRef} scene={geometryScene.current} camera={camera.current}
                     selectionMode={selectionMode} setTransformFormData={(newData) => setTransformFormData(newData)}
                     setPrimitiveData={(newData) => setPrimitiveData(newData)} />
             </div>
-            <div className={`${sceneMode === "mesh" ? 'block' : 'hidden'}`}>
+            <div className={`${sceneMode === "mesh" && mesh ? 'block' : 'hidden'}`}>
                 <MeshScene scene={meshScene.current} camera={camera.current} renderer={rendererMesh} />
             </div>
 
             <div className='flex flex-row justify-between w-full m-2 '>
-                <div className='flex flex-row w-full'>
-                    <div className='min-w-0 w-[300px] mr-[12px] h-fit relative'>
-                        <TreePanel />
+
+                <div className='flex flex-row'>
+                    <div className='flex flex-col '>
+                        <div className='min-w-0 w-[300px] mr-[12px] h-fit relative'>
+                            <TreePanel />
+                        </div>
+
+                        <div className={`pl-3 pr-4 min-w-0 w-[300px] mr-[12px] mt-[8px] bg-day-00 rounded-md 
+                         relative shadow text-day-350 ${jobStatus ? 'flex' : 'hidden'} flex-row items-center 
+                        justify-between h-[40px]`}>
+                            <p className='ml-2 pt-[2px] text-base text-ellipsis whitespace-nowrap'>
+                                {jobStatus}
+                            </p><PuffLoader color="#3f3f3f" loading size={20} />
+                        </div>
                     </div>
 
-                    <div className={`w-[350px] mr-[10px] h-fit relative
-                    ${selectedSetting !== null && selectedSetting === (formName) ? '' : 'hidden'}`}>
-                        <SettingForm computeBoundingBox={callComputeBoundingBox} />
+                    <div className={`w-[350px] mr-[10px] h-fit relative`}>
+                        <div className={`${selectedSetting !== null && selectedSetting === (formName) ? '' : 'hidden'}`}>
+                            <SettingForm />
+                        </div>
+                        <div className={`${selectedSetting !== null && selectedSetting === 'mesh' ? '' : 'hidden'}`}>
+                            <MeshForm computeBoundingBox={callComputeBoundingBox} />
+                        </div>
                     </div>
-
+                </div>
+                <div className='flex flex-row'>
                     <ControlPanel selectionMode={selectionMode}
                         onModeChange={(mode) => setSelectionMode(mode)}
                         setPrimitiveData={addPrimitivePattern} />
 
-                    <div className='flex flex-col max-h-[calc(100vh-73px)] overflow-hidden'>
+                    <div className='right-0 flex flex-col max-h-[calc(100vh-73px)] overflow-hidden'>
                         <div ref={geomRef} className={`min-w-0 w-[300px] ml-[12px] relative 
                         max-h-[calc(100vh-73px-${(boxRef.current ? boxRef.current.offsetHeight : 0)}px-
                         ${transformRef.current ? transformRef.current.offsetHeight : 0}px - 

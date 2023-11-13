@@ -4,12 +4,14 @@ import { resetSetting } from '@/store/slices/settingSlice';
 import { useEffect, useState } from 'react';
 import createMesh from '@/pages/api/create_mesh';
 import getSettingsMesh from '@/pages/api/get_settings_mesh';
+import { setJobStatus } from '@/store/slices/projectSlice';
 
 export default function MeshForm({ computeBoundingBox }) {
     const dispatch = useDispatch()
     const projectId = useSelector(state => state.project.projectId)
     const [formData, setFormData] = useState({})
     const [advancedSettingsVisible, setAdvancedSettingsVisible] = useState(false)
+
     const [meshState, setMeshState] = useState('not_generated')
 
     useEffect(() => {
@@ -20,7 +22,6 @@ export default function MeshForm({ computeBoundingBox }) {
         const result = await getSettingsMesh(projectId)
         if (result.success) {
             setFormData(result.data)
-            console.log(result.data)
         } else {
             alert(result.message)
         }
@@ -48,12 +49,14 @@ export default function MeshForm({ computeBoundingBox }) {
 
     const fetchGenerateMesh = async (formData) => {
         setMeshState('in_progress')
+        dispatch(setJobStatus('Mesh generated..'))
         const result = await createMesh(projectId, formData)
         if (result.success) {
-            console.log(result.data)
             setMeshState('successfully_generated')
+            dispatch(setJobStatus(null))
         } else {
             setMeshState('successfully_generated')
+            dispatch(setJobStatus(null))
             alert(result.message)
         }
     }
@@ -64,7 +67,6 @@ export default function MeshForm({ computeBoundingBox }) {
         for (let item in boundingBox) {
             updatedFormData[item] = boundingBox[item]
         }
-        console.log(updatedFormData)
         setFormData(updatedFormData)
         fetchGenerateMesh(updatedFormData)
     }
@@ -132,8 +134,8 @@ export default function MeshForm({ computeBoundingBox }) {
             case 'in_progress':
                 return (
                     <>
-                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                            <div class="bg-gray-400 h-2.5 rounded-full w-[50%] animate-pulse"></div>
+                        <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div className="bg-gray-400 h-2.5 rounded-full w-[50%] animate-pulse"></div>
                         </div>
                         <button type="button" className="w-8 h-8 rounded-md text-gray-500 p-[5px] border bg-day-50 hover:bg-day-100 
                         active:bg-day-150 flex items-center justify-center"
