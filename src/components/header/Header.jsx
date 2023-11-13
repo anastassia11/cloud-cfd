@@ -28,7 +28,7 @@ export default function Header() {
         <header className="flex flex-col">
             <div className="flex flex-row bg-day-00 w-screen h-[56px] p-4 justify-between items-center border-b 
                 border-[#e6e6e6] ">
-                <div className='text-day-300 text-4xl cursor-pointer' onClick={() => router.push(' /')} >
+                <div className='text-day-300 text-3xl cursor-pointer' onClick={() => router.push(' /')} >
                     <span className='font-semibold'> Cloud</span>
                     <span className='font-semibold text-orange-100'>CFD</span>
                 </div>

@@ -10,18 +10,18 @@ export default function Form({ title, handleClick, loading }) {
         <div className="bg-white shadow p-4 py-6 space-y-8 rounded-lg">
             <form onSubmit={(e) => e.preventDefault()} className="space-y-5">
                 <div>
-                    <label className="font-medium text-day-350">
+                    <label htmlFor='email' className="font-medium text-day-350">
                         Email
                     </label>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                    <input name='email' type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                         className="w-full mt-2 px-4 h-9 focus:outline-[0] text-day-350 border rounded-md outline-none bg-day-00 border-day-100 focus:border-day-250 shadow-sm"
                     />
                 </div>
                 <div>
-                    <label className="font-medium text-day-350">
+                    <label htmlFor='password' className="font-medium text-day-350">
                         Password
                     </label>
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+                    <input name='password' type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                         className="w-full mt-2 px-4 h-9 focus:outline-[0] text-day-350 border rounded-md outline-none bg-day-00 border-day-100 focus:border-day-250 shadow-sm"
                     />
                 </div>
