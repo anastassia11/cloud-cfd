@@ -1,6 +1,3 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import logo from '@/../public/logo.jpg'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import { BarLoader } from 'react-spinners'
@@ -13,13 +10,15 @@ export default function DemoHeader() {
     const login = useRef(null)
 
     const handleContactsClick = () => {
-        const contacts = document.getElementById('contacts');
-        contacts.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    const handleDemoClick = () => {
-        const demo = document.getElementById('demo');
-        demo.scrollIntoView({ behavior: 'smooth' });
+        if (router.pathname !== '/') {
+            router.push('/').then(() => {
+                const contacts = document.getElementById('contacts');
+                contacts.scrollIntoView({ behavior: 'smooth' });
+            })
+        } else {
+            const contacts = document.getElementById('contacts');
+            contacts.scrollIntoView({ behavior: 'smooth' });
+        }
     }
 
     useEffect(() => {

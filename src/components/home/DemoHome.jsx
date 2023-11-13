@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import demo_img from '@/../public/demo_img.png'
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import saveContact from '@/pages/api/save_contact';
+import { useRouter } from 'next/router';
 
 export default function DemoHome() {
+    const router = useRouter()
     const [done, setDone] = useState(false)
     const [formData, setFormData] = useState({
         "contactId": 0,
