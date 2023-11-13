@@ -248,7 +248,10 @@ export default function DemoHome() {
             <section className="px-4 md:px-8 text-center pt-12 mx-auto max-w-screen-xl pb-12 items-center 
                 lg:flex lg:text-left lg:pt-28 lg:pb-28 ">
                 <div className="space-y-4 flex-[40%] lg:mr-4">
-                    <h1 className="text-day-350 font-bold text-3xl xl:text-4xl">
+                    <h1 className="hidden lg:block text-day-350 font-semibold text-3xl xl:text-4xl whitespace-nowrap">
+                        <span className="text-orange-100">Облачная</span> платформа для<br />решения газодинамических<br />задач
+                    </h1>
+                    <h1 className="block lg:hidden text-day-350 font-semibold text-3xl xl:text-4xl ">
                         <span className="text-orange-100">Облачная</span> платформа для решения газодинамических задач
                     </h1>
                     <p className="text-day-300 max-w-xl leading-relaxed sm:mx-auto lg:ml-0">
@@ -274,7 +277,7 @@ export default function DemoHome() {
             <section className="bg-white px-4 md:px-8 border-t py-12 lg:pt-20 lg:pb-20">
                 <div className="max-w-screen-xl mx-auto px-4 text-center  md:px-8">
                     <div className="max-w-2xl mx-auto">
-                        <h3 className=" text-3xl font-semibold sm:text-4xl">
+                        <h3 className="font-semibold text-3xl xl:text-4xl">
                             Почему<span className='font-semibold'> Cloud</span>
                             <span className='font-semibold text-orange-100'>CFD</span>
 
@@ -305,7 +308,7 @@ export default function DemoHome() {
             <section className="bg-day-50 px-4 md:px-8 border-t py-12 lg:pt-20 lg:pb-20">
                 <div className="max-w-screen-xl mx-auto px-4 md:px-8">
                     <div className="max-w-2xl mx-auto">
-                        <h3 className="text-center text-3xl font-semibold sm:text-4xl">
+                        <h3 className="text-center font-semibold text-3xl xl:text-4xl">
                             Как работает<span className='font-semibold'> Cloud</span>
                             <span className='font-semibold text-orange-100'>CFD</span>
                         </h3>
@@ -357,7 +360,7 @@ export default function DemoHome() {
             <section className="bg-white px-4 md:px-8 border-t py-12 lg:pt-20 lg:pb-20" id='demo'>
                 <div className="max-w-screen-xl mx-auto px-4  md:px-8">
                     <div className="max-w-lg mx-auto space-y-3 text-center">
-                        <p className="text-3xl font-semibold sm:text-4xl">
+                        <p className="font-semibold text-3xl xl:text-4xl">
                             Запросить <span className='font-semibold text-orange-100'>бесплатный</span> доступ
                         </p>
                         {done ? <><p className='text-center'>
@@ -406,7 +409,7 @@ export default function DemoHome() {
                                         Номер телефона
                                     </label>
                                     <div className="relative mt-2">
-                                        <input type="tel" pattern="^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$"
+                                        <input type="tel"
                                             name='phoneNumber' id='phoneNumber'
                                             placeholder="+7 (999) 999-99-99" value={formData.phoneNumber}
                                             onChange={e => setFormData(prev => ({ ...prev, phoneNumber: e.target.value }))}

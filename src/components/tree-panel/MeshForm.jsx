@@ -9,6 +9,7 @@ import { setJobStatus } from '@/store/slices/projectSlice';
 export default function MeshForm({ computeBoundingBox }) {
     const dispatch = useDispatch()
     const projectId = useSelector(state => state.project.projectId)
+    const geomsState = useSelector(state => state.project.geometries)
     const [formData, setFormData] = useState({})
     const [advancedSettingsVisible, setAdvancedSettingsVisible] = useState(false)
 
@@ -16,7 +17,7 @@ export default function MeshForm({ computeBoundingBox }) {
 
     useEffect(() => {
         getMesh()
-    }, [])
+    }, [geomsState])
 
     const getMesh = async () => {
         const result = await getSettingsMesh(projectId)
