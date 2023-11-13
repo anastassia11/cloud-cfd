@@ -45,12 +45,12 @@ export default function DemoHeader() {
                         Контакты
                     </button>
 
-                    <div className='hidden sm:flex items-center h-[56px] xl:pl-1'>
+                    <div className='flex items-center h-[56px] xl:pl-1'>
                         <button className="disabled:bg-orange-disabled w-full px-4 h-9 text-base font-medium 
                     text-white bg-orange-100 hover:bg-orange-150 active:bg-orange-200 rounded-lg duration-300 
                     flex items-center justify-center"
-                            onClick={handleDemoClick}>
-                            Доступ
+                            onClick={() => router.push('/login')}>
+                            Вход
                         </button>
                     </div>
                 </div>

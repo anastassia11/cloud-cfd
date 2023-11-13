@@ -12,7 +12,6 @@ const inter = Inter({ subsets: ['latin'] })
 export default function App({ Component, pageProps }) {
   const router = useRouter()
   const [isChecked, setIsChecked] = useState(false)
-  const [headerVisible, setHeaderVisible] = useState(false)
   const requiresAuth = Component.requiresAuth
   const token = useRef(null)
 
@@ -21,38 +20,26 @@ export default function App({ Component, pageProps }) {
     if (requiresAuth) {
       if (!token.current) {
         router.push('/login').then(() => {
-          setHeaderVisible(false)
           setIsChecked(true)
         })
       } else {
-        setHeaderVisible(true)
         setIsChecked(true)
       }
     }
     else {
       if (router.pathname === '/login' || router.pathname === '/register') {
-        setHeaderVisible(false)
+        setIsChecked(true)
       } else {
-        setHeaderVisible(true)
         setIsChecked(true)
       }
-      // if (token) {
-      //   router.push('/dashboard').then(() => {
-      //     setHeaderVisible(false)
-      //     setIsChecked(true)
-      //   })
-      // } else {
-      //   setHeaderVisible(false)
-      //   setIsChecked(true)
-      // }
-
     }
+    console.log(token.current === null)
   }, [requiresAuth, router])
 
   return (
     <Provider store={store}>
       <main className={`${inter.className}`}>
-        {headerVisible ? (token.current ? <Header /> : <DemoHeader />) : ''}
+        {isChecked && <Header />}
         {isChecked && <Component {...pageProps} />}
       </main>
     </Provider>

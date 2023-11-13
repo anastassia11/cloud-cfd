@@ -13,7 +13,7 @@ import { setLoader } from '@/store/slices/loaderSlice'
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
 import addGeometry from '@/pages/api/set_geometry'
 
-function GeometryScene({ scene, camera, selectionMode, setTransformFormData, setPrimitiveData }, ref) {
+function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimitiveData }, ref) {
     const dispatch = useDispatch()
     const containerRef = useRef(null)
     const sceneRef = useRef(null)
@@ -51,8 +51,9 @@ function GeometryScene({ scene, camera, selectionMode, setTransformFormData, set
     }, [meshes, groups, selectionMode])
 
     useEffect(() => {
+        loadSTL(geomsState)
         const geomsToRemove = sceneRef.current.children
-            .filter(child => child.isGroup && !geomsState.some(geom => geom.uid === child.uid))
+            .filter(child => child.isGroup && !geomsState?.some(geom => geom.uid === child.uid))
             .map(group => {
                 sceneRef.current.remove(group)
                 return group.uid
@@ -139,7 +140,7 @@ function GeometryScene({ scene, camera, selectionMode, setTransformFormData, set
     }
 
     function init() {
-        sceneRef.current = scene
+        sceneRef.current = new THREE.Scene()
         window.addEventListener('resize', onWindowResize)
 
         sceneRef.current.background = new THREE.Color(0xf0f0f0);

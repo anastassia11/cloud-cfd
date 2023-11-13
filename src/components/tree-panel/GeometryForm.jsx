@@ -15,13 +15,14 @@ export default function GeometryForm({ }) {
     const [drag, setDrag] = useState(false)
     const [loading, setLoading] = useState([])
     const [files, setFiles] = useState(geoms || [])
-    const [fileCount, setFileCount] = useState(geoms?.length)
+    const [fileCount, setFileCount] = useState(geoms?.length ?? 0)
 
     const dispatch = useDispatch()
 
+
     useEffect(() => {
         geoms && setFiles(geoms)
-        setFileCount(geoms?.length)
+        setFileCount(geoms?.length ?? 0)
     }, [geoms])
 
     const handleGeometrySubmit = (e) => {
@@ -44,9 +45,9 @@ export default function GeometryForm({ }) {
         setDrag(false)
         const newFiles = Array.from(e.dataTransfer.files)
         setFiles((prevFiles) => [...prevFiles, ...newFiles])
-        setLoading((prevLoading) => [...prevLoading, ...newFiles.map(() => false)])
         setFileCount((prevCount) => prevCount + newFiles.length)
         newFiles.forEach((file, index) => {
+            console.log(index)
             handleSetGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file }, fileCount + index)
         })
     }
@@ -55,14 +56,14 @@ export default function GeometryForm({ }) {
         const result = await getGeometries(projectId)
         if (result.success) {
             dispatch(setGeometries({ geometries: result.data.geometryDataList }))
-            // обновление данных на сцене
-            // loadSTL(result.data.geometryDataList)
         } else {
             alert(result.message)
         }
     }
 
     const handleSetGeometry = async (geometryData, index) => {
+        console.log('handleSetGeometry')
+        console.log(index)
         setLoading((prevLoading) => {
             const newLoading = [...prevLoading]
             newLoading[index] = true
@@ -72,23 +73,29 @@ export default function GeometryForm({ }) {
         const result = await addGeometry(geometryData)
         if (result.success) {
             loadGeoms()
+            setLoading((prevLoading) => {
+                const newLoading = [...prevLoading]
+                newLoading[index] = false
+                return newLoading
+            })
         } else {
             alert(result.message)
+            setLoading((prevLoading) => {
+                const newLoading = [...prevLoading]
+                newLoading[index] = false
+                return newLoading
+            })
         }
-        setLoading((prevLoading) => {
-            const newLoading = [...prevLoading]
-            newLoading[index] = false
-            return newLoading
-        })
     }
 
     const handleChange = (e) => {
         e.preventDefault()
         const newFiles = Array.from(e.target.files)
         setFiles((prevFiles) => [...prevFiles, ...newFiles])
-        setLoading((prevLoading) => [...prevLoading, ...newFiles.map(() => false)])
+        // setLoading((prevLoading) => [...prevLoading, ...newFiles.map(() => false)])
         setFileCount((prevCount) => prevCount + newFiles.length)
         newFiles.forEach((file, index) => {
+            console.log(index)
             handleSetGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file }, fileCount + index)
         })
     }

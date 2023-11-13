@@ -125,12 +125,12 @@ export default function Workbench() {
     return (
         <div className='min-h-[calc(100vh-56px)] flex w-full' id='for-canvas'>
             <div className={`${sceneMode === "geom" || !mesh ? 'block' : 'hidden'}`}>
-                <GeometryScene ref={geometrySceneRef} scene={geometryScene.current} camera={camera.current}
+                <GeometryScene ref={geometrySceneRef} camera={camera.current}
                     selectionMode={selectionMode} setTransformFormData={(newData) => setTransformFormData(newData)}
                     setPrimitiveData={(newData) => setPrimitiveData(newData)} />
             </div>
             <div className={`${sceneMode === "mesh" && mesh ? 'block' : 'hidden'}`}>
-                <MeshScene scene={meshScene.current} camera={camera.current} renderer={rendererMesh} />
+                <MeshScene camera={camera.current} renderer={rendererMesh} />
             </div>
 
             <div className='flex flex-row justify-between w-full m-2 '>
