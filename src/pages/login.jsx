@@ -8,5 +8,5 @@ export default function LoginPage() {
         </main>
     )
 }
-
-LoginPage.requiresAuth = false
+// вернуть false
+LoginPage.requiresAuth = true

@@ -11,6 +11,7 @@ export default function Header() {
     const loader = useSelector(state => state.loader.loader)
     const email = useRef(null)
     const login = useRef(null)
+    const token = localStorage.getItem('token')
 
     const handleLogOutClick = () => {
         localStorage.removeItem('token')
@@ -27,10 +28,14 @@ export default function Header() {
         <header className="flex flex-col">
             <div className="flex flex-row bg-day-00 w-screen h-[56px] p-4 justify-between items-center border-b 
                 border-[#e6e6e6] ">
-                <Image src={logo} width={500} height={500} alt='cloudCFD'
-                    className='w-32 cursor-pointer' onClick={() => router.push(' /')} />
+                <div className='text-day-300 text-4xl cursor-pointer' onClick={() => router.push(' /')} >
+                    <span className='font-semibold'> Cloud</span>
+                    <span className='font-semibold text-orange-100'>CFD</span>
+                </div>
+                {/* <Image src={logo} width={500} height={500} alt='cloudCFD'
+                    className='w-32 cursor-pointer' onClick={() => router.push(' /')} /> */}
                 <div className='flex flex-row items-center space-x-1'>
-                    {email.current && <Link href="/dashboard"
+                    {token && <Link href="/dashboard"
                         className='text-day-350 hover:bg-day-50 flex items-center hover:border-b-2 
                             hover:border-orange-100 duration-100 h-[56px] px-3'
                         onClick={() => router.push('/dashboard')}>
@@ -52,13 +57,13 @@ export default function Header() {
                             </Link>
                         </div>
                     </button>
-                    {!email.current && <Link href="/pricing" prefetch={true}
+                    {!token && <Link href="/pricing" prefetch={true}
                         className='text-day-350 hover:bg-day-50 flex items-center hover:border-b-2 
                             hover:border-orange-100 duration-100 h-[56px] px-3'
                         onClick={() => router.push('/pricing')}>
                         Pricing
                     </Link>}
-                    {email.current && <div className='relative group text-day-350 hover:bg-day-50 flex items-center 
+                    {token && <div className='relative group text-day-350 hover:bg-day-50 flex items-center 
                         hover:border-b-2 hover:border-orange-100 duration-100 h-[56px] px-3 cursor-pointer'>
                         <div className='w-8 h-8 mr-2 rounded-full bg-day-250 flex items-center justify-center' >
                             <p className='text-white uppercase text-[22px]  font-medium '>
@@ -91,7 +96,7 @@ export default function Header() {
 
                         </div>
                     </div>}
-                    {!email.current && <div className='flex items-center h-[56px] pl-3'>
+                    {!token && <div className='flex items-center h-[56px] pl-3'>
                         <button className="disabled:bg-orange-disabled w-full px-4 h-9 text-base font-medium 
                     text-white bg-orange-100 hover:bg-orange-150 active:bg-orange-200 rounded-lg duration-300 
                     flex items-center justify-center"
