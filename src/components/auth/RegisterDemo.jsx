@@ -17,20 +17,6 @@ export default function RegisterDemo() {
         "email": null
     })
 
-    const handleFormSubmit = (e) => {
-        e.preventDefault()
-        submitContact()
-    }
-
-    const submitContact = async () => {
-        const result = await saveContact(formData)
-        if (result.success) {
-            setDone(true)
-        } else {
-            alert(result.message)
-        }
-    }
-
     return (
         <div className="space-y-6 flex flex-col items-center" id='demo'>
             <div className="text-center">
