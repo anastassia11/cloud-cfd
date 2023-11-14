@@ -247,8 +247,8 @@ export default function DemoHome() {
 
     return (
         <div className='bg-day-50 text-day-350 min-h-[calc(100vh-56px)] max-w-full flex flex-col'>
-            <section className="px-4 md:px-8 text-center pt-12 mx-auto max-w-screen-xl pb-12 items-center 
-                lg:flex lg:text-left lg:pt-28 lg:pb-28 ">
+            <section className="px-4 text-center  mx-auto max-w-screen-xl  items-center 
+                lg:flex lg:text-left pt-6 pb-12 md:pt-20 lg:pt-28 lg:pb-28 ">
                 <div className="space-y-4 flex-[40%] lg:mr-4">
                     <h1 className="hidden lg:block text-day-350 font-semibold text-3xl xl:text-4xl whitespace-nowrap">
                         <span className="text-orange-100">Облачная</span> платформа для<br />решения газодинамических<br />задач
