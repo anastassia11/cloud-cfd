@@ -414,15 +414,15 @@ export default function DemoHome() {
                                     <label className="font-medium" htmlFor='phoneNumber'>
                                         Номер телефона
                                     </label>
-                                    <div className="relative mt-2">
-                                        <input type="tel"
-                                            name='phoneNumber' id='phoneNumber'
-                                            placeholder="+7 (999) 999-99-99" value={formData.phoneNumber}
-                                            onChange={e => setFormData(prev => ({ ...prev, phoneNumber: e.target.value }))}
-                                            required
-                                            className="w-full px-3 py-2 appearance-none bg-day-00 outline-none border 
+
+                                    <input type="tel"
+                                        name='phoneNumber' id='phoneNumber'
+                                        placeholder="+7 (999) 999-99-99" value={formData.phoneNumber}
+                                        onChange={e => setFormData(prev => ({ ...prev, phoneNumber: e.target.value }))}
+                                        required
+                                        className="w-full px-3 py-2 appearance-none bg-day-00 outline-none border 
                                             focus:border-indigo-600 shadow-sm rounded-lg" />
-                                    </div>
+
                                 </div>
                                 <button type='submit'
                                     className="w-full px-4 py-2 text-white font-medium shadow-md

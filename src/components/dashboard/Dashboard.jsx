@@ -87,7 +87,7 @@ export default function Dashboard() {
                     Projects
                 </h1>
                 <div className='flex flex-row items-center justify-end space-x-2'>
-                    <div className="relative flex items-center">
+                    <div className="relative md:flex hidden items-center">
                         <SvgSelector id='search' />
                         <input type="text" placeholder="Search" value={filterName}
                             onChange={(e) => setFilterName(e.target.value)
@@ -100,7 +100,14 @@ export default function Dashboard() {
                     </button>
                 </div>
             </div>
-            <div className='mt-4 h-[calc(100vh-126px)] overflow-y-scroll rounded pr-2 w-full'>
+            <div className="relative md:hidden flex items-center mt-2">
+                <SvgSelector id='search' />
+                <input type="text" placeholder="Search" value={filterName}
+                    onChange={(e) => setFilterName(e.target.value)
+                    }
+                    className="w-full h-9 pl-12 pr-4 text-base text-day-350 border rounded-md outline-none bg-day-50 focus:bg-day-00 focus:border-day-200" />
+            </div>
+            <div className='mt-4 md:h-[calc(100vh-126px)] overflow-y-scroll rounded pr-2 w-full'>
                 {!loader && projects.length === 0 ? <div className='w-full h-[70%] flex flex-col items-center justify-center'>
                     <div className=''>
                         <SvgSelector id='add-folder' />
