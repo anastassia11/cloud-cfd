@@ -23,6 +23,18 @@ export default function Login() {
         }
     }
 
+    const handlDemoClick = () => {
+        if (router.pathname !== '/') {
+            router.push('/').then(() => {
+                const demo = document.getElementById('demo');
+                demo.scrollIntoView({ behavior: 'smooth' });
+            })
+        } else {
+            const demo = document.getElementById('demo');
+            demo.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
     return (
         <div className="space-y-6 sm:w-96 w-80">
             <div className="text-center">
@@ -31,7 +43,7 @@ export default function Login() {
                         <span className='font-semibold'> Cloud</span>
                         <span className='font-semibold text-orange-100'>CFD</span></h3>
                     <p className="text-day-300">Еще нет аккаунта?
-                        <button onClick={() => router.push('/register')} className="font-medium text-orange-150 hover:text-orange-200 pl-1">Регистрация</button>
+                        <button onClick={handlDemoClick} className="font-medium text-orange-150 hover:text-orange-200 pl-1">Регистрация</button>
                     </p>
                 </div>
             </div>

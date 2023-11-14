@@ -431,7 +431,6 @@ export default function DemoHome() {
                 </div>
             </section>
 
-
             <footer className="lg:pt-10 lg:pb-10 px-4 md:px-8 py-6 border-t flex flex-col items-center space-y-2 
                 bg-day-50"
                 id='contacts'>
