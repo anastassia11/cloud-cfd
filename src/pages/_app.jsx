@@ -5,7 +5,6 @@ import '@/styles/globals.css'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import Header from '@/components/header/Header'
-import DemoHeader from '@/components/header/DemoHeader'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -33,14 +32,15 @@ export default function App({ Component, pageProps }) {
         setIsChecked(true)
       }
     }
-    console.log(token.current === null)
   }, [requiresAuth, router])
 
   return (
     <Provider store={store}>
       <main className={`${inter.className}`}>
         {isChecked && <Header />}
-        {isChecked && <Component {...pageProps} />}
+        {isChecked && <div className='mt-[56px]'>
+          <Component {...pageProps} />
+        </div>}
       </main>
     </Provider>
   )

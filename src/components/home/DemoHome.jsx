@@ -10,10 +10,10 @@ export default function DemoHome() {
     const [done, setDone] = useState(false)
     const [formData, setFormData] = useState({
         "contactId": 0,
-        "fio": null,
-        "company": null,
-        "phoneNumber": null,
-        "email": null
+        "fio": '',
+        "company": '',
+        "phoneNumber": '',
+        "email": ''
     })
 
     const handleDemoClick = () => {
@@ -67,7 +67,7 @@ export default function DemoHome() {
                     />
                 </svg>,
             title: "Облако",
-            desc: "Вычисления проводятся на базе высокопроизводительного облака"
+            desc: "Вычисления проводятся на базе высоко- производительного облака"
         },
         {
             icon:
@@ -278,22 +278,23 @@ export default function DemoHome() {
 
             <section className="bg-white px-4 md:px-8 border-t py-12 lg:pt-20 lg:pb-20">
                 <div className="max-w-screen-xl mx-auto px-4 text-center  md:px-8">
-                    <div className="max-w-2xl mx-auto">
-                        <h3 className="font-semibold text-3xl xl:text-4xl">
+                    <div className="max-w-3xl mx-auto">
+                        <h3 className="font-semibold text-2xl xl:text-3xl">
                             Почему<span className='font-semibold'> Cloud</span>
                             <span className='font-semibold text-orange-100'>CFD</span>
-
                         </h3>
+                        <p className='text-center'>Больше не нужно инвестировать в дорогостоящее оборудование и программное обеспечение</p>
                     </div>
                     <div className="mt-12">
-                        <ul className="grid gap-y-8 gap-x-12 sm:grid-cols-2 lg:grid-cols-4">
+                        <ul className="grid gap-y-8 gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
                             {
                                 features.map((item, idx) => (
-                                    <li key={idx} className="space-y-3">
+                                    <li key={idx} className="cursor-pointer space-y-3 border p-4 rounded-lg
+                                    hover:shadow-md duration-300 group hover:-translate-y-[5px] bg-day-50">
                                         <div className="w-32 h-32 mx-auto flex items-center justify-center text-orange-100">
                                             {item.icon}
                                         </div>
-                                        <h4 className="text-lg  font-semibold">
+                                        <h4 className="duration-300 text-lg group-hover:text-orange-100 font-semibold">
                                             {item.title}
                                         </h4>
                                         <p>
@@ -305,21 +306,23 @@ export default function DemoHome() {
                         </ul>
                     </div>
                 </div>
-            </section>
+            </section >
 
             <section className="bg-day-50 px-4 md:px-8 border-t py-12 lg:pt-20 lg:pb-20">
                 <div className="max-w-screen-xl mx-auto px-4 md:px-8">
-                    <div className="max-w-2xl mx-auto">
-                        <h3 className="text-center font-semibold text-3xl xl:text-4xl">
+                    <div className="max-w-3xl mx-auto">
+                        <h3 className="text-center font-semibold text-2xl xl:text-3xl">
                             Как работает<span className='font-semibold'> Cloud</span>
                             <span className='font-semibold text-orange-100'>CFD</span>
                         </h3>
+                        <p className='text-center'>Простой и понятный интерфейс поможет пройти весь процесс инженерного проектирования</p>
                     </div>
                     <div className="mt-12">
-                        <ul className="grid gap-y-8 gap-x-12 sm:grid-cols-2 lg:grid-cols-4 ">
+                        <ul className="grid gap-y-8 gap-x-12 sm:grid-cols-1 lg:grid-cols-2 ">
                             {
                                 possibilities.map((item, idx) => (
-                                    <li key={idx} className="flex gap-x-4">
+                                    <li key={idx} className="cursor-pointer flex gap-x-4 bg-white p-4 border rounded-lg 
+                                    hover:shadow-md duration-300 group hover:-translate-y-[5px]">
                                         <div className="flex-none w-12 h-12 flex items-center justify-center">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -344,7 +347,7 @@ export default function DemoHome() {
                                             </svg>
                                         </div>
                                         <div>
-                                            <h4 className="text-lg font-semibold">
+                                            <h4 className="duration-300 group-hover:text-orange-100 text-lg font-semibold">
                                                 {item.title}
                                             </h4>
                                             <p className="mt-3">
@@ -362,11 +365,11 @@ export default function DemoHome() {
             <section className="bg-white px-4 md:px-8 border-t py-12 lg:pt-20 lg:pb-20" id='demo'>
                 <div className="max-w-screen-xl mx-auto px-4  md:px-8">
                     <div className="max-w-lg mx-auto space-y-3 text-center">
-                        <p className="font-semibold text-3xl xl:text-4xl">
+                        <p className="font-semibold text-2xl xl:text-3xl">
                             Запросить <span className='font-semibold text-orange-100'>бесплатный</span> доступ
                         </p>
                         {done ? <><p className='text-center'>
-                            Спасибо. Мы скоро с вами свяжемся.
+                            Спасибо. Мы скоро с вами свяжемся!
                         </p></> :
                             <p>
                                 Оставьте свои контакты, чтобы начать использовать
