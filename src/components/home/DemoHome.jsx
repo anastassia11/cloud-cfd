@@ -271,7 +271,7 @@ export default function DemoHome() {
                     </div>
                 </div>
                 <div className="flex-[55%] text-center mt-7 lg:mt-0 lg:ml-3 ">
-                    <Image src={demo_img} width={2000} height={2000} alt='geom preview'
+                    <Image src={demo_img} width={2000} height={1000} priority={true} alt='preview'
                         className="h-full mx-auto rounded-xl shadow-lg lg:shadow-2xl" />
                 </div>
             </section>
@@ -381,7 +381,8 @@ export default function DemoHome() {
                     </div>
                     <div className="mt-6 max-w-lg mx-auto">
                         {done ? '' :
-                            <form onSubmit={handleFormSubmit} className="space-y-5" >
+                            <form onSubmit={handleFormSubmit} className="space-y-5 border px-4 py-8 rounded-lg shadow-md
+                                    bg-day-50" >
                                 <div>
                                     <label htmlFor='name' className="font-medium">
                                         Имя

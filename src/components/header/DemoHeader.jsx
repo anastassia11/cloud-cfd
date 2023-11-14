@@ -27,7 +27,7 @@ export default function DemoHeader() {
     }, [router])
 
     return (
-        <header className="fixed top-0 z-100 flex flex-col">
+        <header className="fixed top-0 z-50 flex flex-col">
             <div className="flex flex-row bg-white/90 w-screen h-[56px] p-4 justify-between items-center border-b 
                 border-[#e6e6e6] ">
                 <div className='text-day-300 text-3xl cursor-pointer' onClick={() => router.push(' /')} >
