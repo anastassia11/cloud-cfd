@@ -30,9 +30,9 @@ export default function Header() {
         <>
             {token ?
                 <>
-                    <div className={`fixed inset-0 w-full h-full bg-black opacity-40 ${menuOpen ? 'block' : 'hidden'}`}></div>
+                    <div className={`fixed top-[56px] inset-0 w-full h-full bg-black opacity-40 ${menuOpen ? 'block' : 'hidden'}`}></div>
                     <header className="fixed top-0 z-50 flex flex-col">
-                        <div className="flex flex-row bg-day-00 w-screen h-[56px] p-4 justify-between items-center border-b 
+                        <div className="flex flex-row bg-white/90 w-screen h-[56px] p-4 justify-between items-center border-b 
                 border-[#e6e6e6] ">
                             <div className='text-day-300 text-3xl cursor-pointer' onClick={() => router.push(' /')} >
                                 <span className='font-semibold'> Cloud</span>
@@ -109,7 +109,7 @@ export default function Header() {
                                     </button>
                                 </div>}
                                 <div className="block md:hidden">
-                                    <button className="p-2 pr-0 transition text-day-300 hover:text-day-350"
+                                    <button className="m-2 mr-0 transition text-day-300 hover:text-day-350"
                                         onClick={() => setMenuOpen(!menuOpen)} >
                                         {
                                             menuOpen ? (
@@ -126,10 +126,10 @@ export default function Header() {
                                 </div>
                             </div>
                         </div >
-                        <div className={`bg-day-50 md:flex flex-col items-start px-3 py-3 w-[60%] self-end h-screen fixed top-[56px] 
-                duration-300 ${menuOpen ? 'right-0 flex' : 'opacity-0 -right-56'}`}>
+                        <div className={`bg-day-50 md:flex flex-col items-start px-3 w-[60%] self-end h-screen fixed top-[56px] 
+                duration-300 ${menuOpen ? 'right-0 flex' : 'opacity-0 -right-[60%]'}`}>
                             <button
-                                className='text-day-350 pb-2 w-full text-left'
+                                className='text-day-350 py-2 w-full text-left'
                                 onClick={() => router.push('/dashboard')}>
                                 Dashboard
                             </button>

@@ -107,7 +107,7 @@ export default function Dashboard() {
                     }
                     className="w-full h-9 pl-12 pr-4 text-base text-day-350 border rounded-md outline-none bg-day-50 focus:bg-day-00 focus:border-day-200" />
             </div>
-            <div className='mt-4 md:h-[calc(100vh-126px)] overflow-y-scroll rounded pr-2 w-full'>
+            <div className='mt-4 md:h-[calc(100vh-126px)] overflow-y-scroll rounded md:pr-2 w-full'>
                 {!loader && projects.length === 0 ? <div className='w-full h-[70%] flex flex-col items-center justify-center'>
                     <div className=''>
                         <SvgSelector id='add-folder' />

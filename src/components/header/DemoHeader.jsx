@@ -36,7 +36,7 @@ export default function DemoHeader() {
 
     return (
         <>
-            <div className={`fixed inset-0 w-full h-full bg-black opacity-40 ${menuOpen ? 'block' : 'hidden'}`}></div>
+            <div className={`fixed top-[56px] inset-0 w-full h-full bg-black opacity-40 ${menuOpen ? 'block' : 'hidden'}`}></div>
             <header className="fixed top-0 z-50 flex flex-col">
                 <div className="flex flex-row bg-white/90 w-screen h-[56px] p-4 justify-between items-center border-b 
                 border-[#e6e6e6] ">
@@ -65,7 +65,7 @@ export default function DemoHeader() {
                     </div>
 
                     <div className="block md:hidden">
-                        <button className="p-2 pr-0 transition text-day-300 hover:text-day-350"
+                        <button className="m-2 mr-0 transition text-day-300 hover:text-day-350"
                             onClick={() => setMenuOpen(!menuOpen)} >
                             {
                                 menuOpen ? (
@@ -81,9 +81,9 @@ export default function DemoHeader() {
                         </button>
                     </div>
                 </div >
-                <div className={`bg-day-50 md:block px-3 py-3 w-[60%] self-end h-screen fixed top-[56px] 
-                duration-300 ${menuOpen ? 'block right-0' : 'opacity-0 -right-56'}`}>
-                    <button className='text-day-350 pb-3' onClick={handleContactsClick}>
+                <div className={`bg-day-50 md:block px-3 w-[60%] self-end h-screen fixed top-[56px] 
+                duration-300 ${menuOpen ? 'block right-0' : 'opacity-0 -right-[60%]'}`}>
+                    <button className='text-day-350 py-3 w-full text-left' onClick={handleContactsClick}>
                         Контакты
                     </button>
                     <button className=" disabled:bg-orange-disabled w-full px-4 h-9 text-base font-medium 

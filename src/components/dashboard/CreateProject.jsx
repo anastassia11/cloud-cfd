@@ -38,14 +38,14 @@ export default function CreateProject({ onCloseClick, onCreate }) {
                         <form onSubmit={(e) => e.preventDefault()} className="space-y-2">
                             <div className='flex items-end justify-between'>
                                 <label className="font-medium text-day-350">
-                                    Project title
+                                    Title
                                 </label>
                                 <input type="text" placeholder="Enter a title..." value={name} onChange={(e) => setName(e.target.value)}
                                     className="w-60 mt-2 px-4 h-9 focus:outline-[0] text-day-350 border-b outline-none bg-day-00 border-day-100 focus:border-day-250 " />
                             </div>
                             <div className='flex items-end justify-between'>
                                 <label className="font-medium text-day-350">
-                                    Project description
+                                    Description
                                 </label>
                                 <input type="text" placeholder="Describe your project..." value={description} onChange={(e) => setDescription(e.target.value)}
                                     className="w-60 mt-2 px-4 h-9 focus:outline-[0] text-day-350 border-b outline-none bg-day-00 border-day-100 focus:border-day-250 " />
