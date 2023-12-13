@@ -256,10 +256,10 @@ export default function DemoHome() {
                     <h1 className="block lg:hidden text-day-350 font-semibold text-3xl xl:text-4xl ">
                         <span className="text-orange-100">Облачная</span> платформа для решения газодинамических задач
                     </h1>
-                    <p className="text-day-300 max-w-xl leading-relaxed sm:mx-auto lg:ml-0">
+                    <h3 className="text-day-300 max-w-xl leading-relaxed sm:mx-auto lg:ml-0">
                         <span className='font-semibold'> Cloud</span>
                         <span className='font-semibold text-orange-100'>CFD</span> делает процесс инженерного проектирования простым и доступным
-                    </p>
+                    </h3>
                     <div className="lg:pt-10 pt-5 items-center justify-center space-y-3 sm:space-x-6 sm:space-y-0 sm:flex lg:justify-start">
                         <button
                             className="cursor-pointer px-7 py-3 w-full text-center shadow-md block sm:w-auto
@@ -271,7 +271,7 @@ export default function DemoHome() {
                     </div>
                 </div>
                 <div className="flex-[55%] text-center mt-7 lg:mt-0 lg:ml-3 ">
-                    <Image src={demo_img} width={2000} height={1000} priority={true} alt='preview'
+                    <Image src={demo_img} width={2000} height={1000} priority={true} placeholder='blur' alt='preview'
                         className="h-full mx-auto rounded-xl shadow-lg lg:shadow-2xl" />
                 </div>
             </section>
@@ -283,7 +283,7 @@ export default function DemoHome() {
                             Почему<span className='font-semibold'> Cloud</span>
                             <span className='font-semibold text-orange-100'>CFD</span>
                         </h3>
-                        <p className='text-center'>Больше не нужно инвестировать в дорогостоящее оборудование и программное обеспечение</p>
+                        <h3 className='text-center'>Больше не нужно инвестировать в дорогостоящее оборудование и программное обеспечение</h3>
                     </div>
                     <div className="mt-12">
                         <ul className="grid gap-y-8 gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -315,7 +315,7 @@ export default function DemoHome() {
                             Как работает<span className='font-semibold'> Cloud</span>
                             <span className='font-semibold text-orange-100'>CFD</span>
                         </h3>
-                        <p className='text-center'>Простой и понятный интерфейс поможет пройти весь процесс инженерного проектирования</p>
+                        <h3 className='text-center'>Простой и понятный интерфейс поможет пройти весь процесс инженерного проектирования</h3>
                     </div>
                     <div className="mt-12">
                         <ul className="grid gap-y-8 gap-x-12 sm:grid-cols-1 lg:grid-cols-2 ">
@@ -365,9 +365,9 @@ export default function DemoHome() {
             <section className="bg-white px-4 md:px-8 border-t py-12 lg:pt-20 lg:pb-20" id='demo'>
                 <div className="max-w-screen-xl mx-auto px-4  md:px-8">
                     <div className="max-w-lg mx-auto space-y-3 text-center">
-                        <p className="font-semibold text-2xl xl:text-3xl">
+                        <h3 className="font-semibold text-2xl xl:text-3xl">
                             Запросить <span className='font-semibold text-orange-100'>бесплатный</span> доступ
-                        </p>
+                        </h3>
                         {done ? <><p className='text-center'>
                             Спасибо. Мы скоро с вами свяжемся!
                         </p></> :

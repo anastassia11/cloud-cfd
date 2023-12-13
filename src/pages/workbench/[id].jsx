@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import Workbench from '@/components/scenes/Workbench'
+import Head from 'next/head'
 
 export default function WorkbenchPage() {
     const router = useRouter()
@@ -28,9 +29,14 @@ export default function WorkbenchPage() {
     }
 
     return (
-        <div className=''>
+        <>
+            <Head>
+                <title>
+                    CLoudCFD | Workbench
+                </title>
+            </Head>
             <Workbench />
-        </div>
+        </>
     )
 }
 WorkbenchPage.requiresAuth = true

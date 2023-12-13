@@ -1,11 +1,17 @@
 
 import Dashboard from '@/components/dashboard/Dashboard'
+import Head from 'next/head'
 
 export default function DashboardPage() {
     return (
-        <div className=''>
+        <>
+            <Head>
+                <title>
+                    CLoudCFD | Dashboard
+                </title>
+            </Head>
             <Dashboard />
-        </div>
+        </>
     )
 }
 

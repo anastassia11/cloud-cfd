@@ -4,7 +4,6 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-
         {/* Код счетчика Яндекс.Метрики */}
         <script
           dangerouslySetInnerHTML={{
