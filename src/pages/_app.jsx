@@ -36,7 +36,8 @@ export default function App({ Component, pageProps }) {
 
   return (
     <Provider store={store}>
-      <main className={`${inter.className}`}>
+      {/* <main className={`${inter.className}`}> */}
+      <main>
         {isChecked && <Header />}
         {isChecked && <div className='mt-[56px]'>
           <Component {...pageProps} />
