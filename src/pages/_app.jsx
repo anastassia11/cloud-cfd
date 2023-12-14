@@ -1,12 +1,12 @@
 import { Provider } from 'react-redux'
-import { Inter } from 'next/font/google'
+// import { Inter } from 'next/font/google'
 import store from '../store'
 import '@/styles/globals.css'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import Header from '@/components/header/Header'
 
-const inter = Inter({ subsets: ['latin'] })
+// const inter = Inter({ subsets: ['latin'] })
 
 export default function App({ Component, pageProps }) {
   const router = useRouter()
