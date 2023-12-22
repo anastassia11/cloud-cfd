@@ -7,7 +7,7 @@ export default function LoginPage() {
         <>
             <Head>
                 <title>
-                    CLoudCFD | Авторизация
+                    CloudCFD | Авторизация
                 </title>
             </Head>
             <main className="w-screen h-[calc(100vh-56px)] flex flex-col items-center pt-[10%]  bg-day-50 overflow-scroll">

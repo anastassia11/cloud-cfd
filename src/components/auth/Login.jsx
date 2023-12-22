@@ -39,7 +39,7 @@ export default function Login() {
         <div className="space-y-6 sm:w-96 w-80">
             <div className="text-center">
                 <div className="mt-5 space-y-2">
-                    <h3 className="text-day-350 text-2xl font-bold sm:text-3xl">Войти в
+                    <h3 className="text-day-350 text-2xl font-semibold sm:text-3xl">Войти в
                         <span className='font-semibold'> Cloud</span>
                         <span className='font-semibold text-orange-100'>CFD</span></h3>
                     <p className="text-day-300">Еще нет аккаунта?

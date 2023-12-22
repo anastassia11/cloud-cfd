@@ -7,7 +7,7 @@ export default function DashboardPage() {
         <>
             <Head>
                 <title>
-                    CLoudCFD | Dashboard
+                    CloudCFD | Dashboard
                 </title>
             </Head>
             <Dashboard />

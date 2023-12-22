@@ -1,4 +1,4 @@
-import updateGeometry from '@/pages/api/update_geom'
+import updateGeometry from '@/api/update_geom'
 import { createSlice } from '@reduxjs/toolkit'
 
 const projectSlice = createSlice({
@@ -37,13 +37,13 @@ const projectSlice = createSlice({
                     return updatedGeom
                 } else return geom
             })
-            const result = updateGeometry(1, JSON.stringify(state.geometries))
+            const result = updateGeometry(1, state.geometries)
         },
 
         deleteGeometries(state, action) {
             const deletedGeom = action.payload.deletedGeometry
             state.geometries = state.geometries.filter((geom) => geom.uid !== deletedGeom.uid)
-            const result = updateGeometry(action.payload.projectId, JSON.stringify(state.geometries))
+            const result = updateGeometry(action.payload.projectId, state.geometries)
 
         },
 

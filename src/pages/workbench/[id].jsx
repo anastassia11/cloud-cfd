@@ -32,7 +32,7 @@ export default function WorkbenchPage() {
         <>
             <Head>
                 <title>
-                    CLoudCFD | Workbench
+                    CloudCFD | Workbench
                 </title>
             </Head>
             <Workbench />

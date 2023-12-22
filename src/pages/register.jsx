@@ -7,7 +7,7 @@ export default function RegisterPage() {
         <>
             <Head>
                 <title>
-                    CLoudCFD | Регистрация
+                    CloudCFD | Регистрация
                 </title>
             </Head>
             <main className="w-screen h-[calc(100vh-56px)] flex flex-col items-center pt-[5%] bg-day-50 overflow-scroll">

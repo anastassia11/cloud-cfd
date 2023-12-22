@@ -6,12 +6,12 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js"
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js"
 import React, { useRef, useEffect, useState, useImperativeHandle, forwardRef } from "react"
 import { BASE_SERVER_URL } from '@/utils/constants'
-import getGeometries from '@/pages/api/get_geometries'
+import getGeometries from '@/api/get_geometries'
 import { useDispatch, useSelector } from 'react-redux'
 import { addSelectedPart, deleteSelectedPart, setGeometries } from '@/store/slices/projectSlice'
 import { setLoader } from '@/store/slices/loaderSlice'
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
-import addGeometry from '@/pages/api/set_geometry'
+import addGeometry from '@/api/set_geometry'
 
 function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimitiveData }, ref) {
     const dispatch = useDispatch()
@@ -24,6 +24,7 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
     const didLogRef = useRef(false)
 
     let orbitControls, composer
+
 
     const projectId = useSelector(state => state.project.projectId)
     const geomsState = useSelector(state => state.project.geometries)

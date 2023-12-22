@@ -41,7 +41,8 @@ export default function App({ Component, pageProps }) {
         {isChecked && <Header />}
         {isChecked && <div className='mt-[56px]'>
           <Component {...pageProps} />
-        </div>}
+        </div>
+        }
       </main>
     </Provider>
   )

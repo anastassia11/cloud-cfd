@@ -43,7 +43,7 @@ export default function ModelPart({ model, handleHideClick, updateModelPart }) {
             ${modelPart.visible ? 'text-day-350' : 'text-day-250'} h-9 ${modelPart.visible && 'hover:bg-day-150'} 
             duration-300`}>
                 <p className={`pl-2 text-ellipsis whitespace-nowrap overflow-hidden
-                ${selectedModelPart.some((item) => item === modelPart.uid) ? 'font-extrabold' : ''}
+                ${selectedModelPart.some((item) => item === modelPart.uid) ? 'font-bold' : ''}
                 `}>
                     {modelPart.name}
                 </p>
