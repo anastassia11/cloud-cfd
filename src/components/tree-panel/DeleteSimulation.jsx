@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Oval } from 'react-loader-spinner'
 import SvgSelector from '../SvgSelector'
 import { useDispatch } from 'react-redux'
-import delete_Simulation from '@/pages/api/delete_simulation'
+import delete_Simulation from '@/api/delete_simulation'
 import { deleteSimulation } from '@/store/slices/projectSlice'
 
 export default function DeleteSimulation({ onCloseClick, simulationName, simulationId }) {

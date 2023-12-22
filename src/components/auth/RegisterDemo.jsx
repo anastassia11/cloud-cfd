@@ -2,7 +2,7 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import Form from './Form'
 import { useRouter } from 'next/router'
-import saveContact from '@/pages/api/save_contact'
+import saveContact from '@/api/save_contact'
 import RegisterFormDemo from './RegisterFormDemo'
 
 export default function RegisterDemo() {

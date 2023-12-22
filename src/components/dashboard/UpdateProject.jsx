@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import SvgSelector from '../SvgSelector'
 import { Oval } from 'react-loader-spinner'
-import updateProject from '@/pages/api/update_project'
+import updateProject from '@/api/update_project'
 
 export default function UpdateProject({ projectId, projectName, projectDescription, onCloseClick, onUpdate }) {
     const [name, setName] = useState(projectName)

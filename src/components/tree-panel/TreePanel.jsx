@@ -1,10 +1,10 @@
 import { useEffect } from "react"
 import SvgSelector from '../SvgSelector'
-import createSimulation from '@/pages/api/create_simulation'
+import createSimulation from '@/api/create_simulation'
 import { useDispatch, useSelector } from 'react-redux'
 import { addSimulation, setSimulations } from '@/store/slices/projectSlice'
 import { setLoader } from '@/store/slices/loaderSlice'
-import getSimulations from '@/pages/api/get_simulations'
+import getSimulations from '@/api/get_simulations'
 import Simulation from './Simulation'
 
 export default function TreePanel() {

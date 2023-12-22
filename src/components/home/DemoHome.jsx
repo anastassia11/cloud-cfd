@@ -2,7 +2,7 @@ import Link from 'next/link';
 import demo_img from '@/../public/demo_img.png'
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import saveContact from '@/pages/api/save_contact';
+import saveContact from '@/api/save_contact';
 import { useRouter } from 'next/router';
 
 export default function DemoHome() {

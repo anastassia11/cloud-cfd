@@ -7,7 +7,7 @@ import { RenderPass } from "three/addons/postprocessing/RenderPass.js"
 import { Lut } from 'three/addons/math/Lut.js'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoader } from '@/store/slices/loaderSlice'
-import getMeshData from '@/pages/api/get_mesh_data'
+import getMeshData from '@/api/get_mesh_data'
 import { BASE_SERVER_URL } from '@/utils/constants'
 import { setJobStatus, setMesh } from '@/store/slices/projectSlice'
 

@@ -15,7 +15,7 @@ export default function App({ Component, pageProps }) {
   const token = useRef(null)
 
   useEffect(() => {
-    token.current = localStorage.getItem('token')
+    token.current = localStorage.getItem('tokenData') ? JSON.parse(localStorage.getItem('tokenData')).token : null
     if (requiresAuth) {
       if (!token.current) {
         router.push('/login').then(() => {

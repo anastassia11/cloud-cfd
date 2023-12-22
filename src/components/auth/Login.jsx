@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import Form from './Form'
-import auth from '@/pages/api/auth'
+import auth from '@/api/auth'
 import Link from 'next/link'
 import { useState } from 'react'
 

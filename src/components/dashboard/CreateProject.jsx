@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import SvgSelector from '../SvgSelector'
-import createProject from '@/pages/api/create_project'
+import createProject from '@/api/create_project'
 import { Oval } from 'react-loader-spinner'
-import updateProject from '@/pages/api/update_project'
+import updateProject from '@/api/update_project'
 
 export default function CreateProject({ onCloseClick, onCreate }) {
     const [name, setName] = useState('')

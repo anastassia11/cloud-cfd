@@ -1,4 +1,4 @@
-import saveContact from '@/pages/api/save_contact'
+import saveContact from '@/api/save_contact'
 import React, { useState } from 'react'
 
 export default function RegisterFormDemo() {

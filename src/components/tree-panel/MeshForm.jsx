@@ -2,8 +2,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import SvgSelector from '../SvgSelector';
 import { resetSetting } from '@/store/slices/settingSlice';
 import { useEffect, useState } from 'react';
-import createMesh from '@/pages/api/create_mesh';
-import getSettingsMesh from '@/pages/api/get_settings_mesh';
+import createMesh from '@/api/create_mesh';
+import getSettingsMesh from '@/api/get_settings_mesh';
 import { setJobStatus } from '@/store/slices/projectSlice';
 
 export default function MeshForm({ computeBoundingBox }) {
@@ -30,6 +30,7 @@ export default function MeshForm({ computeBoundingBox }) {
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
+
         dispatch(resetSetting())
     }
 

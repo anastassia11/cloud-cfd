@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import SvgSelector from "../SvgSelector"
-import addGeometry from '@/pages/api/set_geometry'
+import addGeometry from '@/api/set_geometry'
 import { useDispatch, useSelector } from 'react-redux'
-import getGeometries from '@/pages/api/get_geometries'
+import getGeometries from '@/api/get_geometries'
 import { setGeometries } from '@/store/slices/projectSlice'
 import { resetSetting } from '@/store/slices/settingSlice'
 import { Oval } from 'react-loader-spinner'

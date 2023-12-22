@@ -12,11 +12,11 @@ export default function Header() {
     const loader = useSelector(state => state.loader.loader)
     const email = useRef(null)
     const login = useRef(null)
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('tokenData') ? JSON.parse(localStorage.getItem('tokenData')).token : null
     const [menuOpen, setMenuOpen] = useState(false)
 
     const handleLogOutClick = () => {
-        localStorage.removeItem('token')
+        localStorage.removeItem('tokenData')
         localStorage.removeItem('email')
         router.push('/login')
     }
