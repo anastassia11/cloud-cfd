@@ -33,7 +33,7 @@ export default function GeometriesPanel({ onHidePartObject }) {
                 {sceneMode === 'geom' && geoms.length > 0 ? <ul className='m-2'>
                     {geoms.map((geom) => (
                         <li className="" key={geom.uid}>
-                            <Geometry geom={geom} hidePartObject={(model) => onHidePartObject(model)} />
+                            <Geometry geom={geom} hidePartObject={onHidePartObject} />
                         </li>
                     ))}
                 </ul> : ''}

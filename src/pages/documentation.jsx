@@ -1,10 +1,19 @@
+import Head from 'next/head'
 
 
 export default function DocumentationPage() {
     return (
-        <div className='h-[calc(100vh-56px)] '>
+        <>
+            <Head>
+                <title>
+                    Documentation | CloudCFD
+                </title>
+            </Head>
+            <div className='h-[calc(100vh-56px)] '>
 
-        </div>
+            </div>
+        </>
+
     )
 }
 

@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import SvgSelector from '../SvgSelector'
 import { useSelector } from 'react-redux'
 
-export default function ModelPart({ model, handleHideClick, updateModelPart }) {
+export default function ModelPart({ modelPartProp, updateModelPart }) {
     const [input, setInput] = useState(false)
-    const [modelPart, setModelPart] = useState(model)
+    const [modelPart, setModelPart] = useState(modelPartProp)
     const selectedModelPart = useSelector(state => state.project.selectedPart)
 
     useEffect(() => {
@@ -14,7 +14,6 @@ export default function ModelPart({ model, handleHideClick, updateModelPart }) {
     const handleVisibleClick = () => {
         const newVisible = !modelPart.visible
         setModelPart(prevModelPart => ({ ...prevModelPart, visible: newVisible }))
-        handleHideClick(modelPart)
     }
 
     const handleNameChange = (e) => {

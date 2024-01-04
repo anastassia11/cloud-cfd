@@ -35,6 +35,7 @@ export default function Geometry({ geom = [], hidePartObject }) {
     }, [input])
 
     const handleUpdate = (updatedModelPart) => {
+
         const updatedGeometry = {
             ...geometry,
             models: geometry.models.map((model) => {
@@ -46,6 +47,7 @@ export default function Geometry({ geom = [], hidePartObject }) {
         }
         setGeometry(updatedGeometry)
         dispatch(updateGeometries({ updatedGeometry: updatedGeometry }))
+        hidePartObject(updatedModelPart)
     }
 
     const handleNameChange = (e) => {
@@ -111,8 +113,8 @@ export default function Geometry({ geom = [], hidePartObject }) {
                         {
                             geometry.models.map((model) => (
                                 <li key={model.uid}>
-                                    <ModelPart model={model} handleHideClick={(modelPart) => hidePartObject(modelPart)}
-                                        updateModelPart={(updatedModelPart) => handleUpdate(updatedModelPart)} />
+                                    <ModelPart modelPartProp={model}
+                                        updateModelPart={handleUpdate} />
                                 </li>
                             ))
                         }

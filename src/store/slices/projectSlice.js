@@ -37,13 +37,13 @@ const projectSlice = createSlice({
                     return updatedGeom
                 } else return geom
             })
-            const result = updateGeometry(1, state.geometries)
+            const result = updateGeometry(state.projectId, state.geometries)
         },
 
         deleteGeometries(state, action) {
             const deletedGeom = action.payload.deletedGeometry
             state.geometries = state.geometries.filter((geom) => geom.uid !== deletedGeom.uid)
-            const result = updateGeometry(action.payload.projectId, state.geometries)
+            const result = updateGeometry(state.projectId, state.geometries)
 
         },
 

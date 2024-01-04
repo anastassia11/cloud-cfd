@@ -9,9 +9,9 @@ export default function HomePage() {
         <title>
           Облачная платформа для моделирования | CloudCFD
         </title>
-        <meta name="description" content="CloudCFD - облачная платформа для решения газодинамических задач. Больше не нужно инвестировать в дорогостоящее оборудование и программное обеспечение."></meta>
+        <meta name="description" content="CloudCFD – программный продукт для автоматизированного проектирования (CAE), основанный на облачных вычислениях."></meta>
         <meta name="robots" content="index,follow,noyaca" />
-        <meta name="keywords" content="cloudcfd, облачная платформа, газодинамика, задачи газодинамики, вычислительная физика, вычислительная динамика, облачные вычисления, решение газодинамических задач, облачные технологии"></meta>
+        <meta name="keywords" content="cloudcfd, cloud, cfd, облачная платформа, OpenFOAM, газодинамика, облачные вычисления,"></meta>
       </Head>
       <div className='h-[calc(100vh-56px)] bg-day-50 '>
         <DemoHome />
