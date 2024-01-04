@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react';
 import SvgSelector from '../SvgSelector';
 import * as THREE from "three"
 import { useSelector } from 'react-redux';
+import { Tooltip } from 'react-tooltip';
 
-export default function ControlPanel({ selectionMode, onModeChange, setPrimitiveData }) {
+export default function ControlPanel({ selectModeProp, selectModeChange, renderModeProp,
+    renderModeChange, setPrimitiveData }) {
     const sceneMode = useSelector(state => state.project.sceneMode)
-    const [mode, setMode] = useState(selectionMode)
+    const [selectMode, setSelectMode] = useState(selectModeProp)
+    const [renderMode, setRenderMode] = useState(renderModeProp)
 
     const handleBoxClick = () => {
         const boxPatternGeom = new THREE.BoxGeometry(3, 30, 30);
@@ -28,27 +31,109 @@ export default function ControlPanel({ selectionMode, onModeChange, setPrimitive
     }
 
     useEffect(() => {
-        onModeChange(mode)
-    }, [mode])
+        selectModeChange(selectMode)
+    }, [selectMode])
+
+    useEffect(() => {
+        renderModeChange(renderMode)
+    }, [renderMode])
 
     return (
         <div className={`${sceneMode === "geom" ? 'flex' : 'hidden'} h-[40px] items-center justify-end grow justify-self-end`}>
             <div className='border-r border-[#a4a4a4] px-2 h-[40px] flex flex-row items-center relative'>
-                <button className={`rounded-md w-8 h-8 flex items-center justify-center
-                        ${mode === 'volume' ? 'border border-orange-100' : 'hover:bg-day-150 hover:shadow  active:bg-day-100'}`}
-                    onClick={() => setMode('volume')}>
+                <div className='group rounded-md w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-day-150 hover:shadow'>
+                    {renderMode === 'surfaces' && <SvgSelector id='surfaces-render-mode' className='w-6' />}
+                    {renderMode === 'translucent' && <SvgSelector id='translucent-render-mode' className='w-6' />}
+                    <div className='absolute top-[25px]'>
+                        <div className='mt-[3px] bg-day-00 rounded-md shadow border border-day-200 text-base duration-100 
+                                    ease-linear transition-all group-hover:translate-y-[10px]
+                                    invisible group-hover:visible h-0 group-hover:h-auto
+                                    opacity-0 group-hover:opacity-100 '>
+                            <div className='flex flex-col justify-center h-fit'>
+                                <button className='rounded-md w-8 h-8 flex items-center justify-center hover:bg-day-100'
+                                    onClick={() => setRenderMode('surfaces')}
+                                    data-tooltip-id="surfaces-render-mode"
+                                    data-tooltip-content="Surfaces"
+                                    data-tooltip-place="right"
+                                    data-tooltip-variant="light"
+                                >
+                                    <SvgSelector id='surfaces-render-mode' className='w-6' />
+                                </button>
+                                <Tooltip id="surfaces-render-mode"
+                                    style={{
+                                        fontSize: "11px",
+                                        height: "20px",
+                                        padding: "1px 8px 1px 8px",
+                                        whiteSpace: "nowrap",
+                                        display: "flex",
+                                        alignItems: "center",
+                                    }} />
+                                <button className='rounded-md w-8 h-8 flex items-center justify-center hover:bg-day-100'
+                                    onClick={() => setRenderMode('translucent')}
+                                    data-tooltip-id="translucent-render-mode"
+                                    data-tooltip-content="Translucent"
+                                    data-tooltip-place="right"
+                                    data-tooltip-variant="light"
+                                >
+                                    <SvgSelector id='translucent-render-mode' className='w-6' />
+                                </button>
+                                <Tooltip id="translucent-render-mode"
+                                    style={{
+                                        fontSize: "11px",
+                                        height: "20px",
+                                        padding: "1px 8px 1px 8px",
+                                        whiteSpace: "nowrap",
+                                        display: "flex",
+                                        alignItems: "center",
+                                    }} />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div className='border-r border-[#a4a4a4] px-2 h-[40px] flex flex-row items-center relative'>
+                <button className={`rounded-md w-8 h-8 flex items-center justify-center 
+                        ${selectMode === 'volume' ? 'border border-orange-100' : 'hover:bg-day-150 hover:shadow active:bg-day-100 active:shadow-inner'}`}
+                    onClick={() => setSelectMode('volume')}
+                    data-tooltip-id="volume-mode"
+                    data-tooltip-content="Select Volume"
+                    data-tooltip-place="bottom"
+                    data-tooltip-variant="light"
+                >
                     <SvgSelector id='select-volume' className='w-6' />
                 </button>
+                <Tooltip id="volume-mode"
+                    style={{
+                        fontSize: "11px",
+                        height: "20px",
+                        padding: "1px 8px 1px 8px",
+                        whiteSpace: "nowrap",
+                        textAlign: "center",
+                    }} />
             </div>
             <div className='border-r border-[#a4a4a4] px-2 h-[40px] flex flex-row items-center relative'>
                 <button className={`rounded-md w-8 h-8 flex items-center justify-center
-                        ${mode === 'face' ? 'border border-orange-100' : 'hover:bg-day-150 hover:shadow active:bg-day-100'}`}
-                    onClick={() => setMode('face')}>
+                        ${selectMode === 'face' ? 'border border-orange-100' : 'hover:bg-day-150 hover:shadow active:bg-day-100 active:shadow-inner'}`}
+                    onClick={() => setSelectMode('face')}
+                    data-tooltip-id="face-mode"
+                    data-tooltip-content="Select Face"
+                    data-tooltip-place="bottom"
+                    data-tooltip-variant="light">
                     <SvgSelector id='select-face' className='w-6' />
                 </button>
+                <Tooltip id="face-mode"
+                    style={{
+                        fontSize: "11px",
+                        height: "20px",
+                        padding: "1px 8px 1px 8px",
+                        whiteSpace: "nowrap",
+                        textAlign: "center",
+                    }} />
             </div>
             <div className='relative group text-day-1000 flex flex-row items-center cursor-pointer 
-                            w-[100px] h-8 ml-2 pl-2 justify-start'>
+                            mr-2 h-8 pl-2 justify-start'>
                 <p className='text-[13px] pt-[2px] mr-[2px] tracking-wide'>CREATE</p>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                     className='w-5 h-5 duration-300 group-hover:rotate-180'>
@@ -56,11 +141,11 @@ export default function ControlPanel({ selectionMode, onModeChange, setPrimitive
                 </svg>
 
                 <div className='bg-day-00 rounded-md shadow absolute 
-                                    top-[25px] border border-day-200 -left-[6px] w-[95px] text-base duration-100 
+                                    top-[25px] border border-day-200 left-[5px] w-[65px] text-base duration-100 
                                     ease-linear transition-all group-hover:translate-y-[10px]
+                                    invisible group-hover:visible h-0 group-hover:h-auto
                                     opacity-0 group-hover:opacity-100 '>
                     <div className='flex flex-col justify-center h-fit'>
-
                         <button className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
                                         hover:bg-day-100 rounded-md h-fit'
                             onClick={handleBoxClick}>

@@ -12,7 +12,7 @@ import GeometryScene from './GeometryScene'
 import MeshScene from './MeshScene'
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
 import MeshForm from '../tree-panel/MeshForm'
-import { DotLoader, PuffLoader, SkewLoader } from 'react-spinners'
+import { PuffLoader } from 'react-spinners'
 
 export default function Workbench() {
     const jobStatus = useSelector(state => state.project.jobStatus)
@@ -33,7 +33,9 @@ export default function Workbench() {
     const sceneMode = useSelector(state => state.project.sceneMode)
     const formName = useSelector(state => state.setting.formName)
     const mesh = useSelector(state => state.project.mesh)
-    const [selectionMode, setSelectionMode] = useState("face")
+    const [selectMode, setSelectMode] = useState('face')
+    const [renderMode, setRenderMode] = useState('surfaces')
+
 
     const [transformFormData, setTransformFormData] = useState({
         visible: false,
@@ -122,12 +124,25 @@ export default function Workbench() {
         geometrySceneRef.current.addPrimitive({ 'Angle': '120', 'IdProject': projectId, 'File': file })
     }
 
+    function changeTransformData(newData) {
+        setTransformFormData((prevData) => {
+            return { ...prevData, ...newData }
+        })
+    }
+
+    function changePrimitiveData(newData) {
+        setPrimitiveData((prevData) => {
+            return { ...prevData, ...newData }
+        })
+    }
+
     return (
         <div className='min-h-[calc(100vh-56px)] flex w-full' id='for-canvas'>
             <div className={`${sceneMode === "geom" || !mesh ? 'block' : 'hidden'}`}>
                 <GeometryScene ref={geometrySceneRef} camera={camera.current}
-                    selectionMode={selectionMode} setTransformFormData={(newData) => setTransformFormData(newData)}
-                    setPrimitiveData={(newData) => setPrimitiveData(newData)} />
+                    selectMode={selectMode} setTransformFormData={changeTransformData}
+                    renderMode={renderMode}
+                    setPrimitiveData={changePrimitiveData} />
             </div>
             <div className={`${sceneMode === "mesh" && mesh ? 'block' : 'hidden'}`}>
                 <MeshScene camera={camera.current} renderer={rendererMesh} />
@@ -160,8 +175,8 @@ export default function Workbench() {
                     </div>
                 </div>
                 <div className='flex flex-row'>
-                    <ControlPanel selectionMode={selectionMode}
-                        onModeChange={(mode) => setSelectionMode(mode)}
+                    <ControlPanel selectModeProp={selectMode} selectModeChange={(mode) => setSelectMode(mode)}
+                        renderModeProp={renderMode} renderModeChange={(mode) => setRenderMode(mode)}
                         setPrimitiveData={addPrimitivePattern} />
 
                     <div className='right-0 flex flex-col max-h-[calc(100vh-73px)] overflow-hidden'>

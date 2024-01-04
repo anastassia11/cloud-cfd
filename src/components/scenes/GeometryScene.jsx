@@ -13,7 +13,7 @@ import { setLoader } from '@/store/slices/loaderSlice'
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
 import addGeometry from '@/api/set_geometry'
 
-function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimitiveData }, ref) {
+function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, setPrimitiveData }, ref) {
     const dispatch = useDispatch()
     const containerRef = useRef(null)
     const sceneRef = useRef(null)
@@ -22,15 +22,39 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
     const transformControl = useRef(null)
     const dataUrl = useRef(null)
     const didLogRef = useRef(false)
-
     let orbitControls, composer
-
 
     const projectId = useSelector(state => state.project.projectId)
     const geomsState = useSelector(state => state.project.geometries)
     const [meshes, setMeshes] = useState([])
     const [groups, setGroups] = useState([])
     const [selectedFaces, setSelectedFaces] = useState([])
+
+    const baseMaterial = new THREE.MeshPhongMaterial({
+        color: 0xa0a0a0,
+        specular: 0x494949,
+        shininess: 100,
+        //side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 1,
+    });
+
+    const opacityMaterial = new THREE.MeshPhongMaterial({
+        color: 0xa0a0a0,
+        specular: 0x494949,
+        shininess: 100,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.5,
+    });
+
+    const selectedMaterial = new THREE.MeshPhongMaterial({
+        color: 0x404080,
+        specular: 0x494949,
+        shininess: 100,
+        side: THREE.DoubleSide,
+        transparent: true,
+    })
 
     useEffect(() => {
         if (didLogRef.current === false) {
@@ -42,6 +66,10 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
         addTransformListeners()
         return () => {
             removeTransformListeners()
+            // while (sceneRef.current.children.length > 0) {
+            //     const object = sceneRef.current.children.pop()
+            //     sceneRef.current.remove(object)
+            // }
         }
     }, [])
 
@@ -49,7 +77,11 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
         addListeners()
         takeSnapshot()
         return () => removeListeners()
-    }, [meshes, groups, selectionMode])
+    }, [meshes, groups, selectMode])
+
+    useEffect(() => {
+        renderModeChange()
+    }, [renderMode])
 
     useEffect(() => {
         loadSTL(geomsState)
@@ -100,13 +132,8 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
 
                             //geometry.computeBoundingSphere()
                             //center.add(geometry.boundingSphere.center)
-                            const meshMaterial = new THREE.MeshPhongMaterial({
-                                color: 0xa0a0a0,
-                                specular: 0x494949,
-                                shininess: 100,
-                                side: THREE.DoubleSide,
-                            });
-                            const mesh = new THREE.Mesh(geometry, meshMaterial)
+                            const material = baseMaterial.clone()
+                            const mesh = new THREE.Mesh(geometry, material)
                             mesh.scale.set(1, 1, 1)
                             mesh.castShadow = true
                             mesh.receiveShadow = true
@@ -123,9 +150,9 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
                         }
                     )
                 })
-                sceneRef.current.add(group)
                 setGroups((prevGroups) => {
                     if (!prevGroups.some(groupItem => groupItem.uid === group.uid)) {
+                        sceneRef.current.add(group)
                         return [...prevGroups, group]
                     }
                     return prevGroups
@@ -178,6 +205,7 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
         });
         renderer.current.setClearColor("#f0f0f0");
         renderer.current.setSize(window.innerWidth, window.innerHeight - 56);
+
         orbitControls = new OrbitControls(
             camera,
             renderer.current.domElement
@@ -226,9 +254,9 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
 
     function handleTransformChange() {
         if (transformControl.current?.object?.type === 'Mesh') {
-            setPrimitiveData((prevData) => ({ ...prevData, position: transformControl.current?.object?.position }))
+            setPrimitiveData({ position: transformControl.current?.object?.position })
         } else if ((transformControl.current?.object?.type === 'Group')) {
-            setTransformFormData((prevData) => ({ ...prevData, position: transformControl.current?.object?.position }))
+            setTransformFormData({ position: transformControl.current?.object?.position })
         }
     }
 
@@ -247,21 +275,7 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
         const raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(mouse, camera);
 
-        const selected_material = new THREE.MeshPhongMaterial({
-            color: 0x404080,
-            specular: 0x494949,
-            shininess: 100,
-            side: THREE.DoubleSide,
-        })
-
-        const base_material = new THREE.MeshPhongMaterial({
-            color: 0xa0a0a0,
-            specular: 0x494949,
-            shininess: 100,
-            side: THREE.DoubleSide,
-        });
-
-        if (selectionMode === 'volume') {
+        if (selectMode === 'volume') {
             groups.forEach((group) => {
                 const intersects = raycaster.intersectObjects(group.children, true);
                 if (intersects.length > 0) {
@@ -269,12 +283,12 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
                         if (object.isMesh) {
                             setSelectedFaces((prevGeoms) => {
                                 if (prevGeoms?.length > 0 && prevGeoms.some((prevGeom) => prevGeom.uid === object.uid)) {
-                                    object.material = base_material
+                                    object.material = baseMaterial.clone()
                                     dispatch(deleteSelectedPart({ deletedPart: object.uid }))
                                     handleCloseForm('transformForm')
                                     return prevGeoms.filter((prevGeom) => prevGeom.uid !== object.uid)
                                 } else {
-                                    object.material = selected_material
+                                    object.material = selectedMaterial.clone()
                                     dispatch(addSelectedPart({ addedPart: object.uid }))
                                     addTransformControl(group)
                                     setTransformFormData({ visible: true, name: group.name, position: group.position })
@@ -286,17 +300,17 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
                 }
             })
 
-        } else if (selectionMode === 'face') {
+        } else if (selectMode === 'face') {
             const intersects = raycaster.intersectObjects(meshes, true)
             if (intersects.length > 0) {
                 const object = intersects[0].object
                 setSelectedFaces((prevGeoms) => {
                     if (prevGeoms?.length > 0 && prevGeoms.some((prevGeom) => prevGeom.uid === object.uid)) {
-                        object.material = base_material
+                        object.material = baseMaterial.clone()
                         dispatch(deleteSelectedPart({ deletedPart: object.uid }))
                         return prevGeoms.filter((prevGeom) => prevGeom.uid !== object.uid)
                     } else {
-                        object.material = selected_material
+                        object.material = selectedMaterial.clone();
                         dispatch(addSelectedPart({ addedPart: object.uid }))
                         return [...prevGeoms, object]
                     }
@@ -313,7 +327,7 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
         const raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(mouse, camera);
 
-        if (selectionMode === 'volume') {
+        if (selectMode === 'volume') {
             groups.forEach((group) => {
                 const intersects = raycaster.intersectObjects(group.children, true);
                 if (intersects.length > 0) {
@@ -322,7 +336,7 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
                 }
             })
 
-        } else if (selectionMode === 'face') {
+        } else if (selectMode === 'face') {
             const intersects = raycaster.intersectObjects(meshes, true);
             if (intersects.length > 0) {
                 const object = intersects[0].object;
@@ -336,23 +350,42 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
         orbitControls.enabled = !event.value;
     }
 
+    const renderModeChange = () => {
+        let material;
+        switch (renderMode) {
+            case 'surfaces':
+                material = baseMaterial;
+                break;
+            case 'translucent':
+                material = opacityMaterial;
+                break;
+        }
+        sceneRef.current.children.forEach(child => {
+            if (child.isGroup) {
+                child.children.forEach(item => {
+                    item.material = material.clone();
+                })
+            }
+        })
+    }
+
     const handlePositionChange = (newPosition) => {
         const uid = transformControl.current.uid
         const { x, y, z } = newPosition
         groups.forEach((group) => {
             group.uid === uid && group.position.set(x, y, z)
         })
-        setTransformFormData((prevData) => ({ ...prevData, position: newPosition }))
+        setTransformFormData({ position: newPosition })
     }
 
     const handleCloseForm = (name) => {
         switch (name) {
             case 'transformForm': {
-                setTransformFormData((prevData) => ({ ...prevData, visible: false }))
+                setTransformFormData({ visible: false })
                 break
             };
             case 'primitiveForm': {
-                setPrimitiveData((prevData) => ({ ...prevData, visible: false }))
+                setPrimitiveData({ visible: false })
                 sceneRef.current.remove(transformControl.current.object)
                 break
             };
@@ -362,10 +395,10 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
     }
 
     function hidePartObject(model) {
-        meshes.forEach((d) => {
-            if (d.uid === model.uid) {
-                d.visible = !d.visible;
-                d.material.visible = d.visible
+        meshes.forEach((mesh) => {
+            if (mesh.uid === model.uid) {
+                mesh.visible = !mesh.visible
+                mesh.material.visible = mesh.visible
             }
         })
     }
@@ -450,7 +483,6 @@ function GeometryScene({ camera, selectionMode, setTransformFormData, setPrimiti
                 <img src={dataUrl.current} />
             </div> */}
         </>
-
     )
 }
 export default forwardRef(GeometryScene)
