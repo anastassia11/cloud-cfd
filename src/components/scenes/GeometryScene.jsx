@@ -12,8 +12,9 @@ import { addSelectedPart, deleteSelectedPart, setGeometries } from '@/store/slic
 import { setLoader } from '@/store/slices/loaderSlice'
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
 import addGeometry from '@/api/set_geometry'
+import { setPointPosition } from '@/store/slices/meshSlice'
 
-function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, setPrimitiveData }, ref) {
+function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, setPrimitiveData, }, ref) {
     const dispatch = useDispatch()
     const containerRef = useRef(null)
     const sceneRef = useRef(null)
@@ -26,6 +27,11 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
 
     const projectId = useSelector(state => state.project.projectId)
     const geomsState = useSelector(state => state.project.geometries)
+    const sceneMode = useSelector(state => state.project.sceneMode)
+    const formName = useSelector(state => state.setting.formName)
+    const pointPosition = useSelector(state => state.mesh.pointPosition)
+    const pointVisible = useSelector(state => state.mesh.pointVisible)
+
     const [meshes, setMeshes] = useState([])
     const [groups, setGroups] = useState([])
     const [selectedFaces, setSelectedFaces] = useState([])
@@ -34,7 +40,7 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         color: 0xa0a0a0,
         specular: 0x494949,
         shininess: 100,
-        //side: THREE.DoubleSide,
+        side: THREE.DoubleSide,
         transparent: true,
         opacity: 1,
     });
@@ -66,10 +72,6 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         addTransformListeners()
         return () => {
             removeTransformListeners()
-            // while (sceneRef.current.children.length > 0) {
-            //     const object = sceneRef.current.children.pop()
-            //     sceneRef.current.remove(object)
-            // }
         }
     }, [])
 
@@ -80,8 +82,17 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
     }, [meshes, groups, selectMode])
 
     useEffect(() => {
-        renderModeChange()
+        changeRenderMode(renderMode)
     }, [renderMode])
+
+    useEffect(() => {
+        changePointVisible()
+    }, [formName, pointVisible])
+
+    useEffect(() => {
+        changePointPosition(pointPosition)
+    }, [pointPosition])
+
 
     useEffect(() => {
         loadSTL(geomsState)
@@ -253,10 +264,20 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
     }
 
     function handleTransformChange() {
-        if (transformControl.current?.object?.type === 'Mesh') {
-            setPrimitiveData({ position: transformControl.current?.object?.position })
-        } else if ((transformControl.current?.object?.type === 'Group')) {
-            setTransformFormData({ position: transformControl.current?.object?.position })
+        const objectTypes = {
+            'Mesh': () => setPrimitiveData({ position: transformControl.current?.object?.position }),
+            'Group': () => setTransformFormData({ position: transformControl.current?.object?.position }),
+            'insidePoint': () => dispatch(setPointPosition({
+                position: {
+                    x: transformControl.current?.object?.position.x,
+                    y: transformControl.current?.object?.position.y,
+                    z: transformControl.current?.object?.position.z,
+                }
+            })),
+        };
+        const objectType = transformControl.current?.object?.type;
+        if (objectTypes[objectType]) {
+            objectTypes[objectType]();
         }
     }
 
@@ -350,7 +371,7 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         orbitControls.enabled = !event.value;
     }
 
-    const renderModeChange = () => {
+    const changeRenderMode = (renderMode) => {
         let material;
         switch (renderMode) {
             case 'surfaces':
@@ -365,6 +386,36 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
                 child.children.forEach(item => {
                     item.material = material.clone();
                 })
+            }
+        })
+    }
+
+    const changePointVisible = () => {
+        if (formName === 'mesh' && pointVisible) {
+            const pointGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+            const pointMaterial = selectedMaterial.clone();
+            const point3D = new THREE.Mesh(pointGeometry, pointMaterial);
+            point3D.type = 'insidePoint';
+            sceneRef.current.add(point3D);
+            addTransformControl(point3D);
+            changeRenderMode('translucent');
+        } else {
+            sceneRef.current.children.forEach(child => {
+                if (child.type === 'insidePoint') {
+                    sceneRef.current.remove(child);
+                    transformControl.current.detach();
+                    sceneRef.current.remove(transformControl.current);
+                    changeRenderMode(renderMode);
+                }
+            })
+        }
+    }
+
+    const changePointPosition = (newPosition) => {
+        const { x, y, z } = newPosition;
+        sceneRef.current.children.forEach((child) => {
+            if (child.type === 'insidePoint') {
+                child.position.set(x, y, z);
             }
         })
     }

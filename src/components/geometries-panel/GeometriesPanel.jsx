@@ -38,7 +38,7 @@ export default function GeometriesPanel({ onHidePartObject }) {
                     ))}
                 </ul> : ''}
                 {sceneMode === 'mesh' ? <ul className='m-2'>
-                    Здесь будут Meshes и Sclices
+                    Здесь будут Meshes и Slices
                 </ul> : ''}
             </div>
         </div>

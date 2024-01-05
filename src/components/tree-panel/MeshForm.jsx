@@ -5,11 +5,15 @@ import { useEffect, useState } from 'react';
 import createMesh from '@/api/create_mesh';
 import getSettingsMesh from '@/api/get_settings_mesh';
 import { setJobStatus } from '@/store/slices/projectSlice';
+import { setPointPosition, setPointVisible } from '@/store/slices/meshSlice';
 
 export default function MeshForm({ computeBoundingBox }) {
     const dispatch = useDispatch()
     const projectId = useSelector(state => state.project.projectId)
-    const geomsState = useSelector(state => state.project.geometries)
+    const geomsState = useSelector(state => state.project.geometries);
+    const pointPosition = useSelector(state => state.mesh.pointPosition)
+    const pointVisible = useSelector(state => state.mesh.pointVisible)
+
     const [formData, setFormData] = useState({})
     const [advancedSettingsVisible, setAdvancedSettingsVisible] = useState(false)
 
@@ -19,10 +23,31 @@ export default function MeshForm({ computeBoundingBox }) {
         getMesh()
     }, [geomsState])
 
+    useEffect(() => {
+        // сохранять настройки сетки
+    }, [formData])
+
+    useEffect(() => {
+        setFormData((prev) => ({
+            ...prev, InsidePoint: {
+                X: pointPosition.x,
+                Y: pointPosition.y,
+                Z: pointPosition.z,
+            }
+        }));
+    }, [pointPosition])
+
     const getMesh = async () => {
         const result = await getSettingsMesh(projectId)
         if (result.success) {
-            setFormData(result.data)
+            setFormData(result.data);
+            dispatch(setPointPosition({
+                position: {
+                    x: result.data.InsidePoint.X,
+                    y: result.data.InsidePoint.Y,
+                    z: result.data.InsidePoint.Z,
+                }
+            }));
         } else {
             alert(result.message)
         }
@@ -30,13 +55,19 @@ export default function MeshForm({ computeBoundingBox }) {
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
-
         dispatch(resetSetting())
     }
 
     const inputDataChange = (e) => {
-        const { name, value } = e.target
-        setFormData((prev) => ({ ...prev, [name]: Number(value) }))
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: Number(value) }));
+    }
+
+    const pointInputDataChange = (e) => {
+        const { name, value } = e.target;
+        const _name = name.toLowerCase();
+        setFormData((prev) => ({ ...prev, InsidePoint: { ...prev.InsidePoint, [name]: Number(value) } }));
+        dispatch(setPointPosition({ position: { ...pointPosition, [_name]: Number(value) } }));
     }
 
     const toogleDataChange = (e) => {
@@ -83,6 +114,51 @@ export default function MeshForm({ computeBoundingBox }) {
                             outline-none bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]`}>
                     </input>
                     {unit && <span className={`px-2 w-1/4 text-center cursor-default ml-1 border-b py-[4px]`}>{unit}</span>}
+                </div>
+            </div>
+        )
+    }
+
+    const PointInput = ({ label, name, unit }) => {
+        return (
+            <div className='flex flex-col'>
+                <div className='flex flex-row justify-between'>
+                    <p>
+                        {label}, {unit}
+                    </p>
+                    <button className='text-blue-700 hover:underline underline-offset-4 duration-300'
+                        onClick={() => dispatch(setPointVisible({ visible: !pointVisible }))}>
+                        {!pointVisible ? 'Show' : 'Hide'}
+                    </button>
+                </div>
+                <div className='flex flex-col space-y-2 mt-2 mb-2'>
+                    <div className='flex flex-row items-end justify-between h-8'>
+                        <label htmlFor='X' className='w-full text-left text-ellipsis overflow-hidden whitespace-nowrap'>X</label>
+                        <div className="flex flex-row items-center w-[250px]">
+                            <input type="number" id='X' name='X' value={formData[name] && formData[name]["X"]} onChange={pointInputDataChange}
+                                className='h-8 w-full p-2 focus:outline-[0] text-day-350 border rounded-md 
+                                outline-none bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]'>
+                            </input>
+                        </div>
+                    </div>
+                    <div className='flex flex-row items-end justify-between h-8'>
+                        <label htmlFor='Y' className='w-full text-left text-ellipsis overflow-hidden whitespace-nowrap'>Y</label>
+                        <div className="flex flex-row items-center w-[250px]">
+                            <input type="number" id='Y' name='Y' value={formData[name] && formData[name]["Y"]} onChange={pointInputDataChange}
+                                className='h-8 w-full p-2 focus:outline-[0] text-day-350 border rounded-md 
+                                outline-none bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]'>
+                            </input>
+                        </div>
+                    </div>
+                    <div className='flex flex-row items-end justify-between h-8'>
+                        <label htmlFor='Z' className='w-full text-left text-ellipsis overflow-hidden whitespace-nowrap'>Z</label>
+                        <div className="flex flex-row items-center w-[250px]">
+                            <input type="number" id='Z' name='Z' value={formData[name] && formData[name]["Z"]} onChange={pointInputDataChange}
+                                className='h-8 w-full p-2 focus:outline-[0] text-day-350 border rounded-md 
+                                outline-none bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]'>
+                            </input>
+                        </div>
+                    </div>
                 </div>
             </div>
         )
@@ -191,10 +267,13 @@ export default function MeshForm({ computeBoundingBox }) {
             <div className='overflow-y-auto p-3'>
                 <p className='h-8 flex items-center font-semibold'>Block mesh settings</p>
                 <Input label={'Delta'} name={'Delta'} />
+                <PointInput label={'Inside point'} name={'InsidePoint'} unit='m' />
 
                 <p className='h-8 flex items-center font-semibold'>Castellated mesh controls</p>
                 <Input label={'Cells between levels'} name={'NCellsBetweenLevels'} />
-                <Input label={'Inside point'} name={'ResolveFeatureAngle'} />
+                <Input label={'Resolve feature angle'} name={'ResolveFeatureAngle'}
+                // unit='&deg;' 
+                />
 
                 <p className='h-8 flex items-center font-semibold'>Add layers controls</p>
                 <Toogle label={'Add layers'} name={'AddLayers'} />
