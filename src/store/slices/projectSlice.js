@@ -24,7 +24,6 @@ const projectSlice = createSlice({
 
         setSelectedParts(state, action) {
             state.selectedParts = action.payload
-            console.log(state.selectedParts)
         },
 
         updateGeometries(state, action) {

@@ -84,10 +84,12 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
     }, [])
 
     useEffect(() => {
-        addListeners()
+        if (formName !== 'mesh' || !pointVisible) {
+            addListeners()
+        }
         takeSnapshot()
         return () => removeListeners()
-    }, [meshes, groups, selectMode, renderMode])
+    }, [meshes, groups, selectMode, renderMode, pointVisible, formName])
 
     useEffect(() => {
         changeMaterials(renderMode)
@@ -287,6 +289,10 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         }
     }
 
+    function handleTransformMove(event) {
+        orbitControls.enabled = !event.value;
+    }
+
     function addTransformControl(object) {
         transformControl.current.attach(object)
         transformControl.current.uid = object.uid
@@ -370,10 +376,6 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
                 outlinePass.current.enabled = true;
             }
         }
-    }
-
-    function handleTransformMove(event) {
-        orbitControls.enabled = !event.value;
     }
 
     const changeMaterials = (renderMode) => {
