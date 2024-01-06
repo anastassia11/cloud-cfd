@@ -8,7 +8,7 @@ import React, { useRef, useEffect, useState, useImperativeHandle, forwardRef } f
 import { BASE_SERVER_URL } from '@/utils/constants'
 import getGeometries from '@/api/get_geometries'
 import { useDispatch, useSelector } from 'react-redux'
-import { addSelectedPart, deleteSelectedPart, setGeometries } from '@/store/slices/projectSlice'
+import { setGeometries, setSelectedParts } from '@/store/slices/projectSlice'
 import { setLoader } from '@/store/slices/loaderSlice'
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
 import addGeometry from '@/api/set_geometry'
@@ -27,7 +27,6 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
 
     const projectId = useSelector(state => state.project.projectId)
     const geomsState = useSelector(state => state.project.geometries)
-    const sceneMode = useSelector(state => state.project.sceneMode)
     const formName = useSelector(state => state.setting.formName)
     const pointPosition = useSelector(state => state.mesh.pointPosition)
     const pointVisible = useSelector(state => state.mesh.pointVisible)
@@ -62,6 +61,15 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         transparent: true,
     })
 
+    const selectedOpacityMaterial = new THREE.MeshPhongMaterial({
+        color: 0x404080,
+        specular: 0x494949,
+        shininess: 100,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.5,
+    })
+
     useEffect(() => {
         if (didLogRef.current === false) {
             didLogRef.current = true
@@ -79,11 +87,15 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         addListeners()
         takeSnapshot()
         return () => removeListeners()
-    }, [meshes, groups, selectMode])
+    }, [meshes, groups, selectMode, renderMode])
 
     useEffect(() => {
-        changeRenderMode(renderMode)
-    }, [renderMode])
+        changeMaterials(renderMode)
+    }, [renderMode, selectedFaces])
+
+    useEffect(() => {
+        dispatch(setSelectedParts(selectedFaces.map((face) => face.uid)))
+    }, [selectedFaces])
 
     useEffect(() => {
         changePointVisible()
@@ -92,7 +104,6 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
     useEffect(() => {
         changePointPosition(pointPosition)
     }, [pointPosition])
-
 
     useEffect(() => {
         loadSTL(geomsState)
@@ -129,44 +140,39 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
     }
 
     function loadSTL(geometryDataList) {
-        const stlLoader = new STLLoader()
+        const stlLoader = new STLLoader();
         geometryDataList?.forEach((geom) => {
             if (!groups.some(group => group.uid === geom.uid)) {
-                const group = new THREE.Group()
-                group.name = geom.name
-                group.uid = geom.uid
-                //let center = new THREE.Vector3()
+                const group = new THREE.Group();
+                group.name = geom.name;
+                group.uid = geom.uid;
                 geom.models.forEach((model) => {
                     stlLoader.load(
                         BASE_SERVER_URL + model.link,
                         (geometry) => {
-
-                            //geometry.computeBoundingSphere()
-                            //center.add(geometry.boundingSphere.center)
-                            const material = baseMaterial.clone()
-                            const mesh = new THREE.Mesh(geometry, material)
-                            mesh.scale.set(1, 1, 1)
-                            mesh.castShadow = true
-                            mesh.receiveShadow = true
-                            mesh.uid = model.uid
-                            mesh.visible = model.visible
-                            //mesh.category = geom.name
-                            group.add(mesh)
+                            const material = baseMaterial.clone();
+                            const mesh = new THREE.Mesh(geometry, material);
+                            mesh.scale.set(1, 1, 1);
+                            mesh.castShadow = true;
+                            mesh.receiveShadow = true;
+                            mesh.uid = model.uid;
+                            mesh.visible = model.visible;
+                            group.add(mesh);
                             setMeshes((prevMeshes) => {
                                 if (!prevMeshes.some(meshItem => meshItem.uid === mesh.uid)) {
-                                    return [...prevMeshes, mesh]
+                                    return [...prevMeshes, mesh];
                                 }
-                                return prevMeshes
+                                return prevMeshes;
                             })
                         }
                     )
                 })
                 setGroups((prevGroups) => {
                     if (!prevGroups.some(groupItem => groupItem.uid === group.uid)) {
-                        sceneRef.current.add(group)
-                        return [...prevGroups, group]
+                        sceneRef.current.add(group);
+                        return [...prevGroups, group];
                     }
-                    return prevGroups
+                    return prevGroups;
                 })
             }
         })
@@ -292,56 +298,56 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         const mouse = new THREE.Vector2();
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
         const raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(mouse, camera);
 
         if (selectMode === 'volume') {
             groups.forEach((group) => {
                 const intersects = raycaster.intersectObjects(group.children, true);
-                if (intersects.length > 0) {
-                    group.traverse((object) => {
-                        if (object.isMesh) {
-                            setSelectedFaces((prevGeoms) => {
-                                if (prevGeoms?.length > 0 && prevGeoms.some((prevGeom) => prevGeom.uid === object.uid)) {
-                                    object.material = baseMaterial.clone()
-                                    dispatch(deleteSelectedPart({ deletedPart: object.uid }))
-                                    handleCloseForm('transformForm')
-                                    return prevGeoms.filter((prevGeom) => prevGeom.uid !== object.uid)
-                                } else {
-                                    object.material = selectedMaterial.clone()
-                                    dispatch(addSelectedPart({ addedPart: object.uid }))
-                                    addTransformControl(group)
-                                    setTransformFormData({ visible: true, name: group.name, position: group.position })
-                                    return [...prevGeoms, object]
-                                }
-                            })
+                const intersectedFace = intersects.length > 0 ? intersects[0].object : null;
+                // Логика добавления выбранных граней в стейт selectedFaces (массив) 
+                setSelectedFaces((prevFaces) => {
+                    const selectedUids = prevFaces.map((prevFace) => prevFace.uid);
+                    if (selectedUids.includes(intersectedFace?.uid)) {
+                        // Если выбранная грань уже есть в массиве, 
+                        // проверяем, все ли грани из группы есть в массиве
+                        const allGroupFacesSelected = group.children.every((child) => child.isMesh && selectedUids.includes(child.uid));
+                        if (allGroupFacesSelected) {
+                            // Если все грани из группы есть, удаляем все грани
+                            return [];
+                        } else {
+                            // Если не все грани из группы выбраны, добавляем 
+                            // в массив недостающие грани
+                            const newFaces = group.children.filter((child) => child.isMesh && !selectedUids.includes(child.uid));
+                            return [...prevFaces, ...newFaces];
                         }
-                    })
-                }
-            })
+                    } else {
+                        // Если выбранной грани нет в массиве, добавить все грани группы, которых еще нет
+                        const newFaces = group.children.filter((child) => child.isMesh && !selectedUids.includes(child.uid));
+                        return [...prevFaces, ...newFaces];
+                    }
+                });
+            });
 
         } else if (selectMode === 'face') {
             const intersects = raycaster.intersectObjects(meshes, true)
-            if (intersects.length > 0) {
-                const object = intersects[0].object
-                setSelectedFaces((prevGeoms) => {
-                    if (prevGeoms?.length > 0 && prevGeoms.some((prevGeom) => prevGeom.uid === object.uid)) {
-                        object.material = baseMaterial.clone()
-                        dispatch(deleteSelectedPart({ deletedPart: object.uid }))
-                        return prevGeoms.filter((prevGeom) => prevGeom.uid !== object.uid)
-                    } else {
-                        object.material = selectedMaterial.clone();
-                        dispatch(addSelectedPart({ addedPart: object.uid }))
-                        return [...prevGeoms, object]
-                    }
-                })
-            }
+            const intersectedFace = intersects.length > 0 ? intersects[0].object : null;
+            setSelectedFaces((prevFaces) => {
+                const selectedUids = prevFaces.map((prevFace) => prevFace.uid);
+                if (selectedUids.includes(intersectedFace?.uid)) {
+                    // Если выбранная грань уже есть в массиве, удалить ее из массива
+                    return prevFaces.filter((prevFace) => prevFace.uid !== intersectedFace.uid);
+                } else {
+                    // Если выбранной грани нет в массиве, добавить ее в массив
+                    return intersectedFace ? [...prevFaces, intersectedFace] : prevFaces;
+                }
+            });
         }
     }
 
     const handleHover = (event) => {
-        outlinePass.current.selectedObjects = []
+        event.stopPropagation();
+        outlinePass.current.selectedObjects = [];
         const mouse = new THREE.Vector2();
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -356,7 +362,6 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
                     outlinePass.current.enabled = true;
                 }
             })
-
         } else if (selectMode === 'face') {
             const intersects = raycaster.intersectObjects(meshes, true);
             if (intersects.length > 0) {
@@ -371,20 +376,26 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         orbitControls.enabled = !event.value;
     }
 
-    const changeRenderMode = (renderMode) => {
-        let material;
+    const changeMaterials = (renderMode) => {
+        let _material, _selectedmaterial;
         switch (renderMode) {
             case 'surfaces':
-                material = baseMaterial;
+                _material = baseMaterial;
+                _selectedmaterial = selectedMaterial;
                 break;
             case 'translucent':
-                material = opacityMaterial;
+                _material = opacityMaterial;
+                _selectedmaterial = selectedOpacityMaterial;
                 break;
         }
         sceneRef.current.children.forEach(child => {
             if (child.isGroup) {
                 child.children.forEach(item => {
-                    item.material = material.clone();
+                    if (selectedFaces.includes(item)) {
+                        item.material = _selectedmaterial.clone();
+                    } else {
+                        item.material = _material.clone();
+                    }
                 })
             }
         })
@@ -398,14 +409,14 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
             point3D.type = 'insidePoint';
             sceneRef.current.add(point3D);
             addTransformControl(point3D);
-            changeRenderMode('translucent');
+            changeMaterials('translucent');
         } else {
             sceneRef.current.children.forEach(child => {
                 if (child.type === 'insidePoint') {
                     sceneRef.current.remove(child);
                     transformControl.current.detach();
                     sceneRef.current.remove(transformControl.current);
-                    changeRenderMode(renderMode);
+                    changeMaterials(renderMode);
                 }
             })
         }

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 export default function ModelPart({ modelPartProp, updateModelPart }) {
     const [input, setInput] = useState(false)
     const [modelPart, setModelPart] = useState(modelPartProp)
-    const selectedModelPart = useSelector(state => state.project.selectedPart)
+    const selectedModelParts = useSelector(state => state.project.selectedParts)
 
     useEffect(() => {
         updateModelPart(modelPart)
@@ -42,7 +42,7 @@ export default function ModelPart({ modelPartProp, updateModelPart }) {
             ${modelPart.visible ? 'text-day-350' : 'text-day-250'} h-9 ${modelPart.visible && 'hover:bg-day-150'} 
             duration-300`}>
                 <p className={`pl-2 text-ellipsis whitespace-nowrap overflow-hidden
-                ${selectedModelPart.some((item) => item === modelPart.uid) ? 'font-bold' : ''}
+                ${selectedModelParts.some((item) => item === modelPart.uid) ? 'font-bold' : ''}
                 `}>
                     {modelPart.name}
                 </p>

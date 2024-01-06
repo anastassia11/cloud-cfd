@@ -8,7 +8,7 @@ const projectSlice = createSlice({
         simulations: [],
         geometries: [],
         mesh: false,
-        selectedPart: [],
+        selectedParts: [],
         jobStatus: null,
         sceneMode: 'geom',
     },
@@ -22,12 +22,9 @@ const projectSlice = createSlice({
             state.geometries = action.payload.geometries
         },
 
-        addSelectedPart(state, action) {
-            state.selectedPart.push(action.payload.addedPart)
-        },
-
-        deleteSelectedPart(state, action) {
-            state.selectedPart = state.selectedPart.filter((part) => part !== action.payload.deletedPart)
+        setSelectedParts(state, action) {
+            state.selectedParts = action.payload
+            console.log(state.selectedParts)
         },
 
         updateGeometries(state, action) {
@@ -77,6 +74,5 @@ const projectSlice = createSlice({
 export const { setProject,
     setGeometries, updateGeometries, deleteGeometries,
     setSimulations, addSimulation, deleteSimulation,
-    addSelectedPart, deleteSelectedPart,
-    setJobStatus, setSceneMode, setMesh } = projectSlice.actions;
+    setSelectedParts, setJobStatus, setSceneMode, setMesh } = projectSlice.actions;
 export default projectSlice.reducer
