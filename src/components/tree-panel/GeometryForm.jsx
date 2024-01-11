@@ -47,7 +47,6 @@ export default function GeometryForm({ }) {
         setFiles((prevFiles) => [...prevFiles, ...newFiles])
         setFileCount((prevCount) => prevCount + newFiles.length)
         newFiles.forEach((file, index) => {
-            console.log(index)
             handleSetGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file }, fileCount + index)
         })
     }
@@ -62,8 +61,6 @@ export default function GeometryForm({ }) {
     }
 
     const handleSetGeometry = async (geometryData, index) => {
-        console.log('handleSetGeometry')
-        console.log(index)
         setLoading((prevLoading) => {
             const newLoading = [...prevLoading]
             newLoading[index] = true
@@ -95,7 +92,6 @@ export default function GeometryForm({ }) {
         // setLoading((prevLoading) => [...prevLoading, ...newFiles.map(() => false)])
         setFileCount((prevCount) => prevCount + newFiles.length)
         newFiles.forEach((file, index) => {
-            console.log(index)
             handleSetGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file }, fileCount + index)
         })
     }

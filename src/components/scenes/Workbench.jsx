@@ -52,10 +52,6 @@ export default function Workbench() {
         position: {}
     })
 
-    // useEffect(() => {
-    //     console.log(renderMode)
-    // }, [renderMode])
-
     useEffect(() => {
         if (primitiveData.name === 'box') {
             geometrySceneRef.current.changeBoxData(primitiveData)

@@ -155,7 +155,6 @@ export default function MeshScene({ camera }) {
     }
 
     function updateMeshColor(meshToUpdate, colorMap, _meshValuesData, useMaxMinVisibleValue = false, colorCount = 32) {
-        console.log('lut', lut.current)
         lut.current.setColorMap(colorMap, colorCount);
         if (colorMap === "solidColor") {
             lut.current.setMax(1);

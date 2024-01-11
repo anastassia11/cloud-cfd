@@ -43,9 +43,9 @@ export default function MeshForm({ computeBoundingBox }) {
             setFormData(result.data);
             dispatch(setPointPosition({
                 position: {
-                    x: result.data.InsidePoint.X,
-                    y: result.data.InsidePoint.Y,
-                    z: result.data.InsidePoint.Z,
+                    x: result.data.InsidePoint?.X,
+                    y: result.data.InsidePoint?.Y,
+                    z: result.data.InsidePoint?.Z,
                 }
             }));
         } else {

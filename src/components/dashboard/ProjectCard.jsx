@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react'
 import UpdateProject from './UpdateProject'
 import DeleteProject from './DeleteProject'
+import { BASE_SERVER_URL } from '@/utils/constants';
 
 export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
     const router = useRouter()
@@ -17,20 +18,6 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
     const month = date.getMonth()
     const year = date.getFullYear()
     const formettedData = `${day < 10 ? '0' : ''}${day}.${month < 10 ? '0' : ''}${month}.${year}`
-
-    useEffect(() => {
-        // const element = document.getElementById(item.id);
-        // const getPosition = () => {
-        //     const rect = element.getBoundingClientRect();
-        //     setPosition({ x: rect.x, y: rect.y });
-        // };
-        // getPosition();
-        // const observer = new MutationObserver(getPosition);
-        // observer.observe(element, { attributes: true, childList: true, subtree: true });
-        // return () => {
-        //     observer.disconnect();
-        // };
-    }, [])
 
     const handleExternalClick = () => {
         router.push(`/workbench/${item.id}`)
@@ -57,8 +44,8 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
     return (
         <div className="rounded-lg overflow-hidden shadow transition hover:shadow-lg bg-white flex flex-col"
             onDoubleClick={handleExternalClick}>
-            <Image src={geom_preview2} width={500} height={500} alt='geom preview'
-                className='h-56 w-full object-cover' />
+            <Image src={`${BASE_SERVER_URL}${item.pathPreviewImg}`} unoptimized={true} width={400} height={400}
+                alt='geom preview' className='h-56 w-full object-cover' />
             <div className="bg-white py-4 pl-4 flex flex-col justify-between flex-grow h-full">
                 <div>
                     <div className='flex flex-row justify-between items-start'>

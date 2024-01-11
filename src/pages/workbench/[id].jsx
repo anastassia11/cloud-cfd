@@ -29,14 +29,14 @@ export default function WorkbenchPage() {
     }
 
     return (
-        <>
+        <div className='select-none'>
             <Head>
                 <title>
                     CloudCFD | Workbench
                 </title>
             </Head>
             <Workbench />
-        </>
+        </div>
     )
 }
 WorkbenchPage.requiresAuth = true

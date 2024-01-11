@@ -1,4 +1,5 @@
 import * as THREE from "three"
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { OutlinePass } from "three/addons/postprocessing/OutlinePass.js"
@@ -13,6 +14,7 @@ import { setLoader } from '@/store/slices/loaderSlice'
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
 import addGeometry from '@/api/set_geometry'
 import { setPointPosition } from '@/store/slices/meshSlice'
+import setPreview from '@/api/set_preview'
 
 function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, setPrimitiveData, }, ref) {
     const dispatch = useDispatch()
@@ -21,7 +23,6 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
     const renderer = useRef(null)
     const outlinePass = useRef(null)
     const transformControl = useRef(null)
-    const dataUrl = useRef(null)
     const didLogRef = useRef(false)
     let orbitControls, composer
 
@@ -87,7 +88,6 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         if (formName !== 'mesh' || !pointVisible) {
             addListeners()
         }
-        takeSnapshot()
         return () => removeListeners()
     }, [meshes, groups, selectMode, renderMode, pointVisible, formName])
 
@@ -141,7 +141,16 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         }
     }
 
-    function loadSTL(geometryDataList) {
+    async function sendPreview(preview) {
+        const result = await setPreview(projectId, preview)
+        if (result.success) {
+
+        } else {
+            alert(result.message)
+        }
+    }
+
+    async function loadSTL(geometryDataList) {
         const stlLoader = new STLLoader();
         geometryDataList?.forEach((geom) => {
             if (!groups.some(group => group.uid === geom.uid)) {
@@ -178,6 +187,8 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
                 })
             }
         })
+        await new Promise(resolve => setTimeout(resolve, 7000))
+        takeSnapshot()
     }
 
     function onWindowResize() {
@@ -249,7 +260,15 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
     }
 
     function takeSnapshot() {
-        dataUrl.current = renderer.current.domElement.toDataURL('image/png')
+        const dataUrl = renderer.current.domElement.toDataURL('image/jpeg');
+        const byteCharacters = atob(dataUrl.split(',')[1]);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+        sendPreview(blob);
     }
 
     function addListeners() {
@@ -542,11 +561,7 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
     }
 
     return (
-        <><canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
-            {/* <div className='relative z-10'>
-                <img src={dataUrl.current} />
-            </div> */}
-        </>
+        <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
     )
 }
 export default forwardRef(GeometryScene)

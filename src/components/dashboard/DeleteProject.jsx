@@ -13,7 +13,6 @@ export default function DeleteProject({ onCloseClick, onDeleteClick, projectName
     }
 
     const handleKeyDown = (e) => {
-        console.log('Enter')
         if (e.key === "Enter") {
             handleDeleteClick()
         }
