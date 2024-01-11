@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import SvgSelector from '../SvgSelector'
 import DropdownSettings from './DropdownSettings'
 import DeleteSimulation from './DeleteSimulation'
@@ -11,6 +11,7 @@ export default function Simulation({ id, name }) {
     const [deleteModal, setDeleteModal] = useState(false)
     const userValue = useSelector(state => state.params.params)
     const selectedSetting = useSelector(state => state.setting.setting)
+
     const dispatch = useDispatch()
 
     const handleRunClick = async () => {
@@ -133,12 +134,11 @@ export default function Simulation({ id, name }) {
                 simulationOpen ? (
                     <div className="border-l ml-[17px]">
                         <ul className="text-base font-normal flex-1 ml-3">
-                            {settings.map((item) => {
-                                return item.child ? <li key={item.id}>{item.setting}</li> :
-                                    <li key={item.setting}>
-                                        {item.setting}
-                                    </li>
-                            })}
+                            {settings.map((item) => <li key={item.id}>
+                                {item.setting}
+                            </li>
+                            )}
+
                             <button className={`flex w-full items-center gap-2 rounded-lg px-2 h-9 text-base font-normal 
                             text-day-350 hover:bg-day-150 active:bg-day-200 duration-300 ${selectedSetting === 'mesh' && 'bg-day-150'}`}
                                 onClick={handleMeshClick}>
@@ -147,6 +147,7 @@ export default function Simulation({ id, name }) {
                                 </span>
                                 <p className='text-ellipsis whitespace-nowrap overflow-hidden'>Mesh</p>
                             </button>
+
                             <button className="flex w-full items-center gap-2 rounded-lg px-2 h-9 text-base font-normal 
                             text-[#ef7931] hover:bg-day-150 active:bg-day-200 duration-300 "
                                 onClick={handleRunClick}>

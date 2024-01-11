@@ -15,8 +15,9 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
     const [deleteModal, setDeleteModal] = useState(false)
     const date = new Date(item.updateTime)
     const day = date.getDate()
-    const month = date.getMonth()
+    const month = date.getMonth() + 1
     const year = date.getFullYear()
+
     const formettedData = `${day < 10 ? '0' : ''}${day}.${month < 10 ? '0' : ''}${month}.${year}`
 
     const handleExternalClick = () => {
@@ -44,12 +45,12 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
     return (
         <div className="rounded-lg overflow-hidden shadow transition hover:shadow-lg bg-white flex flex-col"
             onDoubleClick={handleExternalClick}>
-            <Image src={`${BASE_SERVER_URL}${item.pathPreviewImg}`} unoptimized={true} width={400} height={400}
+            <Image src={`${BASE_SERVER_URL}${item.pathPreviewImg}`} priority unoptimized={true} width={400} height={400}
                 alt='geom preview' className='h-56 w-full object-cover' />
             <div className="bg-white py-4 pl-4 flex flex-col justify-between flex-grow h-full">
                 <div>
                     <div className='flex flex-row justify-between items-start'>
-                        <time datetime={formettedData} className="block text-xs text-gray-500">
+                        <time dateTime={formettedData} className="block text-xs text-gray-500">
                             {`Last modified: ${formettedData}`}
                         </time>
                     </div>
@@ -57,7 +58,7 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
                         <p className="mt-0.5 text-lg text-gray-900">
                             {item.name}
                         </p>
-                        <button className='group relative flex flex-row justify-center items-center w-10 h-10'
+                        <div className='group relative cursor-pointer flex flex-row justify-center items-center w-10 h-10'
                             id={item.id}>
                             <SvgSelector id='more' className='w-[16px] h-[16px] rotate-90' />
                             <div className="invisible opacity-0 group-hover:opacity-100 group-hover:visible translate-y-3 group-hover:translate-y-0
@@ -85,7 +86,7 @@ export default function ProjectCard({ item = {}, onDeleteClick, onEditClick }) {
                             </div>
 
 
-                        </button>
+                        </div>
                     </div>
                     <p className="line-clamp-3 text-sm/relaxed text-gray-500 mr-4">
                         {item.description}
