@@ -11,10 +11,10 @@ export default async function getSettingsMesh(idProject) {
                     'Authorization': `Bearer ${JSON.parse(localStorage.getItem('tokenData')).token}`
                 }
             })
-        if (response.status === 200) {
-            return { success: true, data: response.data }
+        if (response.status === 200 || response.status === 204) {
+            return { success: true, status: response.status, data: response.data }
         } else {
-            throw new Error('Error getting settings mesh')
+            return { success: false, message: `Error getting settings mesh with status ${response.status}` }
         }
     } catch (error) {
         return { success: false, message: error.message }

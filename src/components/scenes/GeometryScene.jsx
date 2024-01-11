@@ -423,7 +423,7 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
     }
 
     const changePointVisible = () => {
-        if (formName === 'mesh' && pointVisible) {
+        if (geomsState && formName === 'mesh' && pointVisible) {
             const pointGeometry = new THREE.SphereGeometry(0.1, 16, 16);
             const pointMaterial = selectedMaterial.clone();
             const point3D = new THREE.Mesh(pointGeometry, pointMaterial);
