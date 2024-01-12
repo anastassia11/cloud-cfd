@@ -107,20 +107,16 @@ export default function Geometry({ geom = [], hidePartObject }) {
                         </div>
                     </div>}
             </div>
-            {
-                settingOpen ? (
-                    <ul className="ml-4 pl-2 border-l text-base font-normal">
-                        {
-                            geometry.models.map((model) => (
-                                <li key={model.uid}>
-                                    <ModelPart modelPartProp={model}
-                                        updateModelPart={handleUpdate} />
-                                </li>
-                            ))
-                        }
-                    </ul>
-                ) : ""
-            }
+            <ul className={`${settingOpen ? 'block' : 'hidden'} ml-4 pl-2 border-l text-base font-normal`}>
+                {
+                    geometry.models.map((model) => (
+                        <li key={model.uid}>
+                            <ModelPart modelPartProp={model}
+                                updateModelPart={handleUpdate} />
+                        </li>
+                    ))
+                }
+            </ul>
             {modal ? <DeleteGeometry onCloseClick={() => setModal(false)} geometry={geometry} /> : ''}
         </div >
     )
