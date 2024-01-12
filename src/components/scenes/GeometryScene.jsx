@@ -192,7 +192,7 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
                 })
             }
         })
-        if (geometryDataList) {
+        if (geometryDataList?.length > 0) {
             await new Promise(resolve => setTimeout(resolve, 5000))
             takeSnapshot()
         }
