@@ -27,7 +27,7 @@ export default function Dashboard() {
             setProjects(result.data)
             dispatch(setLoader(false))
         } else {
-            //alert(result.message)
+            alert(result.message)
             dispatch(setLoader(false))
         }
     }

@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setLoader } from '@/store/slices/loaderSlice'
 import getMeshData from '@/api/get_mesh_data'
 import { BASE_SERVER_URL } from '@/utils/constants'
-import { setJobStatus, setMesh } from '@/store/slices/projectSlice'
+import { setGeometries, setJobStatus, setMesh } from '@/store/slices/projectSlice'
 
 export default function MeshScene({ camera }) {
     const dispatch = useDispatch()

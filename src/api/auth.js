@@ -21,6 +21,6 @@ export default async function auth(url, email, password) {
             throw new Error('Invalid user')
         }
     } catch (error) {
-        return { success: false, message: error.message, status: error.response.status }
+        return { success: false, message: error.message }
     }
 }

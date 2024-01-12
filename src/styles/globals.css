@@ -10,10 +10,6 @@
   padding: 0;
 }
 
-body {
-  //user-select: none;
-}
-
 ::-webkit-scrollbar {
   width: 7px;
   height: 5px;
