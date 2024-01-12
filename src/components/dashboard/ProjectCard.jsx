@@ -51,7 +51,7 @@ export default function ProjectCard({ item, onDeleteClick, onEditClick }) {
             onDoubleClick={handleExternalClick}>
             <div className='h-56 overflow-hidden'>
                 <Image src={`${BASE_SERVER_URL}${project.pathPreviewImg}`} priority unoptimized={true} width={400} height={400}
-                    alt='geom preview' className='h-56 object-cover object-center' />
+                    alt='geom preview' className='h-full w-full object-cover object-center' />
             </div>
 
             <div className="bg-white py-4 pl-4 flex flex-col justify-between flex-grow ">
