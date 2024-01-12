@@ -6,6 +6,7 @@ import createMesh from '@/api/create_mesh';
 import getSettingsMesh from '@/api/get_settings_mesh';
 import { setJobStatus } from '@/store/slices/projectSlice';
 import { setPointPosition, setPointVisible } from '@/store/slices/meshSlice';
+import setMeshData from '@/api/set_mesh_data';
 
 export default function MeshForm({ computeBoundingBox }) {
     const dispatch = useDispatch()
@@ -22,10 +23,6 @@ export default function MeshForm({ computeBoundingBox }) {
     useEffect(() => {
         getMesh()
     }, [geomsState])
-
-    useEffect(() => {
-        // сохранять настройки сетки
-    }, [formData])
 
     useEffect(() => {
         setFormData((prev) => ({
@@ -55,6 +52,7 @@ export default function MeshForm({ computeBoundingBox }) {
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
+        saveMeshData()
         dispatch(resetSetting())
     }
 
@@ -78,6 +76,10 @@ export default function MeshForm({ computeBoundingBox }) {
     const selectDataChange = (e) => {
         const { name, value } = e.target
         setFormData((prev) => ({ ...prev, [name]: value }))
+    }
+
+    const saveMeshData = async () => {
+        await setMeshData(projectId, formData)
     }
 
     const fetchGenerateMesh = async (formData) => {
