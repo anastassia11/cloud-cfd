@@ -9,12 +9,13 @@ import React, { useRef, useEffect, useState, useImperativeHandle, forwardRef } f
 import { BASE_SERVER_URL } from '@/utils/constants'
 import getGeometries from '@/api/get_geometries'
 import { useDispatch, useSelector } from 'react-redux'
-import { setGeometries, setSelectedParts } from '@/store/slices/projectSlice'
+import { setGeometries, setSceneMode, setSelectedParts, setSimulations } from '@/store/slices/projectSlice'
 import { setLoader } from '@/store/slices/loaderSlice'
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
 import addGeometry from '@/api/set_geometry'
 import { setPointPosition } from '@/store/slices/meshSlice'
 import setPreview from '@/api/set_preview'
+import { setSetting } from '@/store/slices/settingSlice'
 
 function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, setPrimitiveData, }, ref) {
     const dispatch = useDispatch()
@@ -81,6 +82,10 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         addTransformListeners()
         return () => {
             removeTransformListeners()
+            dispatch(setGeometries({ geometries: [] }))
+            dispatch(setSetting({ formName: null }))
+            dispatch(setSimulations({ simulations: [] }))
+            dispatch(setSceneMode('geom'))
         }
     }, [])
 
@@ -187,8 +192,10 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
                 })
             }
         })
-        await new Promise(resolve => setTimeout(resolve, 7000))
-        takeSnapshot()
+        if (geometryDataList) {
+            await new Promise(resolve => setTimeout(resolve, 5000))
+            takeSnapshot()
+        }
     }
 
     function onWindowResize() {
