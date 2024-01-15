@@ -7,6 +7,7 @@ import getSettingsMesh from '@/api/get_settings_mesh';
 import { setJobStatus } from '@/store/slices/projectSlice';
 import { setPointPosition, setPointVisible } from '@/store/slices/meshSlice';
 import setMeshData from '@/api/set_mesh_data';
+import cancelCreateMesh from '@/api/cancel_create_mesh';
 
 export default function MeshForm({ computeBoundingBox }) {
     const dispatch = useDispatch()
@@ -21,7 +22,7 @@ export default function MeshForm({ computeBoundingBox }) {
     const [meshState, setMeshState] = useState('not_generated')
 
     useEffect(() => {
-        getMesh()
+        getMeshData()
     }, [geomsState])
 
     useEffect(() => {
@@ -34,9 +35,10 @@ export default function MeshForm({ computeBoundingBox }) {
         }));
     }, [pointPosition])
 
-    const getMesh = async () => {
+    const getMeshData = async () => {
         const result = await getSettingsMesh(projectId)
         if (result.success && result.status === 200) {
+            console.log(result.data)
             setFormData(result.data);
             dispatch(setPointPosition({
                 position: {
@@ -85,6 +87,7 @@ export default function MeshForm({ computeBoundingBox }) {
     const fetchGenerateMesh = async (formData) => {
         setMeshState('in_progress')
         dispatch(setJobStatus('Mesh generated..'))
+        console.log(formData)
         const result = await createMesh(projectId, formData)
         if (result.success) {
             setMeshState('successfully_generated')
@@ -98,12 +101,23 @@ export default function MeshForm({ computeBoundingBox }) {
 
     const generateMesh = () => {
         const boundingBox = computeBoundingBox()
+        console.log(boundingBox)
         const updatedFormData = { ...formData }
         for (let item in boundingBox) {
             updatedFormData[item] = boundingBox[item]
         }
+        console.log(updatedFormData)
         setFormData(updatedFormData)
         fetchGenerateMesh(updatedFormData)
+    }
+
+    const stopCreateMesh = async () => {
+        const result = await cancelCreateMesh(projectId)
+        if (result.success) {
+            console.log(result)
+            setMeshState('not_generated')
+            dispatch(setJobStatus(null))
+        }
     }
 
     const Input = ({ label, name, unit }) => {
@@ -219,7 +233,7 @@ export default function MeshForm({ computeBoundingBox }) {
                         </div>
                         <button type="button" className="w-8 h-8 rounded-md text-gray-500 p-[5px] border bg-day-50 hover:bg-day-100 
                         active:bg-day-150 flex items-center justify-center"
-                            onClick={() => { }}>
+                            onClick={stopCreateMesh}>
                             <SvgSelector id='stop' />
                         </button>
                     </>
@@ -228,7 +242,7 @@ export default function MeshForm({ computeBoundingBox }) {
             case 'successfully_generated':
                 return (
                     <>
-                        <div class="w-full flex flex-col text-xs ">
+                        <div className="w-full flex flex-col text-xs ">
                             <p className='text-green-800'>Finished</p>
                             <p className=''>Overall mesh quality: 00</p>
                         </div>
@@ -238,7 +252,6 @@ export default function MeshForm({ computeBoundingBox }) {
                             <SvgSelector id='update' />
                         </button>
                     </>
-
                 );
         }
     }
