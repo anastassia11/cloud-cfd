@@ -7,35 +7,27 @@ import { PuffLoader } from 'react-spinners'
 export default function StateBar() {
     const dispatch = useDispatch()
     const { visible, type, message } = useSelector(state => state.project.stateBar)
-    useEffect(() => {
-        console.log(visible, type, message)
-    }, [visible, type, message])
+
+    const INFO_STYLE = {
+        error: 'bg-red-50 border-red-300',
+        success: 'bg-green-50 border-green-300',
+    };
 
     const Info = () => {
         return (
-            <div className="relative l-3 pr-4 min-w-0 w-[300px] mr-[12px] mt-[8px] p-[14px] rounded-md bg-red-50 border 
-            border-red-300 shadow">
-                <div className='flex justify-between'>
+            <div className={`relative pl-[14px] pr-[8px] min-w-0 w-[300px] mr-[12px] mt-[8px] rounded-md border h-[40px] shadow
+            ${INFO_STYLE[type]}`}>
+                <div className='flex flex-row justify-between items-center h-full'>
                     <div className="flex gap-2">
-                        <div>
-                            <SvgSelector id={type} />
-                        </div>
-                        <div className="self-center">
-                            <span className="text-red-600 font-medium">
-                                {type}
-                            </span>
-                            <div className="text-red-600">
-                                <p className="mt-2 sm:text-sm">
-                                    {message}
-                                </p>
-                            </div>
-                        </div>
+                        <SvgSelector id={type} />
+                        <span className={`self-center ${type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+                            {message}
+                        </span>
                     </div>
-                    <button className="self-start text-red-500"
+                    <button className={`flex items-center justify-center duration-300 h-full w-8 
+                        ${type === 'error' ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-600'}`}
                         onClick={() => dispatch(setStateBar({ visible: false }))}>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                        </svg>
+                        <SvgSelector id='close' />
                     </button>
                 </div>
             </div>
@@ -44,18 +36,22 @@ export default function StateBar() {
 
     const JobStatus = () => {
         return (
-            <div className='flex pl-3 pr-4 min-w-0 w-[300px] mr-[12px] mt-[8px] bg-day-00 rounded-md 
-                         relative shadow text-day-350 flex-row items-center 
-                        justify-between h-[40px]'>
-                <p className='ml-2 pt-[2px] text-base text-ellipsis whitespace-nowrap'>
-                    {message}
-                </p><PuffLoader color="#3f3f3f" loading size={20} />
+            <div className={`text-day-350 relative pl-[14px] pr-[8px] min-w-0 w-[300px] mr-[12px] mt-[8px] rounded-md h-[40px] 
+            shadow bg-day-00 `}>
+                <div className='flex flex-row justify-between items-center h-full'>
+                    <div className="flex gap-2 items-center">
+                        <PuffLoader color="#3f3f3f" loading size={24} />
+                        <div className="self-center">
+                            {message}
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }
 
     return (
-        <div className={`${visible ? 'flex' : 'hidden'}`}>
+        <div className={`${visible ? 'flex flex-col' : 'hidden'}`}>
             {type === 'status' ? <JobStatus /> : <Info />}
         </div>
 

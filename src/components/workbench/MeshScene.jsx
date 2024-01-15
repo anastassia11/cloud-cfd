@@ -9,13 +9,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setLoader } from '@/store/slices/loaderSlice'
 import getMeshData from '@/api/get_mesh_data'
 import { BASE_SERVER_URL } from '@/utils/constants'
-import { setGeometries, setJobStatus, setMesh } from '@/store/slices/projectSlice'
+import { setMesh, setStateBar } from '@/store/slices/projectSlice'
+import axios from 'axios'
 
 export default function MeshScene({ camera }) {
     const dispatch = useDispatch()
     const projectId = useSelector(state => state.project.projectId)
-    const geomsState = useSelector(state => state.project.geometries)
-    const jobStatus = useSelector(state => state.project.jobStatus)
+    const stateBar = useSelector(state => state.project.stateBar)
+    const isMesh = useSelector(state => state.project.mesh)
     const containerRef = useRef(null)
     const sceneRef = useRef(null)
     const didLogRef = useRef(false)
@@ -38,7 +39,7 @@ export default function MeshScene({ camera }) {
 
     useEffect(() => {
         getFolderPath()
-    }, [jobStatus])
+    }, [isMesh])
 
     const getFolderPath = async () => {
         const result = await getMeshData(projectId)
@@ -47,7 +48,6 @@ export default function MeshScene({ camera }) {
             reloadMeshGeometry(path)
         } else {
             dispatch(setMesh(false))
-            // alert(result.message)
         }
     }
 
@@ -188,26 +188,31 @@ export default function MeshScene({ camera }) {
         colors.needsUpdate = true;
     }
 
-    function reloadMeshGeometry(_meshFolderUrl) {
-        dispatch(setLoader(true))
-        let fetchRes = fetch(_meshFolderUrl + "surfaseData.json");
-        fetchRes.then(res => res.json()).then(surfaseJsonData => {
-            meshFolderUrl = _meshFolderUrl;
-            if (surfaseMesh != null) sceneRef.current.remove(surfaseMesh);
-            if (lineMesh != null) sceneRef.current.remove(lineMesh);
-            meshValuesData = {};
-            meshGeometryData = surfaseJsonData;
-            surfaseMesh = createSurfaseGeometry(meshGeometryData);
-            surfaseMesh.visible = true;
-            sceneRef.current.add(surfaseMesh);
-            lineMesh = createLinesGeometry(meshGeometryData);
-            lineMesh.visible = true;
-            sceneRef.current.add(lineMesh);
-            updateVizualizationValues();
-        }).then(() => {
-            dispatch(setLoader(false))
-            dispatch(setMesh(true));
-        })
+    async function reloadMeshGeometry(_meshFolderUrl) {
+        dispatch(setLoader(true));
+        try {
+            const response = await axios.get(_meshFolderUrl + "surfaseData.json");
+            if (response.status === 200) {
+                const surfaseJsonData = response.data;
+                meshFolderUrl = _meshFolderUrl;
+                if (surfaseMesh) sceneRef.current.remove(surfaseMesh);
+                if (lineMesh) sceneRef.current.remove(lineMesh);
+                meshValuesData = {};
+                meshGeometryData = surfaseJsonData;
+                surfaseMesh = createSurfaseGeometry(meshGeometryData);
+                surfaseMesh.visible = true;
+                sceneRef.current.add(surfaseMesh);
+                lineMesh = createLinesGeometry(meshGeometryData);
+                lineMesh.visible = true;
+                sceneRef.current.add(lineMesh);
+                updateVizualizationValues();
+                dispatch(setMesh(true));
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            dispatch(setLoader(false));
+        }
     }
 
     function updateVizualizationValues() {
@@ -217,11 +222,9 @@ export default function MeshScene({ camera }) {
         const colorCount = 32;
         if (colorMap === "solidColor") {
             updateMeshColor(surfaseMesh, colorMap, null, useMaxMinVisibleValue, colorCount);
-        }
-        else if (meshValuesData[selectValue] !== undefined) {
+        } else if (meshValuesData[selectValue] !== undefined) {
             updateMeshColor(surfaseMesh, colorMap, meshValuesData[selectValue], useMaxMinVisibleValue, colorCount);
-        }
-        else {
+        } else {
             let fetchRes = fetch(meshFolderUrl + selectValue + "_Data.json");
             fetchRes.then(res => res.json()).then(jsonData => {
                 meshValuesData[selectValue] = jsonData;

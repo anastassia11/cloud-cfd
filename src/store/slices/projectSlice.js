@@ -61,7 +61,7 @@ const projectSlice = createSlice({
         },
 
         setStateBar(state, action) {
-            state.stateBar = { ...state.jobStatus, ...action.payload }
+            state.stateBar = { ...state.stateBar, ...action.payload }
         },
 
         setSceneMode(state, action) {

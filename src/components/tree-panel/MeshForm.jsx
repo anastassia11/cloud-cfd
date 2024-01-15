@@ -85,14 +85,15 @@ export default function MeshForm({ computeBoundingBox }) {
 
     const fetchGenerateMesh = async (formData) => {
         setMeshState('in_progress')
-        dispatch(setStateBar({ type: "status", visible: true, message: 'Mesh generated..' }))
+        dispatch(setStateBar({ type: "status", visible: true, message: 'Mesh' }))
         const result = await createMesh(projectId, formData)
+        console.log(result)
         if (result.success) {
             setMeshState('successfully_generated')
-            dispatch(setStateBar({ visible: false }))
+            dispatch(setStateBar({ type: 'success', visible: true, message: 'Mesh' }))
         } else {
             setMeshState('successfully_generated')
-            dispatch(setStateBar({ type: 'Error', visible: true, message: result.message }))
+            dispatch(setStateBar({ type: 'error', visible: true, message: 'Mesh' }))
         }
     }
 
@@ -110,7 +111,7 @@ export default function MeshForm({ computeBoundingBox }) {
         const result = await cancelCreateMesh(projectId)
         if (result.success) {
             setMeshState('not_generated')
-            dispatch(setStateBar({ visible: false }))
+            dispatch(setStateBar({ visible: false, type: '', message: '' }))
         }
     }
 
@@ -273,7 +274,7 @@ export default function MeshForm({ computeBoundingBox }) {
                     </button>
                 </div>
             </div>
-            {!geomsState ?
+            {geomsState?.length === 0 ?
                 <div className="flex m-2 items-center gap-2 rounded-md px-2 h-9 text-base text-red-700 bg-red-50">
                     Add geometry to generate mesh
                 </div> :
@@ -348,7 +349,7 @@ export default function MeshForm({ computeBoundingBox }) {
                         </div> : ''}
                     </div>
                 </div>}
-            {geomsState && <div className='w-full border-t flex flex-row justify-end items-center p-3 space-x-[6px]'>
+            {geomsState?.length !== 0 && <div className='w-full border-t flex flex-row justify-end items-center p-3 space-x-[6px]'>
                 <StateBar />
             </div>}
         </form>

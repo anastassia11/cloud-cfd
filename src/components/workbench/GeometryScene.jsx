@@ -553,7 +553,6 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
             group.add(mesh.clone())
         }
         const box = new THREE.Box3().setFromObject(group);
-        console.log(box)
         const boundingBox = {
             XMin: box.min.x,
             XMax: box.max.x,
@@ -565,7 +564,6 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         for (let item in boundingBox) {
             boundingBox[item] = Number(boundingBox[item] * 1.5)
         }
-        console.log(boundingBox)
         return boundingBox
     }
 

@@ -13,10 +13,8 @@ import MeshScene from './MeshScene'
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
 import MeshForm from '../tree-panel/MeshForm'
 import StateBar from './StateBar'
-import { PuffLoader } from 'react-spinners'
 
 export default function Workbench() {
-    const stateBar = useSelector(state => state.project.stateBar)
     const transformRef = useRef(null)
     const boxRef = useRef(null)
     const cylinderRef = useRef(null)
@@ -29,11 +27,13 @@ export default function Workbench() {
     const camera = useRef(null)
     const rendererMesh = useRef(null)
 
+    const geomsState = useSelector(state => state.project.geometries)
     const projectId = useSelector(state => state.project.projectId)
     const selectedSetting = useSelector(state => state.setting.setting)
     const sceneMode = useSelector(state => state.project.sceneMode)
     const formName = useSelector(state => state.setting.formName)
     const mesh = useSelector(state => state.project.mesh)
+
     const [selectMode, setSelectMode] = useState('face')
     const [renderMode, setRenderMode] = useState('surfaces')
 
@@ -139,13 +139,13 @@ export default function Workbench() {
 
     return (
         <div className='min-h-[calc(100vh-56px)] flex w-full' id='for-canvas'>
-            <div className={`${sceneMode === "geom" || !mesh ? 'block' : 'hidden'}`}>
+            <div className={`${sceneMode === "geom" || !mesh || geomsState.length === 0 ? 'block' : 'hidden'}`}>
                 <GeometryScene ref={geometrySceneRef} camera={camera.current}
                     selectMode={selectMode} setTransformFormData={changeTransformData}
                     renderMode={renderMode}
                     setPrimitiveData={changePrimitiveData} />
             </div>
-            <div className={`${sceneMode === "mesh" && mesh ? 'block' : 'hidden'}`}>
+            <div className={`${sceneMode === "mesh" && mesh && geomsState.length !== 0 ? 'block' : 'hidden'}`}>
                 <MeshScene camera={camera.current} renderer={rendererMesh} />
             </div>
 
