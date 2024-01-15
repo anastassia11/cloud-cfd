@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import SettingForm from '../tree-panel/SettingForm'
 import TreePanel from '../tree-panel/TreePanel'
 import BoxForm from './BoxForm'
@@ -12,10 +12,11 @@ import GeometryScene from './GeometryScene'
 import MeshScene from './MeshScene'
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
 import MeshForm from '../tree-panel/MeshForm'
+import StateBar from './StateBar'
 import { PuffLoader } from 'react-spinners'
 
 export default function Workbench() {
-    const jobStatus = useSelector(state => state.project.jobStatus)
+    const stateBar = useSelector(state => state.project.stateBar)
     const transformRef = useRef(null)
     const boxRef = useRef(null)
     const cylinderRef = useRef(null)
@@ -155,14 +156,7 @@ export default function Workbench() {
                         <div className='min-w-0 w-[300px] mr-[12px] h-fit relative'>
                             <TreePanel />
                         </div>
-
-                        <div className={`pl-3 pr-4 min-w-0 w-[300px] mr-[12px] mt-[8px] bg-day-00 rounded-md 
-                         relative shadow text-day-350 ${jobStatus ? 'flex' : 'hidden'} flex-row items-center 
-                        justify-between h-[40px]`}>
-                            <p className='ml-2 pt-[2px] text-base text-ellipsis whitespace-nowrap'>
-                                {jobStatus}
-                            </p><PuffLoader color="#3f3f3f" loading size={20} />
-                        </div>
+                        <StateBar />
                     </div>
 
                     <div className={`w-[350px] mr-[10px] h-fit relative`}>

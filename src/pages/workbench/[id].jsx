@@ -1,11 +1,11 @@
-import MeshScene from '@/components/scenes/MeshScene'
-import GeometryScene from '@/components/scenes/GeometryScene'
+import MeshScene from '@/components/workbench/MeshScene'
+import GeometryScene from '@/components/workbench/GeometryScene'
 import { setLoader } from '@/store/slices/loaderSlice'
 import { setProject } from '@/store/slices/projectSlice'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import Workbench from '@/components/scenes/Workbench'
+import Workbench from '@/components/workbench/Workbench'
 import Head from 'next/head'
 
 export default function WorkbenchPage() {
