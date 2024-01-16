@@ -37,7 +37,6 @@ export default function Workbench() {
     const [selectMode, setSelectMode] = useState('face')
     const [renderMode, setRenderMode] = useState('surfaces')
 
-
     const [transformFormData, setTransformFormData] = useState({
         visible: false,
         name: '',
@@ -101,9 +100,11 @@ export default function Workbench() {
     }
 
     function addPrimitivePattern(newData) {
-        setPrimitiveData(newData)
+        geometrySceneRef.current.removeFromGeomScene(primitiveData.mesh)
+        //удалить предфдущую если есть 
         geometrySceneRef.current.addToGeomScene(newData.mesh)
         geometrySceneRef.current.addTransformControl(newData.mesh)
+        setPrimitiveData(newData)
     }
 
     function addPrimitive() {
@@ -132,6 +133,12 @@ export default function Workbench() {
     }
 
     function changePrimitiveData(newData) {
+        setPrimitiveData((prevData) => {
+            return { ...prevData, ...newData }
+        })
+    }
+
+    function boxdatachange(newData) {
         setPrimitiveData((prevData) => {
             return { ...prevData, ...newData }
         })
@@ -191,11 +198,9 @@ export default function Workbench() {
                         {primitiveData.visible && primitiveData.name === 'box' ?
                             <div ref={boxRef} className={`min-w-0 w-[300px] self-end mt-[10px] 
                         relative`}>
-                                <BoxForm
-                                    boxParams={primitiveData.params}
-                                    boxPosition={primitiveData.position}
-                                    onBoxDataChange={(newData) => setPrimitiveData(prev => ({
-                                        ...prev, params: newData.params, position: newData.position
+                                <BoxForm boxDataProp={primitiveData}
+                                    onBoxDataChange={({ width, height, depth, x, y, z }) => setPrimitiveData(prev => ({
+                                        ...prev, params: { width, height, depth }, position: { x, y, z }
                                     }))}
                                     onCloseForm={callCloseForm}
                                     onCreate={addPrimitive}
@@ -205,11 +210,9 @@ export default function Workbench() {
                         {primitiveData.visible && primitiveData.name === 'cylinder' ?
                             <div ref={cylinderRef} className={`min-w-0 w-[300px] self-end mt-[10px] 
                             relative`}>
-                                <CylinderForm
-                                    cylinderParams={primitiveData.params}
-                                    cylinderPosition={primitiveData.position}
-                                    onCylinderDataChange={(newData) => setPrimitiveData(prev => ({
-                                        ...prev, params: newData.params, position: newData.position
+                                <CylinderForm cylinderDataProp={primitiveData}
+                                    onCylinderDataChange={({ height, radius, x, y, z }) => setPrimitiveData(prev => ({
+                                        ...prev, params: { height, radius }, position: { x, y, z }
                                     }))}
                                     onCloseForm={callCloseForm}
                                     onCreate={addPrimitive} />

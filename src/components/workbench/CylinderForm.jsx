@@ -1,63 +1,36 @@
 import { useEffect, useState } from 'react'
 import SvgSelector from '../SvgSelector'
 
-export default function CylinderForm({ cylinderParams, cylinderPosition, onCylinderDataChange, onCloseForm, onCreate }) {
-    const [cylinderData, setCylinderData] = useState({ params: cylinderParams, position: cylinderPosition })
+export default function CylinderForm({ cylinderDataProp, onCylinderDataChange, onCloseForm, onCreate }) {
+    const [cylinderData, setCylinderData] = useState({ ...cylinderDataProp.params, ...cylinderDataProp.position })
     const [paramsVisible, setParamsVisible] = useState(true)
     const [positionVisible, setPositionVisible] = useState(true)
 
     useEffect(() => {
-        setCylinderData({ params: cylinderParams, position: cylinderPosition })
-    }, [cylinderParams, cylinderPosition])
+        setCylinderData({ ...cylinderDataProp.params, ...cylinderDataProp.position })
+    }, [cylinderDataProp])
 
-    useEffect(() => {
-        onCylinderDataChange(cylinderData)
-    }, [cylinderData])
+    const inputDataChange = (e) => {
+        const { name, value } = e.target;
+        setCylinderData((prev) => ({ ...prev, [name]: Number(value) }));
+        onCylinderDataChange({ ...cylinderData, [name]: Number(value) })
+    }
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
         onCreate()
     }
 
-    const heightChange = (e) => {
-        const { value } = e.target
-        setCylinderData((prev) => ({
-            ...prev, params: { ...prev.params, height: Number(value) }
-        }))
-    }
-
-    const radiusChange = (e) => {
-        const { value } = e.target
-        setCylinderData((prev) => ({
-            ...prev, params: { ...prev.params, radiusTop: Number(value), radiusBottom: Number(value) }
-        }))
-    }
-
-    const positionXChange = (e) => {
-        const { value } = e.target
-        setCylinderData((prev) => ({ ...prev, position: { ...prev.position, x: Number(value) } }))
-    }
-
-    const positionYChange = (e) => {
-        const { value } = e.target
-        setCylinderData((prev) => ({ ...prev, position: { ...prev.position, y: Number(value) } }))
-    }
-
-    const positionZChange = (e) => {
-        const { value } = e.target
-        setCylinderData((prev) => ({ ...prev, position: { ...prev.position, z: Number(value) } }))
-    }
-
     const handleCloseForm = () => {
         onCloseForm('primitiveForm')
     }
 
-    const Input = ({ label, value, onChange }) => {
+    const Input = ({ label, name }) => {
         return (
             <div className='flex flex-row items-center justify-between'>
                 <label className=''>{label}</label>
                 <div className='flex flex-row items-center mr-2 '>
-                    <input type='number' value={value} onChange={onChange}
+                    <input type='number' step='any' name={name} id={name} value={cylinderData[name]} onChange={inputDataChange}
                         className='h-8 w-[140px] p-2 focus:outline-[0] text-day-350 border rounded-md outline-none 
                             bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]'/>
                     <p className='ml-2'>m</p>
@@ -99,8 +72,8 @@ export default function CylinderForm({ cylinderParams, cylinderPosition, onCylin
                             <p className='font-semibold ml-[7px]'>Parameters</p>
                         </div>
                         {paramsVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
-                            <Input label='Height' value={cylinderData.params.height} onChange={heightChange} />
-                            <Input label='Radius' value={cylinderData.params.radiusTop} onChange={radiusChange} />
+                            {Input({ label: 'Height', name: 'height' })}
+                            {Input({ label: 'Radius', name: 'radius' })}
                         </div> : ''}
                     </div>
                     <div>
@@ -114,9 +87,9 @@ export default function CylinderForm({ cylinderParams, cylinderPosition, onCylin
                             <p className='font-semibold ml-[7px]'>Position</p>
                         </div>
                         {positionVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
-                            <Input label='X' value={cylinderData.position.x} onChange={positionXChange} />
-                            <Input label='Y' value={cylinderData.position.y} onChange={positionYChange} />
-                            <Input label='Z' value={cylinderData.position.z} onChange={positionZChange} />
+                            {Input({ label: 'X', name: 'x' })}
+                            {Input({ label: 'Y', name: 'y' })}
+                            {Input({ label: 'Z', name: 'z' })}
                         </div> : ''}
                     </div>
                 </div>

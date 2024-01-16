@@ -119,7 +119,7 @@ export default function MeshForm({ computeBoundingBox }) {
             <div className='flex flex-row items-end mb-2 justify-between h-8'>
                 <label htmlFor={name} className='w-full text-left text-ellipsis overflow-hidden whitespace-nowrap'>{label}</label>
                 <div className="flex flex-row items-center w-[250px]">
-                    <input type="number" id={name} name={name} value={formData[name]} onChange={inputDataChange}
+                    <input type="number" step="any" id={name} name={name} value={formData[name]} onChange={inputDataChange}
                         className={`h-8 ${unit ? 'w-3/4' : 'w-full'} p-2 focus:outline-[0] text-day-350 border rounded-md 
                             outline-none bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]`}>
                     </input>

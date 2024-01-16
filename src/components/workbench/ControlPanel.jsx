@@ -11,22 +11,23 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
     const [renderMode, setRenderMode] = useState(renderModeProp)
 
     const handleBoxClick = () => {
-        const boxPatternGeom = new THREE.BoxGeometry(3, 30, 30);
-        const boxPatternMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
-        const box = new THREE.Mesh(boxPatternGeom, boxPatternMaterial);
+        const boxGeom = new THREE.BoxGeometry(3, 30, 30);
+        const boxMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
+        const box = new THREE.Mesh(boxGeom, boxMaterial);
         setPrimitiveData({
             visible: true, name: 'box', mesh: box,
-            params: boxPatternGeom.parameters, position: box.position
+            params: boxGeom.parameters, position: box.position
         })
     }
 
     const handleCylinderClick = () => {
         const cylinderGeom = new THREE.CylinderGeometry(5, 5, 20)
         const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true })
-        const cylinder = new THREE.Mesh(cylinderGeom, cylinderMaterial)
+        const cylinder = new THREE.Mesh(cylinderGeom, cylinderMaterial);
         setPrimitiveData({
             visible: true, name: 'cylinder', mesh: cylinder,
-            params: cylinderGeom.parameters, position: cylinder.position
+            params: { height: cylinderGeom.parameters.height, radius: cylinderGeom.parameters.radiusTop },
+            position: cylinder.position
         })
     }
 

@@ -33,14 +33,15 @@ export default function TransformForm({ geomName, position, onPositionChange, on
         setCoordinates((prevCoordinates) => ({ ...prevCoordinates, z: Number(value) }))
     }
 
-    const PositionInput = ({ label, value, onChange }) => {
+    const Input = ({ label, value, onChange, inputType }) => {
         return (
             <div className='flex flex-row items-center '>
-                <label className='mr-10'>{label}</label>
-                <input type='number' value={value} onChange={onChange}
-                    className='h-8 w-full p-2 focus:outline-[0] text-day-350 border rounded-md outline-none 
-                            bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]' />
-                <p className='ml-2'>m</p>
+                <label className={`${inputType === 'position' ? 'mr-10' : 'mr-2'}`}>{label}</label>
+                <input type='number' step='any' value={value} onChange={onChange}
+                    className={`${inputType === 'position' ? 'w-full' : 'w-16'} h-8 p-2 focus:outline-[0] text-day-350 
+                        border rounded-md outline-none bg-day-00 shadow-sm border-day-200 
+                        focus:border-[#c9c9c9]`} />
+                {inputType === 'position' ? <p className='ml-2'>m</p> : ''}
             </div>
         )
     }
@@ -49,7 +50,7 @@ export default function TransformForm({ geomName, position, onPositionChange, on
         return (
             <div className='flex flex-row items-center'>
                 <label className='mr-2'>{label}</label>
-                <input value={value} onChange={onChange}
+                <input type='number' step='any' value={value} onChange={onChange}
                     className='h-8 w-16 p-2 focus:outline-[0] text-day-350 border rounded-md outline-none 
                             bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]' />
             </div>
@@ -75,16 +76,16 @@ export default function TransformForm({ geomName, position, onPositionChange, on
             <div className='flex flex-col mt-3'>
                 <p className=''>Volume Position</p>
                 <div className='flex flex-col justify-between mt-2 space-y-2'>
-                    <PositionInput label='X' value={coordinates.x} onChange={positionXChange} />
-                    <PositionInput label='Y' value={coordinates.y} onChange={positionYChange} />
-                    <PositionInput label='Z' value={coordinates.z} onChange={positionZChange} />
+                    {Input({ label: 'X', value: coordinates.x, onChange: positionXChange })}
+                    {Input({ label: 'Y', value: coordinates.y, onChange: positionYChange })}
+                    {Input({ label: 'Z', value: coordinates.X, onChange: positionZChange })}
                 </div>
 
                 <span className='mt-4'>Volume Rotation Angle, °</span>
                 <div className='flex flex-row justify-between mt-2'>
-                    <AngleInput label='X' value={0} onChange={() => { }} />
-                    <AngleInput label='Y' value={0} onChange={() => { }} />
-                    <AngleInput label='Z' value={0} onChange={() => { }} />
+                    {Input({ label: 'X', value: 0, onChange: () => { } })}
+                    {Input({ label: 'Y', value: 0, onChange: () => { } })}
+                    {Input({ label: 'Z', value: 0, onChange: () => { } })}
                 </div>
             </div>
         </form >

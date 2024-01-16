@@ -1,70 +1,36 @@
 import { useEffect, useState } from 'react'
 import SvgSelector from '../SvgSelector'
 
-export default function BoxForm({ boxParams, boxPosition, onBoxDataChange, onCloseForm, onCreate }) {
-    const [boxData, setBoxData] = useState({ params: boxParams, position: boxPosition })
+export default function BoxForm({ boxDataProp, onBoxDataChange, onCloseForm, onCreate }) {
+    const [boxData, setBoxData] = useState({ ...boxDataProp.params, ...boxDataProp.position })
     const [paramsVisible, setParamsVisible] = useState(true)
     const [positionVisible, setPositionVisible] = useState(true)
 
     useEffect(() => {
-        setBoxData({ params: boxParams, position: boxPosition })
-    }, [boxParams, boxPosition])
+        setBoxData({ ...boxDataProp.params, ...boxDataProp.position })
+    }, [boxDataProp])
 
-    useEffect(() => {
-        onBoxDataChange(boxData)
-    }, [boxData])
+    const inputDataChange = (e) => {
+        const { name, value } = e.target;
+        setBoxData((prev) => ({ ...prev, [name]: Number(value) }));
+        onBoxDataChange({ ...boxData, [name]: Number(value) })
+    }
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
         onCreate()
     }
 
-    const widthChange = (e) => {
-        const { value } = e.target
-        setBoxData((prev) => ({
-            ...prev, params: { ...prev.params, width: Number(value) }
-        }))
-    }
-
-    const heightChange = (e) => {
-        const { value } = e.target
-        setBoxData((prev) => ({
-            ...prev, params: { ...prev.params, height: Number(value) }
-        }))
-    }
-
-    const depthChange = (e) => {
-        const { value } = e.target
-        setBoxData((prev) => ({
-            ...prev, params: { ...prev.params, depth: Number(value) }
-        }))
-    }
-
-    const positionXChange = (e) => {
-        const { value } = e.target
-        setBoxData((prev) => ({ ...prev, position: { ...prev.position, x: Number(value) } }))
-    }
-
-    const positionYChange = (e) => {
-        const { value } = e.target
-        setBoxData((prev) => ({ ...prev, position: { ...prev.position, y: Number(value) } }))
-    }
-
-    const positionZChange = (e) => {
-        const { value } = e.target
-        setBoxData((prev) => ({ ...prev, position: { ...prev.position, z: Number(value) } }))
-    }
-
     const handleCloseForm = () => {
         onCloseForm('primitiveForm')
     }
 
-    const Input = ({ label, value, onChange }) => {
+    const Input = ({ label, name }) => {
         return (
             <div className='flex flex-row items-center justify-between'>
                 <label htmlFor={label}>{label}</label>
                 <div className='flex flex-row items-center mr-2 '>
-                    <input id={label} type='number' value={value} onChange={onChange}
+                    <input type='number' step='any' name={name} id={name} value={boxData[name]} onChange={inputDataChange}
                         className='h-8 w-[140px] p-2 focus:outline-[0] text-day-350 border rounded-md outline-none 
                             bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]'/>
                     <p className='ml-2'>m</p>
@@ -106,9 +72,9 @@ export default function BoxForm({ boxParams, boxPosition, onBoxDataChange, onClo
                             <p className='font-semibold ml-[7px]'>Parameters</p>
                         </div>
                         {paramsVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
-                            <Input label='Width' value={boxData.params.width} onChange={widthChange} />
-                            <Input label='Height' value={boxData.params.height} onChange={heightChange} />
-                            <Input label='Depth' value={boxData.params.depth} onChange={depthChange} />
+                            {Input({ label: 'Width', name: 'width' })}
+                            {Input({ label: 'Height', name: 'height' })}
+                            {Input({ label: 'Depth', name: 'depth' })}
                         </div> : ''}
                     </div>
                     <div className='my-3'>
@@ -122,9 +88,9 @@ export default function BoxForm({ boxParams, boxPosition, onBoxDataChange, onClo
                             <p className='font-semibold ml-[7px]'>Position</p>
                         </div>
                         {positionVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
-                            <Input label='X' value={boxData.position.x} onChange={positionXChange} />
-                            <Input label='Y' value={boxData.position.y} onChange={positionYChange} />
-                            <Input label='Z' value={boxData.position.z} onChange={positionZChange} />
+                            {Input({ label: 'X', name: 'x' })}
+                            {Input({ label: 'Y', name: 'y' })}
+                            {Input({ label: 'Z', name: 'z' })}
                         </div> : ''}
                     </div>
                 </div>
