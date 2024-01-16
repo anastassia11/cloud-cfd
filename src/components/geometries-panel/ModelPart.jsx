@@ -7,13 +7,10 @@ export default function ModelPart({ modelPartProp, updateModelPart }) {
     const [modelPart, setModelPart] = useState(modelPartProp)
     const selectedModelParts = useSelector(state => state.project.selectedParts)
 
-    useEffect(() => {
-        updateModelPart(modelPart)
-    }, [modelPart.visible])
-
     const handleVisibleClick = () => {
         const newVisible = !modelPart.visible
         setModelPart(prevModelPart => ({ ...prevModelPart, visible: newVisible }))
+        updateModelPart({ ...modelPart, visible: newVisible })
     }
 
     const handleNameChange = (e) => {

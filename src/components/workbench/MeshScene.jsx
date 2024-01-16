@@ -9,14 +9,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setLoader } from '@/store/slices/loaderSlice'
 import getMeshData from '@/api/get_mesh_data'
 import { BASE_SERVER_URL } from '@/utils/constants'
-import { setMesh, setStateBar } from '@/store/slices/projectSlice'
+import { setMesh } from '@/store/slices/projectSlice'
 import axios from 'axios'
 
 export default function MeshScene({ camera }) {
     const dispatch = useDispatch()
     const projectId = useSelector(state => state.project.projectId)
     const stateBar = useSelector(state => state.project.stateBar)
-    const isMesh = useSelector(state => state.project.mesh)
     const containerRef = useRef(null)
     const sceneRef = useRef(null)
     const didLogRef = useRef(false)
@@ -39,7 +38,7 @@ export default function MeshScene({ camera }) {
 
     useEffect(() => {
         getFolderPath()
-    }, [isMesh])
+    }, [stateBar])
 
     const getFolderPath = async () => {
         const result = await getMeshData(projectId)

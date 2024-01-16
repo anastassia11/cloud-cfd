@@ -35,7 +35,6 @@ export default function Geometry({ geom = [], hidePartObject }) {
     }, [input])
 
     const handleUpdate = (updatedModelPart) => {
-
         const updatedGeometry = {
             ...geometry,
             models: geometry.models.map((model) => {
