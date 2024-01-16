@@ -18,7 +18,6 @@ export default function MeshForm({ computeBoundingBox }) {
 
     const [formData, setFormData] = useState({})
     const [advancedSettingsVisible, setAdvancedSettingsVisible] = useState(false)
-
     const [meshState, setMeshState] = useState('not_generated')
 
     useEffect(() => {
@@ -280,28 +279,26 @@ export default function MeshForm({ computeBoundingBox }) {
                 </div> :
                 <div className='overflow-y-auto p-3'>
                     <p className='h-8 flex items-center font-semibold'>Block mesh settings</p>
-                    <Input label={'Delta'} name={'Delta'} />
-                    <PointInput label={'Inside point'} name={'InsidePoint'} unit='m' />
+                    {Input({ label: 'Delta', name: 'Delta' })}
+                    {PointInput({ label: 'Inside point', name: 'InsidePoint', init: 'm' })}
 
                     <p className='h-8 flex items-center font-semibold'>Castellated mesh controls</p>
-                    <Input label={'Cells between levels'} name={'NCellsBetweenLevels'} />
-                    <Input label={'Resolve feature angle'} name={'ResolveFeatureAngle'}
-                    // unit='&deg;' 
-                    />
+                    {Input({ label: 'Cells between levels', name: 'NCellsBetweenLevels' })}
+                    {Input({ label: 'Resolve feature angle', name: 'ResolveFeatureAngle', unit: '\u00B0' })}
+
 
                     <p className='h-8 flex items-center font-semibold'>Add layers controls</p>
-                    <Toogle label={'Add layers'} name={'AddLayers'} />
+                    {Toogle({ label: 'Add layers', name: 'AddLayers' })}
                     {formData.AddLayers && <>
-                        <Toogle label={'Relative sizes'} name={'RelativeSizes'} />
-                        <Input label={'Expansion ratio'} name={'ExpansionRatio'} />
-                        <Select label={'Layers thickness type'} name={'LayersThicknessType'}
-                            options={thickness} />
+                        {Toogle({ label: 'Relative sizes', name: 'RelativeSizes' })}
+                        {Input({ label: 'Expansion ratio', name: 'ExpansionRatio' })}
+                        {Select({ label: 'Layers thickness type', name: 'LayersThicknessType', options: thickness })}
                         {formData.LayersThicknessType === "FirstLayerThickness" &&
-                            <Input label={'First layer thickness'} name={'FirstLayerThickness'} />}
+                            Input({ label: 'First layer thickness', name: 'FirstLayerThickness' })}
                         {formData.LayersThicknessType === "FinalLayerThickness" &&
-                            <Input label={'Final layer thickness'} name={'FinalLayerThickness'} />}
+                            Input({ label: 'Final layer thickness', name: 'FinalLayerThickness' })}
                         {formData.LayersThicknessType === "Thickness" &&
-                            <Input label={'Thickness'} name={'Thickness'} />}
+                            Input({ label: 'Thickness', name: 'Thickness' })}
                     </>}
                     <div className='mt-3'>
                         <div className='flex flex-row cursor-pointer'
@@ -314,36 +311,35 @@ export default function MeshForm({ computeBoundingBox }) {
                             <p className='font-semibold ml-[7px] text-day-350'>Advanced settings</p>
                         </div>
                         {advancedSettingsVisible ? <div className='flex flex-col ml-[27px]'>
-                            <Input label={'Merge tolerance'} name={'MergeTolerance'} />
+                            {Input({ label: 'Merge tolerance', name: 'MergeTolerance' })}
 
                             <p className='h-8 flex items-center font-semibold'>Castellated mesh controls</p>
-                            <Input label={'Max global cells'} name={'MaxGlobalCells'} />
-                            <Input label={'Resolve feature angle'} name={'ResolveFeatureAngle'} />
-                            <Toogle label={'Allow free standing zone faces'} name={'AllowFreeStandingZoneFaces'} />
-
+                            {Input({ label: 'Max global cells', name: 'MaxGlobalCells' })}
+                            {Input({ label: 'Resolve feature angle', name: 'ResolveFeatureAngle' })}
+                            {Toogle({ label: 'Allow free standing zone faces', name: 'AllowFreeStandingZoneFaces' })}
                             <p className='h-8 flex items-center font-semibold'>Snap controls</p>
-                            <Toogle label={'Snap'} name={'Snap'} />
+                            {Toogle({ label: 'Snap', name: 'Snap' })}
                             {formData.Snap && <>
-                                <Input label={'Smooth patch'} name={'NSmoothPatch'} />
-                                <Input label={'Tolerance'} name={'Tolerance'} />
-                                <Input label={'Solve iterations'} name={'NSolveIter'} />
-                                <Input label={'Relax iterations'} name={'NRelaxIter'} />
-                                <Input label={'Feature snap iter'} name={'NFeatureSnapIter'} />
+                                {Input({ label: 'Smooth patch', name: 'NSmoothPatch' })}
+                                {Input({ label: 'Tolerance', name: 'Tolerance' })}
+                                {Input({ label: 'Solve iterations', name: 'NSolveIter' })}
+                                {Input({ label: 'Relax iterations', name: 'NRelaxIter' })}
+                                {Input({ label: 'Feature snap iter', name: 'NFeatureSnapIter' })}
 
                                 {formData.AddLayers && <>
                                     <p className='h-8 flex items-center font-semibold'>Add layers controls</p>
-                                    <Input label={'Min thickness'} name={'MinThickness'} />
-                                    <Input label={'Grow'} name={'NGrow'} />
-                                    <Input label={'Feature angle'} name={'FeatureAngle'} />
-                                    <Input label={'Relax iterations layer'} name={'NRelaxIterLayer'} />
-                                    <Input label={'Smooth surface normals'} name={'NSmoothSurfaceNormals'} />
-                                    <Input label={'Smooth thickness'} name={'NSmoothThickness'} />
-                                    <Input label={'Max face thickness ratio'} name={'MaxFaceThicknessRatio'} />
-                                    <Input label={'Max thickness to medial ratio'} name={'MaxThicknessToMedialRatio'} />
-                                    <Input label={'Min median axis angle'} name={'MinMedianAxisAngle'} />
-                                    <Input label={'Buffer cells no extrude'} name={'NBufferCellsNoExtrude'} />
-                                    <Input label={'Layer iterations'} name={'NLayerIter'} />
-                                    <Input label={'Relaxed iterations'} name={'NRelaxedIter'} />
+                                    {Input({ label: 'Min thickness', name: 'MinThickness' })}
+                                    {Input({ label: 'Grow', name: 'NGrow' })}
+                                    {Input({ label: 'Feature angle', name: 'FeatureAngle' })}
+                                    {Input({ label: 'elax iterations layer', name: 'NRelaxIterLayer' })}
+                                    {Input({ label: 'Smooth surface normals', name: 'NSmoothSurfaceNormals' })}
+                                    {Input({ label: 'Smooth thickness', name: 'NSmoothThickness' })}
+                                    {Input({ label: 'Max face thickness ratio', name: 'MaxFaceThicknessRatio' })}
+                                    {Input({ label: 'Max thickness to medial ratio', name: 'MaxThicknessToMedialRatio' })}
+                                    {Input({ label: 'Min median axis angle', name: 'MinMedianAxisAngle' })}
+                                    {Input({ label: 'Buffer cells no extrude', name: 'NBufferCellsNoExtrude' })}
+                                    {Input({ label: 'Layer iterations', name: 'NLayerIter' })}
+                                    {Input({ label: 'Relaxed iterations', name: 'NRelaxedIter' })}
                                 </>}
                             </>}
                         </div> : ''}
