@@ -158,30 +158,14 @@ export default function SvgSelector({ id = '', ...props }) {
             )
         case 'cylinder':
             return (
-                <svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" viewBox="0 0 58 58" {...props} >
-                    <path d="M29 8C13.536 8 1 6.209 1 4v50c0 2.209 12.536 4 28 4s28-1.791 28-4V4c0 2.209-12.536 4-28 4z"
-                        style={{
-                            fill: "#556080",
-                        }}
-                    />
-                    <ellipse
-                        cx={29}
-                        cy={4}
-                        rx={28}
-                        ry={4}
-                        style={{
-                            fill: "#7383bf",
-                        }}
-                    />
-                    <ellipse
-                        cx={29}
-                        cy={54}
-                        rx={28}
-                        ry={4}
-                        style={{
-                            fill: "#434c6d",
-                        }}
-                    />
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlSpace="preserve"
+                    viewBox="0 0 20 20"
+                    {...props}
+                >
+                    <path fill="#C6C7C8" d="M1 4v12c0 1.66 4.03 3 9 3s9-1.34 9-3V4H1z" />
+                    <ellipse cx={10} cy={4} fill="#90908F" rx={9} ry={3} />
                 </svg>
             )
         case 'cube':
@@ -189,51 +173,12 @@ export default function SvgSelector({ id = '', ...props }) {
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     xmlSpace="preserve"
-                    viewBox="0 0 58 58"
+                    viewBox="0 0 20 20"
                     {...props}
                 >
-                    <path
-                        d="M14 14h30v30H14z"
-                        style={{
-                            fill: "#556080",
-                        }}
-                    />
-                    <path
-                        d="M14 14H0v44l14-14z"
-                        style={{
-                            fill: "#434c6d",
-                        }}
-                    />
-                    <path
-                        d="M44 14 58 0H14v14z"
-                        style={{
-                            fill: "#7383bf",
-                        }}
-                    />
-                    <path
-                        d="M14 0 0 14h14z"
-                        style={{
-                            fill: "#59699b",
-                        }}
-                    />
-                    <path
-                        d="M14 44 0 58h44V44z"
-                        style={{
-                            fill: "#333c56",
-                        }}
-                    />
-                    <path
-                        d="M44 14v30h14V0z"
-                        style={{
-                            fill: "#434c6d",
-                        }}
-                    />
-                    <path
-                        d="m44 58 14-14H44z"
-                        style={{
-                            fill: "#47526d",
-                        }}
-                    />
+                    <path fill="#90908F" d="M1 7h15v10H1z" />
+                    <path fill="#C6C7C8" d="M16 7v10l3-5V3z" />
+                    <path fill="#EBEBEB" d="M4 3 1 7h15l3-4z" />
                 </svg>
             )
         case 'add-folder':
@@ -420,6 +365,23 @@ export default function SvgSelector({ id = '', ...props }) {
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            )
+        case 'clip':
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 31 32" {...props} >
+                    <path
+                        d="m9.935 8.226 9.112 5.738-.019 11.013-9.093-5.714V8.226z"
+                        style={{
+                            fill: "#c6c7c8",
+                        }}
+                    />
+                    <path
+                        d="M24.277 19.674v-6.709a1.996 1.996 0 1 0-1.87-3.2l-5.525-3.14a1.977 1.977 0 0 0 .096-.581 2 2 0 1 0-3.965.35l-1.734.941a1.994 1.994 0 1 0-1.793 3.28v7.058a1.996 1.996 0 1 0 1.9 3.149l5.69 3.39a2.001 2.001 0 1 0 3.894-.027l1.727-1.013a1.994 1.994 0 1 0 1.58-3.497Zm-13.112-1.467a1.995 1.995 0 0 0-.679-.428V14.59l3.374 2.012Zm.21-8.37 2.563 1.527-3.452 2.056v-2.912a1.995 1.995 0 0 0 .889-.671Zm-.889 4.165 3.707-2.208v4.425l-3.707-2.211Zm8.06 1.577v3.236l-3.71-2.213 2.717-1.618a1.989 1.989 0 0 0 .994.595Zm-1.28-1.006-2.573 1.532v-4.29l2.378 1.416a2.004 2.004 0 0 0-.043.413 1.977 1.977 0 0 0 .238.929Zm1.021 4.67-3.594 2.14v-4.284Zm1.26-3.676a1.995 1.995 0 0 0 1.48-1.923c0-.042-.01-.08-.012-.122l1.689-.992a1.983 1.983 0 0 0 .573.335v3.406l-3.73 2.222Zm2.565-3.848-1.413.83a1.986 1.986 0 0 0-3.174-.212l-2.378-1.417 3.548-2.114 3.308 1.881a1.805 1.805 0 0 0 .11 1.032Zm-8.677-4.417a1.981 1.981 0 0 0 2.929.18l1.83 1.04-3.536 2.107-2.906-1.732a1.973 1.973 0 0 0 .026-.253 2.002 2.002 0 0 0-.046-.418Zm-1.957 11.3 2.715-1.617v4.345l-2.439-1.453a1.753 1.753 0 0 0-.276-1.275Zm3.498 3.194 3.57-2.126v3.038a1.988 1.988 0 0 0-1.01.614Zm4.57.924v-3.645l3.731-2.222v2.922a1.977 1.977 0 0 0-1.168 2.583l-1.608.943a1.989 1.989 0 0 0-.954-.58Z"
+                        style={{
+                            fill: "#535353",
+                        }}
+                    />
                 </svg>
             )
     }
