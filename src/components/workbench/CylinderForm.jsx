@@ -61,7 +61,7 @@ export default function CylinderForm({ cylinderDataProp, onCylinderDataChange, o
             </div>
             <div className='flex flex-col mt-3 text-day-350'>
                 <div className='flex flex-col justify-between mt-2 space-y-2'>
-                    <div className=''>
+                    <>
                         <div className='flex flex-row cursor-pointer'
                             onClick={() => setParamsVisible(prev => !prev)}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -75,8 +75,8 @@ export default function CylinderForm({ cylinderDataProp, onCylinderDataChange, o
                             {Input({ label: 'Height', name: 'height' })}
                             {Input({ label: 'Radius', name: 'radius' })}
                         </div> : ''}
-                    </div>
-                    <div>
+                    </>
+                    <>
                         <div className='flex flex-row cursor-pointer'
                             onClick={() => setPositionVisible(prev => !prev)}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -91,7 +91,7 @@ export default function CylinderForm({ cylinderDataProp, onCylinderDataChange, o
                             {Input({ label: 'Y', name: 'y' })}
                             {Input({ label: 'Z', name: 'z' })}
                         </div> : ''}
-                    </div>
+                    </>
                 </div>
             </div>
         </form >

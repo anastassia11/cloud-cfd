@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { Tooltip } from 'react-tooltip';
 
 export default function ControlPanel({ selectModeProp, selectModeChange, renderModeProp,
-    renderModeChange, setPrimitiveData }) {
+    renderModeChange, setPrimitiveData, addClipPlane }) {
     const sceneMode = useSelector(state => state.project.sceneMode)
     const [selectMode, setSelectMode] = useState(selectModeProp)
     const [renderMode, setRenderMode] = useState(renderModeProp)
@@ -40,9 +40,14 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
     }, [renderMode])
 
     return (
-        <div className={`${sceneMode === "geom" ? 'flex' : 'hidden'} h-[40px] items-center justify-end grow justify-self-end`}>
+        <div className='flex h-[40px] items-center justify-end grow justify-self-end'>
             <div className='border-r border-[#a4a4a4] px-2 h-[40px] flex flex-row items-center relative'>
-                <div className='group rounded-md w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-day-150 hover:shadow'>
+                <div className={`rounded-md w-8 h-8 flex items-center justify-center 
+                ${sceneMode === 'geom' ? 'group cursor-pointer hover:bg-day-150 hover:shadow' : 'opacity-40 cursor-default'}`}
+                    data-tooltip-id="render-mode"
+                    data-tooltip-content="Render Mode"
+                    data-tooltip-place="bottom"
+                    data-tooltip-variant="light">
                     {renderMode === 'surfaces' && <SvgSelector id='surfaces-render-mode' className='w-6' />}
                     {renderMode === 'translucent' && <SvgSelector id='translucent-render-mode' className='w-6' />}
                     <div className='absolute top-[25px]'>
@@ -56,8 +61,7 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
                                     data-tooltip-id="surfaces-render-mode"
                                     data-tooltip-content="Surfaces"
                                     data-tooltip-place="right"
-                                    data-tooltip-variant="light"
-                                >
+                                    data-tooltip-variant="light" >
                                     <SvgSelector id='surfaces-render-mode' className='w-6' />
                                 </button>
                                 <Tooltip id="surfaces-render-mode"
@@ -74,8 +78,7 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
                                     data-tooltip-id="translucent-render-mode"
                                     data-tooltip-content="Translucent"
                                     data-tooltip-place="right"
-                                    data-tooltip-variant="light"
-                                >
+                                    data-tooltip-variant="light">
                                     <SvgSelector id='translucent-render-mode' className='w-6' />
                                 </button>
                                 <Tooltip id="translucent-render-mode"
@@ -90,13 +93,21 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
                             </div>
                         </div>
                     </div>
-
                 </div>
-
+                {sceneMode === 'mesh' && <Tooltip id="render-mode"
+                    style={{
+                        fontSize: "11px",
+                        height: "20px",
+                        padding: "1px 8px 1px 8px",
+                        whiteSpace: "nowrap",
+                        display: "flex",
+                        alignItems: "center",
+                    }} />}
             </div>
             <div className='border-r border-[#a4a4a4] px-2 h-[40px] flex flex-row items-center relative'>
-                <button className={`rounded-md w-8 h-8 flex items-center justify-center 
-                        ${selectMode === 'volume' ? 'border border-orange-100' : 'hover:bg-day-150 hover:shadow active:bg-day-100 active:shadow-inner'}`}
+                <button disabled={sceneMode === 'mesh'} className={`rounded-md w-8 h-8 flex items-center justify-center disabled:opacity-40
+                        ${selectMode === 'volume' ? 'border border-orange-100 disabled:border-none' :
+                        'hover:bg-day-150 disabled:bg-transparent hover:shadow disabled:shadow-none active:bg-day-100 active:shadow-inner'}`}
                     onClick={() => setSelectMode('volume')}
                     data-tooltip-id="volume-mode"
                     data-tooltip-content="Select Volume"
@@ -115,8 +126,9 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
                     }} />
             </div>
             <div className='border-r border-[#a4a4a4] px-2 h-[40px] flex flex-row items-center relative'>
-                <button className={`rounded-md w-8 h-8 flex items-center justify-center
-                        ${selectMode === 'face' ? 'border border-orange-100' : 'hover:bg-day-150 hover:shadow active:bg-day-100 active:shadow-inner'}`}
+                <button disabled={sceneMode === 'mesh'} className={`rounded-md w-8 h-8 flex items-center justify-center disabled:opacity-40
+                        ${selectMode === 'face' ? 'border border-orange-100 disabled:border-none' :
+                        'hover:bg-day-150 disabled:bg-transparent hover:shadow disabled:shadow-none active:bg-day-100 active:shadow-inner'}`}
                     onClick={() => setSelectMode('face')}
                     data-tooltip-id="face-mode"
                     data-tooltip-content="Select Face"
@@ -133,8 +145,29 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
                         textAlign: "center",
                     }} />
             </div>
-            <div className='relative group text-day-1000 flex flex-row items-center cursor-pointer 
-                            mr-2 h-8 pl-2 justify-start'>
+            <div className='border-r border-[#a4a4a4] px-2 h-[40px] flex flex-row items-center relative'>
+                <button disabled={sceneMode === 'geom'} className={`rounded-md w-8 h-8 flex items-center justify-center 
+                     hover:bg-day-150 hover:shadow active:bg-day-100 active:shadow-inner 
+                        disabled:bg-transparent disabled:shadow-none disabled:opacity-40`}
+                    onClick={addClipPlane}
+                    data-tooltip-id="clip"
+                    data-tooltip-content="Mesh Clip"
+                    data-tooltip-place="bottom"
+                    data-tooltip-variant="light">
+                    <SvgSelector id='clip' className='w-6' />
+                </button>
+                <Tooltip id="clip"
+                    style={{
+                        fontSize: "11px",
+                        height: "20px",
+                        padding: "1px 8px 1px 8px",
+                        whiteSpace: "nowrap",
+                        textAlign: "center",
+                    }} />
+            </div>
+            <div className={`relative  text-day-1000 flex flex-row items-center 
+                            mr-2 h-8 pl-2 justify-start
+                ${sceneMode === 'geom' ? 'group cursor-pointer' : 'opacity-40 cursor-default'}`}>
                 <p className='text-[13px] pt-[2px] mr-[2px] tracking-wide'>CREATE</p>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                     className='w-5 h-5 duration-300 group-hover:rotate-180'>

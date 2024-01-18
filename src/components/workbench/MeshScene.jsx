@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { OutlinePass } from "three/addons/postprocessing/OutlinePass.js"
@@ -11,8 +11,9 @@ import getMeshData from '@/api/get_mesh_data'
 import { BASE_SERVER_URL } from '@/utils/constants'
 import { setMesh } from '@/store/slices/projectSlice'
 import axios from 'axios'
+import { setMeshes } from '@/store/slices/meshSlice'
 
-export default function MeshScene({ camera }) {
+function MeshScene({ camera }, ref) {
     const dispatch = useDispatch()
     const projectId = useSelector(state => state.project.projectId)
     const stateBar = useSelector(state => state.project.stateBar)
@@ -24,6 +25,9 @@ export default function MeshScene({ camera }) {
     let renderer, orbitControls, composer, outlinePass
     let surfaseMesh, lineMesh, meshGeometryData, meshFolderUrl
     let meshValuesData = {}
+
+    const arrowRef = useRef(null)
+    const planeRef = useRef(null)
 
     useEffect(() => {
         dispatch(setLoader(false))
@@ -39,6 +43,10 @@ export default function MeshScene({ camera }) {
     useEffect(() => {
         getFolderPath()
     }, [stateBar])
+
+    useImperativeHandle(ref, () => ({
+        addClipPlane, deleteClipPlane, changeClipPlane
+    }))
 
     const getFolderPath = async () => {
         const result = await getMeshData(projectId)
@@ -117,6 +125,40 @@ export default function MeshScene({ camera }) {
         renderer.render(sceneRef.current, camera)
         orbitControls.update()
         composer.render()
+    }
+
+    function addClipPlane() {
+        deleteClipPlane()
+        arrowRef.current = new THREE.ArrowHelper(
+            new THREE.Vector3(0, 1, 0).normalize(),
+            new THREE.Vector3(0, 0, 0),
+            50,
+            0x0078d3
+        );
+        sceneRef.current.add(arrowRef.current);
+
+        const geometry = new THREE.PlaneGeometry(50, 50);
+        const material = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true, side: THREE.DoubleSide });
+        planeRef.current = new THREE.Mesh(geometry, material);
+        planeRef.current.lookAt(new THREE.Vector3(0, 1, 0).normalize());
+        planeRef.current.position.set(0, 0, 0);
+        sceneRef.current.add(planeRef.current);
+    }
+
+    function deleteClipPlane() {
+        sceneRef.current.remove(arrowRef.current);
+        sceneRef.current.remove(planeRef.current);
+    }
+
+    function changeClipPlane(params) {
+        const { normalX, normalY, normalZ, centerX, centerY, centerZ } = params;
+        const normalVector = new THREE.Vector3(normalX, normalY, normalZ).normalize();
+
+        arrowRef.current.position.set(centerX, centerY, centerZ);
+        planeRef.current.position.set(centerX, centerY, centerZ);
+
+        arrowRef.current.setDirection(normalVector);
+        planeRef.current.lookAt(new THREE.Vector3(centerX + normalVector.x, centerY + normalVector.y, centerZ + normalVector.z));
     }
 
     function createSurfaseGeometry(_meshGeometryData) {
@@ -206,6 +248,7 @@ export default function MeshScene({ camera }) {
                 sceneRef.current.add(lineMesh);
                 updateVizualizationValues();
                 dispatch(setMesh(true));
+                dispatch(setMeshes({ meshes: [{ name: 'Mesh 1', uid: '123' }] }))
             }
         } catch (error) {
             console.log(error)
@@ -234,10 +277,11 @@ export default function MeshScene({ camera }) {
 
     function init_mesh_components() {
         lut.current = new Lut();
-        lut.current.addColorMap("solidColor", [[0.0, 0x55aaff], [1.0, 0x55aaff]])
+        lut.current.addColorMap("solidColor", [[0.0, 0x4488CC], [1.0, 0x4488CC]])
     }
 
     return (
         <canvas tabIndex='1' ref={containerRef} className='absolute outline-none overflow-hidden' />
     )
 }
+export default forwardRef(MeshScene)

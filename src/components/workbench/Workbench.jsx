@@ -13,6 +13,7 @@ import MeshScene from './MeshScene'
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
 import MeshForm from '../tree-panel/MeshForm'
 import StateBar from './StateBar'
+import ClipForm from './ClipForm'
 
 export default function Workbench() {
     const transformRef = useRef(null)
@@ -24,8 +25,9 @@ export default function Workbench() {
     const meshScene = useRef(null)
 
     const geometrySceneRef = useRef(null)
+    const meshSceneRef = useRef(null)
+
     const camera = useRef(null)
-    const rendererMesh = useRef(null)
 
     const geomsState = useSelector(state => state.project.geometries)
     const projectId = useSelector(state => state.project.projectId)
@@ -52,6 +54,10 @@ export default function Workbench() {
         position: {}
     })
 
+    const [clipPlane, setClipPlane] = useState({
+        visible: false,
+    })
+
     useEffect(() => {
         if (primitiveData.name === 'box') {
             geometrySceneRef.current.changeBoxData(primitiveData)
@@ -73,14 +79,6 @@ export default function Workbench() {
             camera.current.position.y = 0
             camera.current.position.z = 50;
             camera.current.lookAt(new THREE.Vector3(0, 0, 0));
-
-            rendererMesh.current = new THREE.WebGLRenderer({
-                antialias: true,
-                preserveDrawingBuffer: true
-            });
-
-            rendererMesh.current.setClearColor("#f0f0f0");
-            rendererMesh.current.setSize(window.innerWidth, window.innerHeight - 56);
         })()
 
     function callHidePartObject(model) {
@@ -94,14 +92,28 @@ export default function Workbench() {
     function callCloseForm(formName) {
         geometrySceneRef.current.handleCloseForm(formName)
     }
+
     function callComputeBoundingBox() {
         const boundingBox = geometrySceneRef.current.computeBoundingBox()
         return boundingBox
     }
 
+    function addClipPlane() {
+        meshSceneRef.current.addClipPlane()
+        setClipPlane(prev => ({ ...prev, visible: true }))
+    }
+
+    function closeClipPlane() {
+        meshSceneRef.current.deleteClipPlane()
+        setClipPlane(prev => ({ ...prev, visible: false }))
+    }
+
+    function changeClipPlane(params) {
+        meshSceneRef.current.changeClipPlane(params)
+    }
+
     function addPrimitivePattern(newData) {
         geometrySceneRef.current.removeFromGeomScene(primitiveData.mesh)
-        //удалить предфдущую если есть 
         geometrySceneRef.current.addToGeomScene(newData.mesh)
         geometrySceneRef.current.addTransformControl(newData.mesh)
         setPrimitiveData(newData)
@@ -118,7 +130,6 @@ export default function Workbench() {
             ...prev, visible: false, mesh: { ...prev.mesh, material: material }
         }))
 
-        // + ПОЗИЦИЮ БОКСА НА СЕРВЕР 
         const stlExporter = new STLExporter()
         const stlData = stlExporter.parse(primitiveData.mesh, { binary: true })
         const stlBlob = new Blob([stlData], { type: 'application/octet-stream' })
@@ -138,12 +149,6 @@ export default function Workbench() {
         })
     }
 
-    function boxdatachange(newData) {
-        setPrimitiveData((prevData) => {
-            return { ...prevData, ...newData }
-        })
-    }
-
     return (
         <div className='min-h-[calc(100vh-56px)] flex w-full' id='for-canvas'>
             <div className={`${sceneMode === "geom" || !mesh || geomsState.length === 0 ? 'block' : 'hidden'}`}>
@@ -153,7 +158,7 @@ export default function Workbench() {
                     setPrimitiveData={changePrimitiveData} />
             </div>
             <div className={`${sceneMode === "mesh" && mesh && geomsState.length !== 0 ? 'block' : 'hidden'}`}>
-                <MeshScene camera={camera.current} renderer={rendererMesh} />
+                <MeshScene ref={meshSceneRef} camera={camera.current} />
             </div>
 
             <div className='flex flex-row justify-between w-full m-2 '>
@@ -178,7 +183,8 @@ export default function Workbench() {
                 <div className='flex flex-row'>
                     <ControlPanel selectModeProp={selectMode} selectModeChange={(mode) => setSelectMode(mode)}
                         renderModeProp={renderMode} renderModeChange={(mode) => setRenderMode(mode)}
-                        setPrimitiveData={addPrimitivePattern} />
+                        setPrimitiveData={addPrimitivePattern}
+                        addClipPlane={addClipPlane} />
 
                     <div className='right-0 flex flex-col max-h-[calc(100vh-73px)] overflow-hidden'>
                         <div ref={geomRef} className={`min-w-0 w-[300px] ml-[12px] relative 
@@ -203,8 +209,7 @@ export default function Workbench() {
                                         ...prev, params: { width, height, depth }, position: { x, y, z }
                                     }))}
                                     onCloseForm={callCloseForm}
-                                    onCreate={addPrimitive}
-                                />
+                                    onCreate={addPrimitive} />
                             </div> : ''}
 
                         {primitiveData.visible && primitiveData.name === 'cylinder' ?
@@ -216,6 +221,13 @@ export default function Workbench() {
                                     }))}
                                     onCloseForm={callCloseForm}
                                     onCreate={addPrimitive} />
+                            </div> : ''}
+
+                        {clipPlane.visible ?
+                            <div className={`min-w-0 w-[300px] self-end mt-[10px] 
+                            relative`}>
+                                <ClipForm onCloseForm={closeClipPlane}
+                                    onChangeClip={changeClipPlane} />
                             </div> : ''}
                     </div>
                 </div>
