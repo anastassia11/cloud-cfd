@@ -430,11 +430,15 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
     }
 
     const changePointVisible = () => {
+        const { XMin, XMax, YMin, YMax, ZMin, ZMax } = computeBoundingBox();
+        const center = [(XMin + XMax) / 2, (YMin + YMax) / 2, (ZMin + ZMax) / 2];
+
         if (geomsState && formName === 'mesh' && pointVisible) {
             const pointGeometry = new THREE.SphereGeometry(0.1, 16, 16);
             const pointMaterial = selectedMaterial.clone();
             const point3D = new THREE.Mesh(pointGeometry, pointMaterial);
             point3D.type = 'insidePoint';
+            point3D.position.set(...center)
             sceneRef.current.add(point3D);
             addTransformControl(point3D);
             changeMaterials('translucent');
@@ -566,7 +570,7 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
             ZMax: box.max.z,
         }
         for (let item in boundingBox) {
-            boundingBox[item] = Number(boundingBox[item] * 1.5)
+            boundingBox[item] = Number(boundingBox[item])
         }
         return boundingBox
     }

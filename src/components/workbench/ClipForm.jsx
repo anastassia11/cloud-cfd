@@ -4,12 +4,13 @@ import createClip from '@/api/create_clip'
 import { useSelector } from 'react-redux'
 import { setLoader } from '@/store/slices/loaderSlice'
 
-export default function ClipForm({ onCloseForm, onChangeClip }) {
-    const projectId = useSelector(state => state.project.projectId)
+export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
+    const projectId = useSelector(state => state.project.projectId);
+    const { XMin, XMax, YMin, YMax, ZMin, ZMax } = boundingBox();
+    const center = { centerX: (XMin + XMax) / 2, centerY: (YMin + YMax) / 2, centerZ: (ZMin + ZMax) / 2 };
+
     const [params, setParams] = useState({
-        centerX: 0,
-        centerY: 0,
-        centerZ: 0,
+        ...center,
         normalX: 0,
         normalY: 1,
         normalZ: 0,
@@ -43,12 +44,13 @@ export default function ClipForm({ onCloseForm, onChangeClip }) {
             <div className='flex flex-row items-start justify-between h-8'>
                 <label className=''>{label}</label>
                 <div className='flex flex-col h-full mt-[10px]'>
-                    <input type='range' min={`${type === 'center' ? '-10' : '-1'}`}
-                        max={`${type === 'center' ? '10' : '1'}`} step='any' name={name} id={name}
+                    <input type='range' min={`${name === 'centerX' ? XMin : name === 'centerY' ? YMin : name === 'centerZ' ? ZMin : '-1'}`}
+                        max={`${name === 'centerX' ? XMax : name === 'centerY' ? YMax : name === 'centerZ' ? ZMax : '1'}`}
+                        step='any' name={name} id={name}
                         value={params[name]}
                         onChange={paramsChange}
                         className='w-[140px] h-[6px] bg-gray-300 accent-orange-200 rounded-full appearance-none cursor-pointer' />
-                    <p className='mt-1 w-10 self-center text-center'>
+                    <p className='mt-1 w-32 self-center text-center'>
                         {params[name].toFixed(3)}
                     </p>
                 </div>

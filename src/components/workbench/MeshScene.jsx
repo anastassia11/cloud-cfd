@@ -13,7 +13,7 @@ import { setMesh } from '@/store/slices/projectSlice'
 import axios from 'axios'
 import { setMeshes } from '@/store/slices/meshSlice'
 
-function MeshScene({ camera }, ref) {
+function MeshScene({ camera, boundingBox }, ref) {
     const dispatch = useDispatch()
     const projectId = useSelector(state => state.project.projectId)
     const stateBar = useSelector(state => state.project.stateBar)
@@ -128,20 +128,24 @@ function MeshScene({ camera }, ref) {
     }
 
     function addClipPlane() {
+        const { XMin, XMax, YMin, YMax, ZMin, ZMax } = boundingBox();
+        const delta = 1.5 * Math.max(XMax - XMin, YMax - YMin, ZMax - ZMin);
+        const center = [(XMin + XMax) / 2, (YMin + YMax) / 2, (ZMin + ZMax) / 2];
         deleteClipPlane()
+
         arrowRef.current = new THREE.ArrowHelper(
             new THREE.Vector3(0, 1, 0).normalize(),
-            new THREE.Vector3(0, 0, 0),
-            50,
+            new THREE.Vector3(...center),
+            delta,
             0x0078d3
         );
         sceneRef.current.add(arrowRef.current);
 
-        const geometry = new THREE.PlaneGeometry(50, 50);
+        const geometry = new THREE.PlaneGeometry(delta, delta);
         const material = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true, side: THREE.DoubleSide });
         planeRef.current = new THREE.Mesh(geometry, material);
         planeRef.current.lookAt(new THREE.Vector3(0, 1, 0).normalize());
-        planeRef.current.position.set(0, 0, 0);
+        planeRef.current.position.set(...center);
         sceneRef.current.add(planeRef.current);
     }
 

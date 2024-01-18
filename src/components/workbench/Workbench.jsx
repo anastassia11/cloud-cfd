@@ -158,7 +158,7 @@ export default function Workbench() {
                     setPrimitiveData={changePrimitiveData} />
             </div>
             <div className={`${sceneMode === "mesh" && mesh && geomsState.length !== 0 ? 'block' : 'hidden'}`}>
-                <MeshScene ref={meshSceneRef} camera={camera.current} />
+                <MeshScene ref={meshSceneRef} camera={camera.current} boundingBox={callComputeBoundingBox} />
             </div>
 
             <div className='flex flex-row justify-between w-full m-2 '>
@@ -227,7 +227,7 @@ export default function Workbench() {
                             <div className={`min-w-0 w-[300px] self-end mt-[10px] 
                             relative`}>
                                 <ClipForm onCloseForm={closeClipPlane}
-                                    onChangeClip={changeClipPlane} />
+                                    onChangeClip={changeClipPlane} boundingBox={callComputeBoundingBox} />
                             </div> : ''}
                     </div>
                 </div>
