@@ -5,14 +5,15 @@ import { useEffect, useState } from 'react';
 import createMesh from '@/api/create_mesh';
 import getSettingsMesh from '@/api/get_settings_mesh';
 import { setJobStatus, setStateBar } from '@/store/slices/projectSlice';
-import { setPointPosition, setPointVisible } from '@/store/slices/meshSlice';
+import { setCurrentMesh, setMeshes, setPointPosition, setPointVisible } from '@/store/slices/meshSlice';
 import setMeshData from '@/api/set_mesh_data';
 import cancelCreateMesh from '@/api/cancel_create_mesh';
+import getMeshDataJson from '@/api/get_meshData';
 
 export default function MeshForm({ computeBoundingBox }) {
     const dispatch = useDispatch()
     const projectId = useSelector(state => state.project.projectId)
-    const geomsState = useSelector(state => state.project.geometries)
+    const geoms = useSelector(state => state.project.geometries) || []
     const pointPosition = useSelector(state => state.mesh.pointPosition)
     const pointVisible = useSelector(state => state.mesh.pointVisible)
 
@@ -22,7 +23,7 @@ export default function MeshForm({ computeBoundingBox }) {
 
     useEffect(() => {
         getMeshData()
-    }, [geomsState])
+    }, [geoms])
 
     useEffect(() => {
         setFormData((prev) => ({
@@ -82,14 +83,27 @@ export default function MeshForm({ computeBoundingBox }) {
         await setMeshData(projectId, formData)
     }
 
+    async function fetchMeshes() {
+        const result = await getMeshDataJson(projectId)
+        if (result.success) {
+            dispatch(setMeshes({ meshes: result.data.meshes }))
+            dispatch(setCurrentMesh({
+                uid: result.data.meshes[0].uid,
+                path: result.data.meshes[0].path
+            }))
+        } else {
+            // alert(result.message)
+        }
+    }
+
     const fetchGenerateMesh = async (formData) => {
         setMeshState('in_progress')
         dispatch(setStateBar({ type: "status", visible: true, message: 'Mesh' }))
         const result = await createMesh(projectId, formData)
-        console.log(result)
         if (result.success) {
             setMeshState('successfully_generated')
             dispatch(setStateBar({ type: 'success', visible: true, message: 'Mesh' }))
+            fetchMeshes()
         } else {
             setMeshState('successfully_generated')
             dispatch(setStateBar({ type: 'error', visible: true, message: 'Mesh' }))
@@ -145,7 +159,7 @@ export default function MeshForm({ computeBoundingBox }) {
                     <div className='flex flex-row items-end justify-between h-8'>
                         <label htmlFor='X' className='w-full text-left text-ellipsis overflow-hidden whitespace-nowrap'>X</label>
                         <div className="flex flex-row items-center w-[250px]">
-                            <input type="number" id='X' name='X' value={formData[name] && formData[name]["X"]} onChange={pointInputDataChange}
+                            <input type="number" id='X' name='X' step='any' value={formData[name] && formData[name]["X"]} onChange={pointInputDataChange}
                                 className='h-8 w-full p-2 focus:outline-[0] text-day-350 border rounded-md 
                                 outline-none bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]'>
                             </input>
@@ -154,7 +168,7 @@ export default function MeshForm({ computeBoundingBox }) {
                     <div className='flex flex-row items-end justify-between h-8'>
                         <label htmlFor='Y' className='w-full text-left text-ellipsis overflow-hidden whitespace-nowrap'>Y</label>
                         <div className="flex flex-row items-center w-[250px]">
-                            <input type="number" id='Y' name='Y' value={formData[name] && formData[name]["Y"]} onChange={pointInputDataChange}
+                            <input type="number" id='Y' name='Y' step='any' value={formData[name] && formData[name]["Y"]} onChange={pointInputDataChange}
                                 className='h-8 w-full p-2 focus:outline-[0] text-day-350 border rounded-md 
                                 outline-none bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]'>
                             </input>
@@ -163,7 +177,7 @@ export default function MeshForm({ computeBoundingBox }) {
                     <div className='flex flex-row items-end justify-between h-8'>
                         <label htmlFor='Z' className='w-full text-left text-ellipsis overflow-hidden whitespace-nowrap'>Z</label>
                         <div className="flex flex-row items-center w-[250px]">
-                            <input type="number" id='Z' name='Z' value={formData[name] && formData[name]["Z"]} onChange={pointInputDataChange}
+                            <input type="number" id='Z' name='Z' step='any' value={formData[name] && formData[name]["Z"]} onChange={pointInputDataChange}
                                 className='h-8 w-full p-2 focus:outline-[0] text-day-350 border rounded-md 
                                 outline-none bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]'>
                             </input>
@@ -273,7 +287,7 @@ export default function MeshForm({ computeBoundingBox }) {
                     </button>
                 </div>
             </div>
-            {geomsState?.length === 0 ?
+            {Object.keys(geoms).length === 0 ?
                 <div className="flex m-2 items-center gap-2 rounded-md px-2 h-9 text-base text-red-700 bg-red-50">
                     Add geometry to generate mesh
                 </div> :
@@ -345,7 +359,7 @@ export default function MeshForm({ computeBoundingBox }) {
                         </div> : ''}
                     </div>
                 </div>}
-            {geomsState?.length !== 0 && <div className='w-full border-t flex flex-row justify-end items-center p-3 space-x-[6px]'>
+            {Object.keys(geoms).length !== 0 && <div className='w-full border-t flex flex-row justify-end items-center p-3 space-x-[6px]'>
                 <StateBar />
             </div>}
         </form>

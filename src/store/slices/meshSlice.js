@@ -3,10 +3,11 @@ import { createSlice } from '@reduxjs/toolkit'
 const meshSlice = createSlice({
     name: 'mesh',
     initialState: {
-        meshes: {},
+        meshes: [],
         currentMesh: {
             uid: null,
             path: null,
+            isClip: null
         },
         pointVisible: true,
         pointPosition: { x: 0, y: 0, z: 0 },

@@ -7,7 +7,6 @@ const projectSlice = createSlice({
         projectId: null,
         simulations: [],
         geometries: [],
-        mesh: false,
         selectedParts: [],
         stateBar: {
             visible: false,
@@ -67,15 +66,11 @@ const projectSlice = createSlice({
         setSceneMode(state, action) {
             state.sceneMode = action.payload
         },
-
-        setMesh(state, action) {
-            state.mesh = action.payload
-        }
     }
 })
 
 export const { setProject,
     setGeometries, updateGeometries, deleteGeometries,
     setSimulations, addSimulation, deleteSimulation,
-    setSelectedParts, setStateBar, setSceneMode, setMesh } = projectSlice.actions;
+    setSelectedParts, setStateBar, setSceneMode } = projectSlice.actions;
 export default projectSlice.reducer

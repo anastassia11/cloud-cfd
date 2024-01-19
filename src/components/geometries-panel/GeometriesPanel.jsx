@@ -5,16 +5,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setSceneMode } from '@/store/slices/projectSlice'
 import getMeshDataJson from '@/api/get_meshData'
 import { setCurrentMesh, setMeshes } from '@/store/slices/meshSlice'
+import deleteClip from '@/api/delete_clip'
+import deleteMesh from '@/api/delete_mesh'
 
 export default function GeometriesPanel({ onHidePartObject }) {
     const dispatch = useDispatch()
-    const geomsState = useSelector(state => state.project.geometries)
-    const meshesState = useSelector(state => state.mesh.meshes)
+    const geoms = useSelector(state => state.project.geometries) || []
+    const meshes = useSelector(state => state.mesh.meshes) || []
     const currentMesh = useSelector(state => state.mesh.currentMesh)
     const projectId = useSelector(state => state.project.projectId)
     const sceneMode = useSelector(state => state.project.sceneMode)
-    const geoms = geomsState ? geomsState : []
-    const meshes = meshesState ? meshesState : []
 
     useEffect(() => {
         fetchMeshes()
@@ -29,16 +29,36 @@ export default function GeometriesPanel({ onHidePartObject }) {
                 path: result.data.meshes[0].path
             }))
         } else {
+            // alert(result.message)
+        }
+    }
+
+    async function handleDeleteMesh() {
+        const result = await deleteMesh(projectId)
+        if (result.success) {
+            dispatch(setMeshes({ meshes: {} }))
+        } else {
             alert(result.message)
         }
     }
 
-    function selectMesh(uid, path) {
-        dispatch(setCurrentMesh({ uid, path }))
-    }
-
-    function deleteMesh(uid) {
-
+    async function handleDeleteClip(uidClip) {
+        const result = await deleteClip(projectId, uidClip)
+        if (result.success) {
+            let newMeshes = meshes.map(mesh => {
+                return {
+                    ...mesh,
+                    clipMeshes: mesh.clipMeshes.filter(clipMesh => clipMesh.uid !== uidClip)
+                };
+            });
+            dispatch(setMeshes({ meshes: newMeshes }));
+            dispatch(setCurrentMesh({
+                uid: meshes[0].uid,
+                path: meshes[0].path
+            }))
+        } else {
+            alert(result.message)
+        }
     }
 
     const Clip = ({ clip }) => {
@@ -47,11 +67,11 @@ export default function GeometriesPanel({ onHidePartObject }) {
             <div className={`cursor-pointer w-full flex items-center justify-between rounded-md text-day-350 h-9 
                                     hover:bg-day-150 active:bg-day-200 overflow-hidden group
                                     ${currentMesh.uid === uid ? 'bg-day-150' : ''}`}
-                onClick={() => selectMesh(uid, path)}>
+                onClick={() => dispatch(setCurrentMesh({ uid, path, isClip: true }))}>
                 <p className='pl-[9px] text-ellipsis whitespace-nowrap overflow-hidden'>{`Clip_${uid}`}</p>
                 <div className='pr-2 flex flex-row items-center'>
                     <button className='invisible group-hover:visible'
-                        onClick={() => deleteMesh(uid)}>
+                        onClick={() => handleDeleteClip(uid)}>
                         <SvgSelector id='delete' className="h-5 w-5" />
                     </button>
                 </div>
@@ -66,11 +86,11 @@ export default function GeometriesPanel({ onHidePartObject }) {
                 <div className={`cursor-pointer w-full flex items-center justify-between rounded-md text-day-350 h-9 
                         hover:bg-day-150 active:bg-day-200 overflow-hidden group
                         ${currentMesh.uid === uid ? 'bg-day-150' : ''}`}
-                    onClick={() => selectMesh(uid, path)}>
+                    onClick={() => dispatch(setCurrentMesh({ uid, path, isClip: false }))}>
                     <p className='pl-[9px] text-ellipsis whitespace-nowrap overflow-hidden'>{`Mesh_${uid}`}</p>
                     <div className='pr-2 flex flex-row items-center'>
                         <button className='invisible group-hover:visible'
-                            onClick={() => deleteMesh(uid)}>
+                            onClick={handleDeleteMesh}>
                             <SvgSelector id='delete' className="h-5 w-5" />
                         </button>
                     </div>
@@ -106,7 +126,7 @@ export default function GeometriesPanel({ onHidePartObject }) {
                     </p>
                 </button>
             </div>
-            <div className='overflow-y-auto '>
+            <div className='overflow-y-auto'>
                 {sceneMode === 'geom' && geoms.length > 0 ? <ul className='m-2'>
                     {geoms.map(geom => (
                         <li key={geom.uid}>

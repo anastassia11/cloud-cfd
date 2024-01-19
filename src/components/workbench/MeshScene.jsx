@@ -9,9 +9,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setLoader } from '@/store/slices/loaderSlice'
 import getMeshData from '@/api/get_mesh_data'
 import { BASE_SERVER_URL } from '@/utils/constants'
-import { setMesh } from '@/store/slices/projectSlice'
+import { setMesh, setStateBar } from '@/store/slices/projectSlice'
 import axios from 'axios'
-import { setMeshes } from '@/store/slices/meshSlice'
+import { setCurrentMesh, setMeshes } from '@/store/slices/meshSlice'
 
 function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }, ref) {
     const dispatch = useDispatch()
@@ -40,6 +40,15 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
             init()
             init_mesh_components()
             animate()
+        }
+        return () => {
+            dispatch(setMeshes({ meshes: {} }))
+            dispatch(setCurrentMesh({
+                uid: null,
+                path: null,
+                isClip: null
+            }));
+            dispatch(setStateBar({ type: '', visible: false, message: '' }))
         }
     }, [])
 
@@ -261,7 +270,6 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
                 lineMeshRef.current = createLinesGeometry(response.data);
                 sceneRef.current.add(lineMeshRef.current);
                 updateVizualizationValues();
-                dispatch(setMesh(true));
             }
         } catch (error) {
             console.log(error)

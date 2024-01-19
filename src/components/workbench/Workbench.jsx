@@ -29,12 +29,13 @@ export default function Workbench() {
 
     const camera = useRef(null)
 
-    const geomsState = useSelector(state => state.project.geometries)
+    const meshes = useSelector(state => state.mesh.meshes) || []
+    const geoms = useSelector(state => state.project.geometries) || []
+
     const projectId = useSelector(state => state.project.projectId)
     const selectedSetting = useSelector(state => state.setting.setting)
     const sceneMode = useSelector(state => state.project.sceneMode)
     const formName = useSelector(state => state.setting.formName)
-    const mesh = useSelector(state => state.project.mesh)
 
     const [selectMode, setSelectMode] = useState('face')
     const [renderMode, setRenderMode] = useState('surfaces')
@@ -155,7 +156,9 @@ export default function Workbench() {
 
     return (
         <div className='min-h-[calc(100vh-56px)] flex w-full' id='for-canvas'>
-            <div className={`${sceneMode === "geom" || !mesh || geomsState.length === 0 ? 'block' : 'hidden'}`}>
+            <div className={`${(sceneMode === "geom") ||
+                (Object.keys(meshes).length === 0) ||
+                (Object.keys(geoms).length === 0) ? 'block' : 'hidden'}`}>
                 <GeometryScene ref={geometrySceneRef}
                     selectMode={selectMode} setTransformFormData={changeTransformData}
                     renderMode={renderMode}
@@ -163,7 +166,9 @@ export default function Workbench() {
                     sendParameters={() => { }}
                     acceptParameters={() => { }} />
             </div>
-            <div className={`${sceneMode === "mesh" && mesh && geomsState.length !== 0 ? 'block' : 'hidden'}`}>
+            <div className={`${((Object.keys(meshes).length !== 0) &&
+                (Object.keys(geoms).length !== 0) &&
+                (sceneMode === 'mesh')) ? 'block' : 'hidden'}`}>
                 <MeshScene ref={meshSceneRef} boundingBox={callComputeBoundingBox}
                     sendParameters={() => { }}
                     acceptParameters={() => { }} />
