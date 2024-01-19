@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import SvgSelector from '../SvgSelector'
 import createClip from '@/api/create_clip'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setLoader } from '@/store/slices/loaderSlice'
 
 export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
+    const dispatch = useDispatch()
     const projectId = useSelector(state => state.project.projectId);
     const { XMin, XMax, YMin, YMax, ZMin, ZMax } = boundingBox();
     const center = { centerX: (XMin + XMax) / 2, centerY: (YMin + YMax) / 2, centerZ: (ZMin + ZMax) / 2 };

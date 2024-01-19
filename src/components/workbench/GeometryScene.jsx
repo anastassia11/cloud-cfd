@@ -1,5 +1,4 @@
 import * as THREE from "three"
-import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { OutlinePass } from "three/addons/postprocessing/OutlinePass.js"
@@ -17,13 +16,14 @@ import { setPointPosition } from '@/store/slices/meshSlice'
 import setPreview from '@/api/set_preview'
 import { setSetting } from '@/store/slices/settingSlice'
 
-function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, setPrimitiveData, }, ref) {
+function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimitiveData, }, ref) {
     const dispatch = useDispatch()
     const containerRef = useRef(null)
     const sceneRef = useRef(null)
     const renderer = useRef(null)
     const outlinePass = useRef(null)
     const transformControl = useRef(null)
+    const camera = useRef(null)
     const didLogRef = useRef(false)
     let orbitControls, composer
 
@@ -199,8 +199,8 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
     }
 
     function onWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+        camera.current.aspect = window.innerWidth / window.innerHeight;
+        camera.current.updateProjectionMatrix();
         renderer.current.setSize(window.innerWidth, window.innerHeight - 56);
     }
 
@@ -243,25 +243,36 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         renderer.current.setClearColor("#f0f0f0");
         renderer.current.setSize(window.innerWidth, window.innerHeight - 56);
 
+        camera.current = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+        camera.current.position.x = 0;
+        camera.current.position.y = 0
+        camera.current.position.z = 50;
+        camera.current.lookAt(new THREE.Vector3(0, 0, 0));
+
         orbitControls = new OrbitControls(
-            camera,
+            camera.current,
             renderer.current.domElement
         );
         composer = new EffectComposer(renderer.current);
-        const renderPass = new RenderPass(sceneRef.current, camera);
+        const renderPass = new RenderPass(sceneRef.current, camera.current);
         composer.addPass(renderPass);
         outlinePass.current = new OutlinePass(
             new THREE.Vector2(window.innerWidth, window.innerHeight),
             sceneRef.current,
-            camera
+            camera.current
         );
         composer.addPass(outlinePass.current);
-        transformControl.current = new TransformControls(camera, renderer.current.domElement);
+        transformControl.current = new TransformControls(camera.current, renderer.current.domElement);
     }
 
     function animate() {
         requestAnimationFrame(animate)
-        renderer.current.render(sceneRef.current, camera)
+        renderer.current.render(sceneRef.current, camera.current)
         orbitControls.update()
         composer.render()
     }
@@ -331,7 +342,7 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         const raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(mouse, camera);
+        raycaster.setFromCamera(mouse, camera.current);
 
         if (selectMode === 'volume') {
             groups.forEach((group) => {
@@ -384,7 +395,7 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         const raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(mouse, camera);
+        raycaster.setFromCamera(mouse, camera.current);
 
         if (selectMode === 'volume') {
             groups.forEach((group) => {
@@ -431,10 +442,11 @@ function GeometryScene({ camera, selectMode, renderMode, setTransformFormData, s
 
     const changePointVisible = () => {
         const { XMin, XMax, YMin, YMax, ZMin, ZMax } = computeBoundingBox();
+        const pointSize = Math.min(XMax, YMax, ZMax) / 15;
         const center = [(XMin + XMax) / 2, (YMin + YMax) / 2, (ZMin + ZMax) / 2];
 
         if (geomsState && formName === 'mesh' && pointVisible) {
-            const pointGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+            const pointGeometry = new THREE.SphereGeometry(pointSize, 16, 16);
             const pointMaterial = selectedMaterial.clone();
             const point3D = new THREE.Mesh(pointGeometry, pointMaterial);
             point3D.type = 'insidePoint';

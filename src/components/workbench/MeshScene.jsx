@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { OutlinePass } from "three/addons/postprocessing/OutlinePass.js"
@@ -13,21 +13,25 @@ import { setMesh } from '@/store/slices/projectSlice'
 import axios from 'axios'
 import { setMeshes } from '@/store/slices/meshSlice'
 
-function MeshScene({ camera, boundingBox }, ref) {
+function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }, ref) {
     const dispatch = useDispatch()
-    const projectId = useSelector(state => state.project.projectId)
-    const stateBar = useSelector(state => state.project.stateBar)
+
+    const currentMesh = useSelector(state => state.mesh.currentMesh)
     const containerRef = useRef(null)
     const sceneRef = useRef(null)
     const didLogRef = useRef(false)
     const lut = useRef(null)
 
-    let renderer, orbitControls, composer, outlinePass
-    let surfaseMesh, lineMesh, meshGeometryData, meshFolderUrl
-    let meshValuesData = {}
+    let renderer, camera, orbitControls, composer, outlinePass
+
+    const [meshFolderUrl, setMeshFolderUrl] = useState(null)
+    const [meshValuesData, setMeshValuesData] = useState({})
 
     const arrowRef = useRef(null)
     const planeRef = useRef(null)
+
+    const surfaseMeshRef = useRef(null)
+    const lineMeshRef = useRef(null)
 
     useEffect(() => {
         dispatch(setLoader(false))
@@ -35,28 +39,27 @@ function MeshScene({ camera, boundingBox }, ref) {
             didLogRef.current = true
             init()
             init_mesh_components()
-            getFolderPath()
             animate()
         }
     }, [])
 
+    // useEffect(() => {
+    //     if (sceneMode === 'geom') {
+    //         sendParameters(camera, orbitControls)
+    //     } else {
+    //         camera = cameraProp;
+    //         orbitControls = orbitControlProp
+    //     }
+    // }, [sceneMode])
+
     useEffect(() => {
-        getFolderPath()
-    }, [stateBar])
+        reloadMeshGeometry(currentMesh.path)
+    }, [currentMesh])
+
 
     useImperativeHandle(ref, () => ({
         addClipPlane, deleteClipPlane, changeClipPlane
     }))
-
-    const getFolderPath = async () => {
-        const result = await getMeshData(projectId)
-        if (result.success) {
-            const path = `${BASE_SERVER_URL}` + result.data
-            reloadMeshGeometry(path)
-        } else {
-            dispatch(setMesh(false))
-        }
-    }
 
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -98,6 +101,17 @@ function MeshScene({ camera, boundingBox }, ref) {
         helper.material.transparent = true;
         sceneRef.current.add(helper);
 
+        camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+        camera.position.x = 0;
+        camera.position.y = 0
+        camera.position.z = 50;
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+
         renderer = new THREE.WebGLRenderer({
             canvas: containerRef.current,
             antialias: true,
@@ -131,7 +145,7 @@ function MeshScene({ camera, boundingBox }, ref) {
         const { XMin, XMax, YMin, YMax, ZMin, ZMax } = boundingBox();
         const delta = 1.5 * Math.max(XMax - XMin, YMax - YMin, ZMax - ZMin);
         const center = [(XMin + XMax) / 2, (YMin + YMax) / 2, (ZMin + ZMax) / 2];
-        deleteClipPlane()
+        deleteClipPlane();
 
         arrowRef.current = new THREE.ArrowHelper(
             new THREE.Vector3(0, 1, 0).normalize(),
@@ -234,25 +248,20 @@ function MeshScene({ camera, boundingBox }, ref) {
     }
 
     async function reloadMeshGeometry(_meshFolderUrl) {
+        setMeshFolderUrl(_meshFolderUrl);
         dispatch(setLoader(true));
         try {
-            const response = await axios.get(_meshFolderUrl + "surfaseData.json");
+            const response = await axios.get(`${BASE_SERVER_URL}${_meshFolderUrl}surfaseData.json`);
             if (response.status === 200) {
-                const surfaseJsonData = response.data;
-                meshFolderUrl = _meshFolderUrl;
-                if (surfaseMesh) sceneRef.current.remove(surfaseMesh);
-                if (lineMesh) sceneRef.current.remove(lineMesh);
-                meshValuesData = {};
-                meshGeometryData = surfaseJsonData;
-                surfaseMesh = createSurfaseGeometry(meshGeometryData);
-                surfaseMesh.visible = true;
-                sceneRef.current.add(surfaseMesh);
-                lineMesh = createLinesGeometry(meshGeometryData);
-                lineMesh.visible = true;
-                sceneRef.current.add(lineMesh);
+                if (surfaseMeshRef.current) sceneRef.current.remove(surfaseMeshRef.current);
+                if (lineMeshRef.current) sceneRef.current.remove(lineMeshRef.current);
+                setMeshValuesData({});
+                surfaseMeshRef.current = createSurfaseGeometry(response.data);
+                sceneRef.current.add(surfaseMeshRef.current);
+                lineMeshRef.current = createLinesGeometry(response.data);
+                sceneRef.current.add(lineMeshRef.current);
                 updateVizualizationValues();
                 dispatch(setMesh(true));
-                dispatch(setMeshes({ meshes: [{ name: 'Mesh 1', uid: '123' }] }))
             }
         } catch (error) {
             console.log(error)
@@ -267,14 +276,14 @@ function MeshScene({ camera, boundingBox }, ref) {
         const useMaxMinVisibleValue = true;
         const colorCount = 32;
         if (colorMap === "solidColor") {
-            updateMeshColor(surfaseMesh, colorMap, null, useMaxMinVisibleValue, colorCount);
+            updateMeshColor(surfaseMeshRef.current, colorMap, null, useMaxMinVisibleValue, colorCount);
         } else if (meshValuesData[selectValue] !== undefined) {
-            updateMeshColor(surfaseMesh, colorMap, meshValuesData[selectValue], useMaxMinVisibleValue, colorCount);
+            updateMeshColor(surfaseMeshRef.current, colorMap, meshValuesData[selectValue], useMaxMinVisibleValue, colorCount);
         } else {
             let fetchRes = fetch(meshFolderUrl + selectValue + "_Data.json");
             fetchRes.then(res => res.json()).then(jsonData => {
                 meshValuesData[selectValue] = jsonData;
-                updateMeshColor(surfaseMesh, colorMap, meshValuesData[selectValue], useMaxMinVisibleValue, colorCount);
+                updateMeshColor(surfaseMeshRef.current, colorMap, meshValuesData[selectValue], useMaxMinVisibleValue, colorCount);
             })
         }
     }

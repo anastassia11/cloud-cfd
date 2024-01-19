@@ -149,16 +149,24 @@ export default function Workbench() {
         })
     }
 
+    function copyParams(params) {
+
+    }
+
     return (
         <div className='min-h-[calc(100vh-56px)] flex w-full' id='for-canvas'>
             <div className={`${sceneMode === "geom" || !mesh || geomsState.length === 0 ? 'block' : 'hidden'}`}>
-                <GeometryScene ref={geometrySceneRef} camera={camera.current}
+                <GeometryScene ref={geometrySceneRef}
                     selectMode={selectMode} setTransformFormData={changeTransformData}
                     renderMode={renderMode}
-                    setPrimitiveData={changePrimitiveData} />
+                    setPrimitiveData={changePrimitiveData}
+                    sendParameters={() => { }}
+                    acceptParameters={() => { }} />
             </div>
             <div className={`${sceneMode === "mesh" && mesh && geomsState.length !== 0 ? 'block' : 'hidden'}`}>
-                <MeshScene ref={meshSceneRef} camera={camera.current} boundingBox={callComputeBoundingBox} />
+                <MeshScene ref={meshSceneRef} boundingBox={callComputeBoundingBox}
+                    sendParameters={() => { }}
+                    acceptParameters={() => { }} />
             </div>
 
             <div className='flex flex-row justify-between w-full m-2 '>

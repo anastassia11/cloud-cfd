@@ -47,7 +47,7 @@ export default function ProjectCard({ item, onDeleteClick, onEditClick }) {
     }
 
     return (
-        <div className="overflow-hidden rounded-lg shadow transition hover:shadow-lg bg-white flex flex-col"
+        <div className="overflow-hidden rounded-lg shadow transition hover:shadow-lg bg-white flex flex-col cursor-pointer"
             onDoubleClick={handleExternalClick}>
             <div className='h-56 overflow-hidden'>
                 <Image src={`${BASE_SERVER_URL}${project.pathPreviewImg}`} priority unoptimized={true}
