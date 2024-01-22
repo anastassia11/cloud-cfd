@@ -23,6 +23,10 @@ export default function GeometriesPanel({ onHidePartObject }) {
         fetchMeshes()
     }, [])
 
+    useEffect(() => {
+        !meshes.length && dispatch(setSceneMode('geom'))
+    }, [meshes])
+
     async function fetchMeshes() {
         const result = await getMeshDataJson(projectId)
         if (result.success) {

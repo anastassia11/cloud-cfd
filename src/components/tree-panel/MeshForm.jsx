@@ -13,7 +13,8 @@ import getMeshDataJson from '@/api/get_meshData';
 export default function MeshForm({ computeBoundingBox }) {
     const dispatch = useDispatch()
     const projectId = useSelector(state => state.project.projectId)
-    const geoms = useSelector(state => state.project.geometries) || []
+    const geoms = useSelector(state => state.project.geometries) ?? []
+    const meshes = useSelector(state => state.mesh.meshes) ?? []
     const point = useSelector(state => state.mesh.point)
 
     const [formData, setFormData] = useState({})
@@ -23,6 +24,10 @@ export default function MeshForm({ computeBoundingBox }) {
     useEffect(() => {
         getMeshData()
     }, [geoms])
+
+    useEffect(() => {
+        !meshes.length && setMeshState('not_generated')
+    }, [meshes])
 
     useEffect(() => {
         setFormData((prev) => ({
