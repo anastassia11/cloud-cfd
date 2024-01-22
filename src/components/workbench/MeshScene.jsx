@@ -11,19 +11,26 @@ import getMeshData from '@/api/get_mesh_data'
 import { BASE_SERVER_URL } from '@/utils/constants'
 import { setMesh, setStateBar } from '@/store/slices/projectSlice'
 import axios from 'axios'
-import { setCurrentMesh, setMeshes } from '@/store/slices/meshSlice'
+import { setCurrentMesh, setMeshes, setPoint } from '@/store/slices/meshSlice'
+import { TransformControls } from "three/examples/jsm/controls/TransformControls"
 
 function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }, ref) {
     const dispatch = useDispatch()
 
     const currentMesh = useSelector(state => state.mesh.currentMesh)
     const geoms = useSelector(state => state.project.geometries)
+    const point = useSelector(state => state.mesh.point)
+    const formName = useSelector(state => state.setting.formName)
+
     const containerRef = useRef(null)
     const sceneRef = useRef(null)
+    const transformControl = useRef(null)
     const didLogRef = useRef(false)
     const lut = useRef(null)
+    const camera = useRef(null)
+    const renderer = useRef(null)
 
-    let renderer, camera, orbitControls, composer, outlinePass
+    let orbitControls, composer, outlinePass
 
     const [meshFolderUrl, setMeshFolderUrl] = useState(null)
     const [meshValuesData, setMeshValuesData] = useState({})
@@ -34,6 +41,12 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
     const surfaseMeshRef = useRef(null)
     const lineMeshRef = useRef(null)
 
+    const baseMaterial = new THREE.MeshPhysicalMaterial({
+        side: THREE.DoubleSide,
+        flatShading: true,
+        vertexColors: true
+    });
+
     useEffect(() => {
         dispatch(setLoader(false))
         if (didLogRef.current === false) {
@@ -42,7 +55,9 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
             init_mesh_components()
             animate()
         }
+        addTransformListeners()
         return () => {
+            removeTransformListeners()
             dispatch(setMeshes({ meshes: {} }))
             dispatch(setCurrentMesh({
                 uid: null,
@@ -70,14 +85,22 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         dispatch(setMeshes({ meshes: [] }))
     }, [geoms])
 
+    useEffect(() => {
+        changePointVisible()
+    }, [formName, point.visible])
+
+    useEffect(() => {
+        changePointPosition(point.position)
+    }, [point.position])
+
     useImperativeHandle(ref, () => ({
         addClipPlane, deleteClipPlane, changeClipPlane
     }))
 
     function onWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight - 56);
+        camera.current.aspect = window.innerWidth / window.innerHeight;
+        camera.current.updateProjectionMatrix();
+        renderer.current.setSize(window.innerWidth, window.innerHeight - 56);
     }
 
     function init() {
@@ -114,30 +137,30 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         helper.material.transparent = true;
         sceneRef.current.add(helper);
 
-        camera = new THREE.PerspectiveCamera(
+        camera.current = new THREE.PerspectiveCamera(
             75,
             window.innerWidth / window.innerHeight,
             0.1,
             1000
         );
-        camera.position.x = 0;
-        camera.position.y = 0
-        camera.position.z = 50;
-        camera.lookAt(new THREE.Vector3(0, 0, 0));
+        camera.current.position.x = 0;
+        camera.current.position.y = 0
+        camera.current.position.z = 50;
+        camera.current.lookAt(new THREE.Vector3(0, 0, 0));
 
-        renderer = new THREE.WebGLRenderer({
+        renderer.current = new THREE.WebGLRenderer({
             canvas: containerRef.current,
             antialias: true,
             preserveDrawingBuffer: true
         });
-        renderer.setClearColor("#f0f0f0");
-        renderer.setSize(window.innerWidth, window.innerHeight - 56);
+        renderer.current.setClearColor("#f0f0f0");
+        renderer.current.setSize(window.innerWidth, window.innerHeight - 56);
         orbitControls = new OrbitControls(
-            camera,
-            renderer.domElement
+            camera.current,
+            renderer.current.domElement
         );
-        composer = new EffectComposer(renderer);
-        const renderPass = new RenderPass(sceneRef.current, camera);
+        composer = new EffectComposer(renderer.current);
+        const renderPass = new RenderPass(sceneRef.current, camera.current);
         composer.addPass(renderPass);
         // outlinePass = new OutlinePass(
         //     new THREE.Vector2(window.innerWidth, window.innerHeight),
@@ -145,13 +168,44 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         //     camera
         // );
         // composer.addPass(outlinePass)
+        transformControl.current = new TransformControls(camera.current, renderer.current.domElement);
     }
 
     function animate() {
         requestAnimationFrame(animate)
-        renderer.render(sceneRef.current, camera)
+        renderer.current.render(sceneRef.current, camera.current)
         orbitControls.update()
         composer.render()
+    }
+
+    function addTransformListeners() {
+        transformControl.current.addEventListener('dragging-changed', handleTransformMove)
+        transformControl.current.addEventListener('change', handleTransformChange)
+    }
+    function removeTransformListeners() {
+        transformControl.current.removeEventListener('dragging-changed', handleTransformMove)
+        transformControl.current.removeEventListener('change', handleTransformMove)
+    }
+
+    function handleTransformMove(event) {
+        orbitControls.enabled = !event.value;
+    }
+
+    function handleTransformChange() {
+        const objectTypes = {
+            'insidePoint': () => dispatch(setPoint({
+                position: {
+                    x: transformControl.current?.object?.position.x,
+                    y: transformControl.current?.object?.position.y,
+                    z: transformControl.current?.object?.position.z,
+                }
+            }
+            ))
+        };
+        const objectType = transformControl.current?.object?.type;
+        if (objectTypes[objectType]) {
+            objectTypes[objectType]();
+        }
     }
 
     function addClipPlane() {
@@ -190,6 +244,41 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
 
         arrowRef.current.setDirection(normalVector);
         planeRef.current.lookAt(new THREE.Vector3(centerX + normalVector.x, centerY + normalVector.y, centerZ + normalVector.z));
+    }
+
+    function addTransformControl(object) {
+        transformControl.current.attach(object)
+        transformControl.current.uid = object.uid
+        sceneRef.current.add(transformControl.current)
+    }
+    const changePointVisible = () => {
+        if (formName === 'mesh' && point.visible) {
+            const pointSize = Number.isFinite(point.size) ? point.size : 0.1
+            const pointGeometry = new THREE.SphereGeometry(pointSize, 16, 16);
+            const pointMaterial = baseMaterial.clone()
+            const point3D = new THREE.Mesh(pointGeometry, pointMaterial);
+            point3D.type = 'insidePoint';
+            point3D.position.set(point.position.x, point.position.y, point.position.z)
+            sceneRef.current.add(point3D);
+            addTransformControl(point3D);
+        } else {
+            sceneRef.current.children.forEach(child => {
+                if (child.type === 'insidePoint') {
+                    sceneRef.current.remove(child);
+                    transformControl.current.detach();
+                    sceneRef.current.remove(transformControl.current);
+                }
+            })
+        }
+    }
+
+    const changePointPosition = (newPosition) => {
+        const { x, y, z } = newPosition;
+        sceneRef.current.children.forEach((child) => {
+            if (child.type === 'insidePoint') {
+                child.position.set(x, y, z);
+            }
+        })
     }
 
     function createSurfaseGeometry(_meshGeometryData) {

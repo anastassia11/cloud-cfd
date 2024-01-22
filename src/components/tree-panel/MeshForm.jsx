@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import createMesh from '@/api/create_mesh';
 import getSettingsMesh from '@/api/get_settings_mesh';
 import { setJobStatus, setStateBar } from '@/store/slices/projectSlice';
-import { setCurrentMesh, setMeshes, setPointPosition, setPointVisible } from '@/store/slices/meshSlice';
+import { setCurrentMesh, setMeshes, setPoint } from '@/store/slices/meshSlice';
 import setMeshData from '@/api/set_mesh_data';
 import cancelCreateMesh from '@/api/cancel_create_mesh';
 import getMeshDataJson from '@/api/get_meshData';
@@ -14,8 +14,7 @@ export default function MeshForm({ computeBoundingBox }) {
     const dispatch = useDispatch()
     const projectId = useSelector(state => state.project.projectId)
     const geoms = useSelector(state => state.project.geometries) || []
-    const pointPosition = useSelector(state => state.mesh.pointPosition)
-    const pointVisible = useSelector(state => state.mesh.pointVisible)
+    const point = useSelector(state => state.mesh.point)
 
     const [formData, setFormData] = useState({})
     const [advancedSettingsVisible, setAdvancedSettingsVisible] = useState(false)
@@ -28,18 +27,18 @@ export default function MeshForm({ computeBoundingBox }) {
     useEffect(() => {
         setFormData((prev) => ({
             ...prev, InsidePoint: {
-                X: pointPosition.x,
-                Y: pointPosition.y,
-                Z: pointPosition.z,
+                X: point.position.x,
+                Y: point.position.y,
+                Z: point.position.z,
             }
         }));
-    }, [pointPosition])
+    }, [point.position])
 
     const getMeshData = async () => {
         const result = await getSettingsMesh(projectId)
         if (result.success && result.status === 200) {
             setFormData(result.data);
-            dispatch(setPointPosition({
+            dispatch(setPoint({
                 position: {
                     x: result.data.InsidePoint?.X,
                     y: result.data.InsidePoint?.Y,
@@ -66,7 +65,7 @@ export default function MeshForm({ computeBoundingBox }) {
         const { name, value } = e.target;
         const _name = name.toLowerCase();
         setFormData((prev) => ({ ...prev, InsidePoint: { ...prev.InsidePoint, [name]: Number(value) } }));
-        dispatch(setPointPosition({ position: { ...pointPosition, [_name]: Number(value) } }));
+        dispatch(setPoint({ position: { ...point.position, [_name]: Number(value) } }));
     }
 
     const toogleDataChange = (e) => {
@@ -150,9 +149,9 @@ export default function MeshForm({ computeBoundingBox }) {
                     <p>
                         {label}, {unit}
                     </p>
-                    <button className='text-blue-700 hover:underline underline-offset-4 duration-300'
-                        onClick={() => dispatch(setPointVisible({ visible: !pointVisible }))}>
-                        {!pointVisible ? 'Show' : 'Hide'}
+                    <button type='button' className='text-blue-700 hover:underline underline-offset-4 duration-300'
+                        onClick={() => dispatch(setPoint({ visible: !point.visible }))}>
+                        {!point.visible ? 'Show' : 'Hide'}
                     </button>
                 </div>
                 <div className='flex flex-col space-y-2 mt-2 mb-2'>

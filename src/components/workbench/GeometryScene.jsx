@@ -12,7 +12,7 @@ import { setGeometries, setSceneMode, setSelectedParts, setSimulations } from '@
 import { setLoader } from '@/store/slices/loaderSlice'
 import { TransformControls } from "three/examples/jsm/controls/TransformControls"
 import addGeometry from '@/api/set_geometry'
-import { setPointPosition } from '@/store/slices/meshSlice'
+import { setPoint } from '@/store/slices/meshSlice'
 import setPreview from '@/api/set_preview'
 import { setSetting } from '@/store/slices/settingSlice'
 
@@ -30,8 +30,7 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
     const projectId = useSelector(state => state.project.projectId)
     const geomsState = useSelector(state => state.project.geometries)
     const formName = useSelector(state => state.setting.formName)
-    const pointPosition = useSelector(state => state.mesh.pointPosition)
-    const pointVisible = useSelector(state => state.mesh.pointVisible)
+    const point = useSelector(state => state.mesh.point)
 
     const [meshes, setMeshes] = useState([])
     const [groups, setGroups] = useState([])
@@ -90,11 +89,11 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
     }, [])
 
     useEffect(() => {
-        if (formName !== 'mesh' || !pointVisible) {
+        if (formName !== 'mesh' || !point.visible) {
             addListeners()
         }
         return () => removeListeners()
-    }, [meshes, groups, selectMode, renderMode, pointVisible, formName])
+    }, [meshes, groups, selectMode, renderMode, point.visible, formName])
 
     useEffect(() => {
         changeMaterials(renderMode)
@@ -106,11 +105,11 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
 
     useEffect(() => {
         changePointVisible()
-    }, [formName, pointVisible])
+    }, [formName, point.visible])
 
     useEffect(() => {
-        changePointPosition(pointPosition)
-    }, [pointPosition])
+        changePointPosition(point.position)
+    }, [point.position])
 
     useEffect(() => {
         loadSTL(geomsState)
@@ -312,13 +311,14 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         const objectTypes = {
             'Mesh': () => setPrimitiveData({ position: transformControl.current?.object?.position }),
             'Group': () => setTransformFormData({ position: transformControl.current?.object?.position }),
-            'insidePoint': () => dispatch(setPointPosition({
+            'insidePoint': () => dispatch(setPoint({
                 position: {
                     x: transformControl.current?.object?.position.x,
                     y: transformControl.current?.object?.position.y,
                     z: transformControl.current?.object?.position.z,
                 }
-            })),
+            }
+            ))
         };
         const objectType = transformControl.current?.object?.type;
         if (objectTypes[objectType]) {
@@ -443,9 +443,10 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
     const changePointVisible = () => {
         const { XMin, XMax, YMin, YMax, ZMin, ZMax } = computeBoundingBox();
         const pointSize = Math.min(XMax, YMax, ZMax) / 15;
+        dispatch(setPoint({ size: pointSize }))
         const center = [(XMin + XMax) / 2, (YMin + YMax) / 2, (ZMin + ZMax) / 2];
 
-        if (geomsState && formName === 'mesh' && pointVisible) {
+        if (geomsState && formName === 'mesh' && point.visible) {
             const pointGeometry = new THREE.SphereGeometry(pointSize, 16, 16);
             const pointMaterial = selectedMaterial.clone();
             const point3D = new THREE.Mesh(pointGeometry, pointMaterial);

@@ -78,7 +78,7 @@ export default function Geometry({ geom = [], hidePartObject }) {
 
     const message = <>
         <p>
-            {`${geometry.name} will be deleted forever.`}
+            {`'${geometry.name}' will be deleted forever.`}
         </p>
         {meshes.length ? <div className='flex flex-row self-end mt-2'>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 rounded-full text-amber-500" viewBox="0 0 20 20" fill="currentColor">

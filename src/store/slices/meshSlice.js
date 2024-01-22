@@ -9,16 +9,18 @@ const meshSlice = createSlice({
             path: null,
             isClip: null
         },
-        pointVisible: true,
-        pointPosition: { x: 0, y: 0, z: 0 },
+        point: {
+            visible: true,
+            position: { x: 0, y: 0, z: 0 },
+            size: 0,
+        }
     },
 
     reducers: {
-        setPointPosition(state, action) {
-            state.pointPosition = action.payload.position;
-        },
-        setPointVisible(state, action) {
-            state.pointVisible = action.payload.visible;
+        setPoint(state, action) {
+            state.point = {
+                ...state.point, ...action.payload
+            };
         },
         setMeshes(state, action) {
             state.meshes = action.payload.meshes;
@@ -29,6 +31,6 @@ const meshSlice = createSlice({
     },
 })
 
-export const { setPointPosition, setPointVisible, setMeshes,
+export const { setPoint, setMeshes,
     setCurrentMesh } = meshSlice.actions;
 export default meshSlice.reducer
