@@ -11,8 +11,8 @@ import Modal from '../Modal'
 
 export default function GeometriesPanel({ onHidePartObject }) {
     const dispatch = useDispatch()
-    const geoms = useSelector(state => state.project.geometries) || []
-    const meshes = useSelector(state => state.mesh.meshes) || []
+    const geoms = useSelector(state => state.project.geometries) ?? []
+    const meshes = useSelector(state => state.mesh.meshes) ?? []
     const currentMesh = useSelector(state => state.mesh.currentMesh)
     const projectId = useSelector(state => state.project.projectId)
     const sceneMode = useSelector(state => state.project.sceneMode)
@@ -68,6 +68,10 @@ export default function GeometriesPanel({ onHidePartObject }) {
         } else {
             alert(result.message)
         }
+    }
+
+    function handleMeshClick() {
+        meshes.length && dispatch(setSceneMode('mesh'))
     }
 
     const Clip = ({ clip }) => {
@@ -129,8 +133,9 @@ export default function GeometriesPanel({ onHidePartObject }) {
                     </p>
                 </button>
                 <button className={`w-[40%] py-3 border-b-2 border-gray-300
+                     ${!meshes.length && 'opacity-40 cursor-default'}
                      ${sceneMode === 'mesh' ? 'border-orange-600 text-orange-600 font-semibold ' : 'border-gray-300'}`}
-                    onClick={() => dispatch(setSceneMode('mesh'))}>
+                    onClick={handleMeshClick}>
                     <p className='text-ellipsis whitespace-nowrap overflow-hidden'>
                         MESH
                     </p>

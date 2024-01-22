@@ -251,6 +251,7 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         transformControl.current.uid = object.uid
         sceneRef.current.add(transformControl.current)
     }
+
     const changePointVisible = () => {
         if (formName === 'mesh' && point.visible) {
             const pointSize = Number.isFinite(point.size) ? point.size : 0.1
@@ -261,7 +262,7 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
             point3D.position.set(point.position.x, point.position.y, point.position.z)
             sceneRef.current.add(point3D);
             addTransformControl(point3D);
-        } else {
+        } else if (formName !== 'mesh' || !point.visible) {
             sceneRef.current.children.forEach(child => {
                 if (child.type === 'insidePoint') {
                     sceneRef.current.remove(child);

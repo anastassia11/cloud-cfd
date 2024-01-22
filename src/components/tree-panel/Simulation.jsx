@@ -11,7 +11,8 @@ export default function Simulation({ id, name }) {
     const [simulationOpen, setSimulationOpen] = useState(false)
     const [modal, setModal] = useState(false)
     const userValue = useSelector(state => state.params.params)
-    const selectedSetting = useSelector(state => state.setting.setting)
+    const selectedSetting = useSelector(state => state.setting.formName)
+    const meshes = useSelector(state => state.mesh.meshes) ?? []
     const dispatch = useDispatch()
 
     function handleRunClick() {
@@ -35,7 +36,7 @@ export default function Simulation({ id, name }) {
 
     function handleMeshClick() {
         dispatch(setSetting({ formName: 'mesh', formTitle: 'Mesh' }))
-        dispatch(setSceneMode('mesh'))
+        meshes.length && dispatch(setSceneMode('mesh'))
     }
 
     function handleSettingClick(formName, formTitle, inputs) {

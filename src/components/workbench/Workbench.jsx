@@ -34,9 +34,9 @@ export default function Workbench() {
     const geoms = useSelector(state => state.project.geometries) ?? []
 
     const projectId = useSelector(state => state.project.projectId)
-    const selectedSetting = useSelector(state => state.setting.setting)
+    const selectedSetting = useSelector(state => state.setting.formName)
     const sceneMode = useSelector(state => state.project.sceneMode)
-    const formName = useSelector(state => state.setting.formName)
+    // const formName = useSelector(state => state.setting.formName)
 
     const [selectMode, setSelectMode] = useState('face')
     const [renderMode, setRenderMode] = useState('surfaces')
@@ -182,10 +182,10 @@ export default function Workbench() {
                     </div>
 
                     <div className={`w-[350px] mr-[10px] h-fit relative`}>
-                        <div className={`${selectedSetting !== null && selectedSetting === (formName) ? '' : 'hidden'}`}>
+                        <div className={`${selectedSetting !== '' && selectedSetting !== 'mesh' ? '' : 'hidden'}`}>
                             <SettingForm />
                         </div>
-                        <div className={`${selectedSetting !== null && selectedSetting === 'mesh' ? '' : 'hidden'}`}>
+                        <div className={`${selectedSetting !== '' && selectedSetting === 'mesh' ? '' : 'hidden'}`}>
                             <MeshForm computeBoundingBox={callComputeBoundingBox} />
                         </div>
                     </div>
