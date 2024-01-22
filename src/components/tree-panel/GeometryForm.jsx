@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import SvgSelector from "../SvgSelector"
 import addGeometry from '@/api/set_geometry'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,6 +7,8 @@ import { deleteGeometries, setGeometries } from '@/store/slices/projectSlice'
 import { resetSetting } from '@/store/slices/settingSlice'
 import { Oval } from 'react-loader-spinner'
 import Modal from '../Modal'
+import Geometry from '../geometries-panel/Geometry'
+import GeometryRow from './GeometryRow'
 
 export default function GeometryForm({ }) {
     const geoms = useSelector(state => state.project.geometries)
@@ -17,6 +19,8 @@ export default function GeometryForm({ }) {
     const [loading, setLoading] = useState([])
     const [files, setFiles] = useState(geoms || [])
     const [fileCount, setFileCount] = useState(geoms?.length ?? 0)
+    const [modal, setModal] = useState(false)
+    const newFiles = useRef(null)
 
     const dispatch = useDispatch()
 
@@ -43,12 +47,8 @@ export default function GeometryForm({ }) {
     const handleDrop = (e) => {
         e.preventDefault()
         setDrag(false)
-        const newFiles = Array.from(e.dataTransfer.files)
-        setFiles((prevFiles) => [...prevFiles, ...newFiles])
-        setFileCount((prevCount) => prevCount + newFiles.length)
-        newFiles.forEach((file, index) => {
-            handleSetGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file }, fileCount + index)
-        })
+        newFiles.current = Array.from(e.dataTransfer.files)
+        meshes.length ? setModal(true) : handleLoadClick()
     }
 
     async function loadGeoms() {
@@ -87,70 +87,32 @@ export default function GeometryForm({ }) {
 
     function handleChange(e) {
         e.preventDefault()
-        const newFiles = Array.from(e.target.files)
-        setFiles((prevFiles) => [...prevFiles, ...newFiles])
-        setFileCount((prevCount) => prevCount + newFiles.length)
-        newFiles.forEach((file, index) => {
+        newFiles.current = Array.from(e.target.files)
+        meshes.length ? setModal(true) : handleLoadClick()
+    }
+
+    function handleLoadClick() {
+        setModal(false)
+        setFiles((prevFiles) => [...prevFiles, ...newFiles.current])
+        setFileCount((prevCount) => prevCount + newFiles.current.length)
+        newFiles.current.forEach((file, index) => {
             handleSetGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file }, fileCount + index)
         })
     }
 
-    const Geometry = ({ geometry, loading }) => {
-        const [modal, setModal] = useState(false)
-
-        function handleDeleteClick(e) {
-            e.stopPropagation()
-            setModal(true)
-        }
-
-        function deleteGeometry() {
-            dispatch(deleteGeometries({ projectId: projectId, deletedGeometry: geometry }))
-            setModal(false)
-        }
-
-        const message = <>
-            <p>
-                {`${geometry.name} will be deleted forever.`}
-            </p>
-            {meshes.length ? <div className='flex flex-row self-end mt-2'>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 rounded-full text-amber-500" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-                <p className='ml-2 font-semibold'>Mesh will be deleted.</p>
-            </div> : ''}
-        </>
-
-        return (
-            <div className='w-full flex items-center justify-between rounded-md text-day-350 h-9 
-            hover:bg-day-100 duration-300 ' >
-                <p className='pl-2'>{geometry.name}</p>
-                <div className='pr-2 flex flex-row items-center'>
-                    {loading ?
-                        <Oval
-                            height={18}
-                            width={18}
-                            color="#6a6a6a"
-                            visible={true}
-                            ariaLabel='oval-loading'
-                            secondaryColor="#6a6a6a"
-                            strokeWidth={4}
-                            strokeWidthSecondary={4} /> : ''
-                    }
-                    <button className="pl-1" id='button' type='button'
-                        onClick={(e) => handleDeleteClick(e)}>
-                        <SvgSelector id='delete' className='w-5 h-5' strokeWidth={1.3} />
-                    </button>
-                </div>
-                {modal ? <Modal onCloseClick={() => setModal(false)} onActionClick={deleteGeometry}
-                    title='Delete geometry' message={message} btnTitle='Delete' /> : ''}
-            </div>
-        )
-    }
+    const title = <>
+        {<div className='flex flex-row self-end'>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 rounded-full text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            <p className='ml-2 font-semibold'>Warning</p>
+        </div>}
+    </>
 
     const filesArray = <div className='mt-2'>
         {files?.map((file, index) => (
             <div key={index}>
-                {Geometry({ geometry: file, loading: loading[index] })}
+                <GeometryRow geometry={file} loading={loading[index]} />
             </div>
         ))}
     </div>
@@ -201,6 +163,8 @@ export default function GeometryForm({ }) {
                 {upload}
                 {files?.length > 0 ? filesArray : ''}
             </form>
+            {modal ? <Modal onCloseClick={() => setModal(false)} onActionClick={handleLoadClick}
+                title={title} message='Mesh will be deleted.' btnTitle='OK' /> : ''}
         </>
     )
 }

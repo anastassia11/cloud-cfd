@@ -14,6 +14,7 @@ import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
 import MeshForm from '../tree-panel/MeshForm'
 import StateBar from './StateBar'
 import ClipForm from './ClipForm'
+import Modal from '../Modal'
 
 export default function Workbench() {
     const transformRef = useRef(null)
