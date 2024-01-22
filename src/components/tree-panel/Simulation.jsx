@@ -1,48 +1,54 @@
 import { useEffect, useState } from 'react'
 import SvgSelector from '../SvgSelector'
-import DropdownSettings from './DropdownSettings'
-import DeleteSimulation from './DeleteSimulation'
 import { useDispatch, useSelector } from 'react-redux'
 import { setSetting } from '@/store/slices/settingSlice'
-import { setSceneMode } from '@/store/slices/projectSlice'
+import { deleteSimulation, setSceneMode } from '@/store/slices/projectSlice'
+import Modal from '../Modal'
+import requestDeleteSimulation from '@/api/delete_simulation'
+import DropdownSettings from './DropdownSettings'
 
 export default function Simulation({ id, name }) {
     const [simulationOpen, setSimulationOpen] = useState(false)
-    const [deleteModal, setDeleteModal] = useState(false)
+    const [modal, setModal] = useState(false)
     const userValue = useSelector(state => state.params.params)
     const selectedSetting = useSelector(state => state.setting.setting)
-
     const dispatch = useDispatch()
 
-    const handleRunClick = async () => {
+    function handleRunClick() {
 
     }
 
-    const handleDeleteClick = (e) => {
+    function handleDeleteClick(e) {
         e.stopPropagation()
-        setDeleteModal(true)
+        setModal(true)
     }
 
-    const deleteSimulation = async () => {
-        onDeleteClick()
-        setDeleteModal(false)
+    async function handledeleteSimulation() {
+        const result = await requestDeleteSimulation(id)
+        if (result.success) {
+            dispatch(deleteSimulation({ deletedSimulation: id }))
+        } else {
+            alert(result.message)
+        }
+        setModal(false)
     }
 
-    const handleMeshClick = () => {
+    function handleMeshClick() {
         dispatch(setSetting({ formName: 'mesh', formTitle: 'Mesh' }))
         dispatch(setSceneMode('mesh'))
     }
 
+    function handleSettingClick(formName, formTitle, inputs) {
+        dispatch(setSetting({ formName, formTitle, inputs }))
+        dispatch(setSceneMode('geom'))
+    }
+
     const Setting = ({ formName, formTitle, inputs = {} }) => {
-        const handleSettingClick = () => {
-            dispatch(setSetting({ formName, formTitle, inputs }))
-            dispatch(setSceneMode('geom'))
-        }
         return (
             <>
                 <div className={`flex items-center rounded-md px-2 cursor-pointer text-day-1000 h-9
                 hover:bg-day-150 active:bg-day-200 duration-300 ${selectedSetting === formName && 'bg-day-150'}`}
-                    onClick={handleSettingClick}>
+                    onClick={(e) => handleSettingClick(formName, formTitle, inputs)}>
                     <p className='text-ellipsis whitespace-nowrap overflow-hidden'>{formTitle}</p>
                 </div>
             </>
@@ -100,7 +106,6 @@ export default function Simulation({ id, name }) {
             </DropdownSettings>,
             child: true
         }
-
     ]
 
     return (
@@ -161,9 +166,9 @@ export default function Simulation({ id, name }) {
                     </div>
                 ) : ""
             }
-            <div className='absolute z-20'>{deleteModal ? <DeleteSimulation simulationName={name} simulationId={id}
-                onCloseClick={() => setDeleteModal(false)}
-                onDeleteClick={() => deleteSimulation()} /> : ''}
+            <div className='absolute z-20'>
+                {modal ? <Modal onCloseClick={() => setModal(false)} onActionClick={handledeleteSimulation}
+                    title='Delete simulation' message={`'${name}' will be deleted forever`} btnTitle='Delete' /> : ''}
             </div>
         </div>
     )

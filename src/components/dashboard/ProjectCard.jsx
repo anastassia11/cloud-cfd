@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import UpdateProject from './UpdateProject'
 import DeleteProject from './DeleteProject'
 import { BASE_SERVER_URL } from '@/utils/constants';
+import Modal from '../Modal';
 
 export default function ProjectCard({ item, onDeleteClick, onEditClick }) {
     const router = useRouter()
@@ -107,9 +108,8 @@ export default function ProjectCard({ item, onDeleteClick, onEditClick }) {
             {modal ? <UpdateProject projectId={project.id} projectName={project.name} projectDescription={project.description}
                 onCloseClick={() => setModal(false)}
                 onUpdate={(proejct) => handleProjectUpdate(proejct)} /> : ''}
-            {deleteModal ? <DeleteProject projectName={project.name}
-                onCloseClick={() => setDeleteModal(false)}
-                onDeleteClick={() => deleteProject()} /> : ''}
+            {deleteModal ? <Modal onCloseClick={() => setDeleteModal(false)} onActionClick={deleteProject}
+                title='Delete project' message={`'${project.name}' will be deleted forever.`} btnTitle='Delete' /> : ''}
         </div>
     )
 }

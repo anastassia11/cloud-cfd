@@ -7,6 +7,7 @@ import getMeshDataJson from '@/api/get_meshData'
 import { setCurrentMesh, setMeshes } from '@/store/slices/meshSlice'
 import deleteClip from '@/api/delete_clip'
 import deleteMesh from '@/api/delete_mesh'
+import Modal from '../Modal'
 
 export default function GeometriesPanel({ onHidePartObject }) {
     const dispatch = useDispatch()
@@ -15,6 +16,8 @@ export default function GeometriesPanel({ onHidePartObject }) {
     const currentMesh = useSelector(state => state.mesh.currentMesh)
     const projectId = useSelector(state => state.project.projectId)
     const sceneMode = useSelector(state => state.project.sceneMode)
+
+    const [modalMesh, setModalMesh] = useState(false);
 
     useEffect(() => {
         fetchMeshes()
@@ -33,13 +36,19 @@ export default function GeometriesPanel({ onHidePartObject }) {
         }
     }
 
-    async function handleDeleteMesh() {
+    function handleDeleteClick(e) {
+        e.stopPropagation()
+        setModalMesh(true)
+    }
+
+    async function deleteMeshes() {
         const result = await deleteMesh(projectId)
         if (result.success) {
             dispatch(setMeshes({ meshes: {} }))
         } else {
             alert(result.message)
         }
+        setModalMesh(false)
     }
 
     async function handleDeleteClip(uidClip) {
@@ -90,7 +99,7 @@ export default function GeometriesPanel({ onHidePartObject }) {
                     <p className='pl-[9px] text-ellipsis whitespace-nowrap overflow-hidden'>{`Mesh_${uid}`}</p>
                     <div className='pr-2 flex flex-row items-center'>
                         <button className='invisible group-hover:visible'
-                            onClick={handleDeleteMesh}>
+                            onClick={handleDeleteClick}>
                             <SvgSelector id='delete' className="h-5 w-5" />
                         </button>
                     </div>
@@ -104,7 +113,8 @@ export default function GeometriesPanel({ onHidePartObject }) {
                         ))
                     }
                 </ul>
-                {/* {modal ? <DeleteGeometry onCloseClick={() => setModal(false)} geometry={geometry} /> : ''} */}
+                {modalMesh ? <Modal onCloseClick={() => setModalMesh(false)} onActionClick={deleteMeshes}
+                    title='Delete mesh' message='Mesh will be deleted forever.' btnTitle='Delete' /> : ''}
             </div >
         )
     }

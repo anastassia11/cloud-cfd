@@ -13,7 +13,7 @@ const settingSlice = createSlice({
         setSetting(state, action) {
             state.setting = state.setting === action.payload.formName ? null : action.payload.formName
             state.formTitle = action.payload.formTitle
-            state.inputs = action.payload.inputs
+            // state.inputs = action.payload.inputs
             state.formName = action.payload.formName
             state.sceneMode = action.payload.sceneMode
         },

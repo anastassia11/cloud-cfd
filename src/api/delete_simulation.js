@@ -2,7 +2,7 @@ import { BASE_SERVER_URL } from '@/utils/constants'
 import axios from 'axios'
 import tokenVerification from './token_verification'
 
-export default async function delete_Simulation(simulationId) {
+export default async function requestDeleteSimulation(simulationId) {
     try {
         await tokenVerification()
         const response = await axios.delete(`${BASE_SERVER_URL}/api/Simulation/Delete/${simulationId}`,

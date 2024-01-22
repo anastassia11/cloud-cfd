@@ -17,6 +17,7 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
     const dispatch = useDispatch()
 
     const currentMesh = useSelector(state => state.mesh.currentMesh)
+    const geoms = useSelector(state => state.project.geometries)
     const containerRef = useRef(null)
     const sceneRef = useRef(null)
     const didLogRef = useRef(false)
@@ -65,6 +66,9 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         reloadMeshGeometry(currentMesh.path)
     }, [currentMesh])
 
+    useEffect(() => {
+        dispatch(setMeshes({ meshes: [] }))
+    }, [geoms])
 
     useImperativeHandle(ref, () => ({
         addClipPlane, deleteClipPlane, changeClipPlane
