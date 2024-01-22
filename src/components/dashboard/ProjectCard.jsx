@@ -4,7 +4,6 @@ import SvgSelector from '../SvgSelector';
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
 import UpdateProject from './UpdateProject'
-import DeleteProject from './DeleteProject'
 import { BASE_SERVER_URL } from '@/utils/constants';
 import Modal from '../Modal';
 
@@ -39,7 +38,7 @@ export default function ProjectCard({ item, onDeleteClick, onEditClick }) {
     }
 
     const deleteProject = async () => {
-        onDeleteClick()
+        await onDeleteClick()
         setDeleteModal(false)
     }
 

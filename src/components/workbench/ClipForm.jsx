@@ -80,20 +80,19 @@ export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
 
     const Input = ({ label, name }) => {
         return (
-            <div className='flex flex-row items-start justify-between h-8'>
+            <div className='flex flex-row items-center justify-between h-8'>
                 <label className=''>{label}</label>
-                <div className='flex flex-col h-full mt-[10px]'>
-                    <input type='range' min={`${name === 'centerX' ? XMin : name === 'centerY' ? YMin : name === 'centerZ' ? ZMin : '-1'}`}
-                        max={`${name === 'centerX' ? XMax : name === 'centerY' ? YMax : name === 'centerZ' ? ZMax : '1'}`}
-                        step='any' name={name} id={name}
-                        value={params[name]}
-                        onChange={paramsChange}
-                        disabled={loader}
-                        className='w-[140px] h-[6px] bg-gray-300 accent-orange-200 rounded-full appearance-none cursor-pointer disabled:opacity-50' />
-                    <p className='mt-1 w-32 self-center text-center'>
-                        {params[name].toFixed(3)}
-                    </p>
-                </div>
+                <input type='range' min={`${name === 'centerX' ? XMin : name === 'centerY' ? YMin : name === 'centerZ' ? ZMin : '-1'}`}
+                    max={`${name === 'centerX' ? XMax : name === 'centerY' ? YMax : name === 'centerZ' ? ZMax : '1'}`}
+                    step='any' name={name} id={name}
+                    value={params[name]}
+                    onChange={paramsChange}
+                    disabled={loader}
+                    className='w-[150px] h-[6px] bg-gray-300 accent-orange-200 rounded-full appearance-none cursor-pointer disabled:opacity-50' />
+                <input type='number' step='any' name={name} id={name}
+                    value={params[name].toFixed(3)} onChange={paramsChange} disabled={loader}
+                    className='h-8 w-[70px] text-center focus:outline-[0] text-day-350 border-b 
+                                outline-none bg-day-00 border-day-200 focus:border-[#c9c9c9]'/>
             </div>
         )
     }
@@ -118,8 +117,8 @@ export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
                     </button>
                 </div>
             </div>
-            <div className='flex flex-col p-3 pb-5 space-y-2 pl-1 text-day-350 overflow-y-auto '>
-                <p className='font-semibold'>Center</p>
+            <div className='flex flex-col p-3 space-y-2 pl-1 text-day-350 overflow-y-auto '>
+                <p className='font-semibold'>Origin</p>
                 {Input({ label: 'X', name: 'centerX' })}
                 {Input({ label: 'Y', name: 'centerY' })}
                 {Input({ label: 'Z', name: 'centerZ' })}
@@ -127,6 +126,34 @@ export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
                 {Input({ label: 'X', name: 'normalX' })}
                 {Input({ label: 'Y', name: 'normalY' })}
                 {Input({ label: 'Z', name: 'normalZ' })}
+
+                <div className='flex flex-row justify-between'>
+                    <button type='button' className="px-2 rounded-md text-day-300 h-8 border bg-day-50 hover:bg-day-100 
+                            active:bg-day-150 flex items-center justify-center disabled:opacity-50"
+                        onClick={() => setParams((prev) => ({ ...prev, normalX: 1, normalY: 0, normalZ: 0 }))}>
+                        X Normal
+                    </button>
+                    <button type='button' className="px-2 rounded-md text-day-300 h-8 border bg-day-50 hover:bg-day-100 
+                            active:bg-day-150 flex items-center justify-center disabled:opacity-50"
+                        onClick={() => setParams((prev) => ({ ...prev, normalX: 0, normalY: 1, normalZ: 0 }))}>
+                        Y Normal
+                    </button>
+                    <button type='button' className="px-2 rounded-md text-day-300 h-8 border bg-day-50 hover:bg-day-100 
+                            active:bg-day-150 flex items-center justify-center disabled:opacity-50"
+                        onClick={() => setParams((prev) => ({ ...prev, normalX: 0, normalY: 0, normalZ: 1 }))}>
+                        Z Normal
+                    </button>
+
+                </div>
+                <button type='button' className="px-2 rounded-md text-day-300 h-8 border bg-day-50 hover:bg-day-100 
+                            active:bg-day-150 items-center justify-center disabled:opacity-50
+                            flex flex-row space-x-2 w-full"
+                    onClick={() => setParams((prev) => (
+                        { ...prev, normalX: -params.normalX, normalY: -params.normalY, normalZ: -params.normalZ }
+                    ))}>
+                    <SvgSelector id='switch' />
+                    <p>Switch Normal</p>
+                </button>
             </div>
         </form >
     )

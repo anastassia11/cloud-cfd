@@ -35,14 +35,11 @@ export default function Dashboard() {
     const deleteUserProject = async (projectId) => {
         const result = await deleteProject(projectId)
         if (result.success) {
+            console.log('deleteUserProject success')
             setProjects(prevProjects => prevProjects.filter((project) => project.id !== projectId))
         } else {
             alert(result.message)
         }
-    }
-
-    const handleDeleteClick = (projectId) => {
-        deleteUserProject(projectId)
     }
 
     const handleEditClick = (project) => {
@@ -123,7 +120,7 @@ export default function Dashboard() {
                     <DashboardLoader />
                     {filteredProjects.map((project) => (
                         <ProjectCard item={project} key={project.id}
-                            onDeleteClick={() => handleDeleteClick(project.id)}
+                            onDeleteClick={() => deleteUserProject(project.id)}
                             onEditClick={(newProject) => handleEditClick(newProject)} />
                     ))}
                 </div>
