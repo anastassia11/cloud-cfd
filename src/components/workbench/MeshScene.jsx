@@ -48,7 +48,7 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
     });
 
     useEffect(() => {
-        dispatch(setLoader(false))
+        // dispatch(setLoader(false))
         if (didLogRef.current === false) {
             didLogRef.current = true
             init()
@@ -58,7 +58,7 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         addTransformListeners()
         return () => {
             removeTransformListeners()
-            dispatch(setMeshes({ meshes: {} }))
+            dispatch(setMeshes({ meshes: [] }))
             dispatch(setCurrentMesh({
                 uid: null,
                 path: null,
@@ -81,9 +81,9 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         reloadMeshGeometry(currentMesh.path)
     }, [currentMesh])
 
-    useEffect(() => {
-        dispatch(setMeshes({ meshes: [] }))
-    }, [geoms])
+    // useEffect(() => {
+    //     dispatch(setMeshes({ meshes: [] }))
+    // }, [geoms])
 
     useEffect(() => {
         changePointVisible()

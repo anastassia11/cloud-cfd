@@ -28,7 +28,7 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
     let orbitControls, composer
 
     const projectId = useSelector(state => state.project.projectId)
-    const geomsState = useSelector(state => state.project.geometries)
+    const geoms = useSelector(state => state.project.geometries) ?? []
     const formName = useSelector(state => state.setting.formName)
     const point = useSelector(state => state.mesh.point)
 
@@ -112,15 +112,15 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
     }, [point.position])
 
     useEffect(() => {
-        loadSTL(geomsState)
+        loadSTL(geoms)
         const geomsToRemove = sceneRef.current.children
-            .filter(child => child.isGroup && !geomsState?.some(geom => geom.uid === child.uid))
+            .filter(child => child.isGroup && !geoms?.some(geom => geom.uid === child.uid))
             .map(group => {
                 sceneRef.current.remove(group)
                 return group.uid
             });
         setGroups((prevGroups) => prevGroups.filter(prevGroup => !geomsToRemove.includes(prevGroup.uid)))
-    }, [geomsState])
+    }, [geoms])
 
     useEffect(() => {
         const allChildren = groups.flatMap(group => group.children)
@@ -446,7 +446,7 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         dispatch(setPoint({ size: pointSize }))
         const center = [(XMin + XMax) / 2, (YMin + YMax) / 2, (ZMin + ZMax) / 2];
 
-        if (geomsState && formName === 'mesh' && point.visible) {
+        if (geoms.length && formName === 'mesh' && point.visible) {
             const pointGeometry = new THREE.SphereGeometry(pointSize, 16, 16);
             const pointMaterial = selectedMaterial.clone();
             const point3D = new THREE.Mesh(pointGeometry, pointMaterial);

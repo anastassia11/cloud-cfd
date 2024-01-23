@@ -4,6 +4,7 @@ import SvgSelector from '../SvgSelector'
 import Modal from '../Modal'
 import { useDispatch, useSelector } from 'react-redux'
 import { useState } from 'react'
+import { setMeshes } from '@/store/slices/meshSlice'
 
 export default function GeometryRow({ geometry, loading }) {
     const meshes = useSelector(state => state.mesh.meshes) ?? []
@@ -19,6 +20,7 @@ export default function GeometryRow({ geometry, loading }) {
 
     function deleteGeometry() {
         dispatch(deleteGeometries({ projectId: projectId, deletedGeometry: geometry }))
+        dispatch(setMeshes({ meshes: [] }))
         setDeleteModal(false)
     }
 

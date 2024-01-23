@@ -4,11 +4,13 @@ import { resetSetting } from '@/store/slices/settingSlice';
 import { useEffect, useState } from 'react';
 import createMesh from '@/api/create_mesh';
 import getSettingsMesh from '@/api/get_settings_mesh';
-import { setJobStatus, setStateBar } from '@/store/slices/projectSlice';
+import { setSceneMode, setStateBar } from '@/store/slices/projectSlice';
 import { setCurrentMesh, setMeshes, setPoint } from '@/store/slices/meshSlice';
 import setMeshData from '@/api/set_mesh_data';
 import cancelCreateMesh from '@/api/cancel_create_mesh';
 import getMeshDataJson from '@/api/get_meshData';
+import downloadCase from '@/api/download_case';
+import { BASE_SERVER_URL } from '@/utils/constants';
 
 export default function MeshForm({ computeBoundingBox }) {
     const dispatch = useDispatch()
@@ -20,17 +22,18 @@ export default function MeshForm({ computeBoundingBox }) {
     const [formData, setFormData] = useState({})
     const [advancedSettingsVisible, setAdvancedSettingsVisible] = useState(false)
     const [meshState, setMeshState] = useState('not_generated')
+    const [downloadDisabled, setDownloadDisabled] = useState(false)
 
     useEffect(() => {
         getMeshData()
     }, [geoms])
 
     useEffect(() => {
-        !meshes.length && setMeshState('not_generated')
+        !meshes.length ? setMeshState('not_generated') : setMeshState('successfully_generated')
     }, [meshes])
 
     useEffect(() => {
-        setFormData((prev) => ({
+        point && setFormData((prev) => ({
             ...prev, InsidePoint: {
                 X: point.position.x,
                 Y: point.position.y,
@@ -39,7 +42,7 @@ export default function MeshForm({ computeBoundingBox }) {
         }));
     }, [point.position])
 
-    const getMeshData = async () => {
+    async function getMeshData() {
         const result = await getSettingsMesh(projectId)
         if (result.success && result.status === 200) {
             setFormData(result.data);
@@ -55,35 +58,35 @@ export default function MeshForm({ computeBoundingBox }) {
         }
     }
 
-    const handleFormSubmit = (e) => {
+    function handleFormSubmit(e) {
         e.preventDefault()
         saveMeshData()
         dispatch(resetSetting())
     }
 
-    const inputDataChange = (e) => {
+    function inputDataChange(e) {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: Number(value) }));
     }
 
-    const pointInputDataChange = (e) => {
+    function pointInputDataChange(e) {
         const { name, value } = e.target;
         const _name = name.toLowerCase();
         setFormData((prev) => ({ ...prev, InsidePoint: { ...prev.InsidePoint, [name]: Number(value) } }));
         dispatch(setPoint({ position: { ...point.position, [_name]: Number(value) } }));
     }
 
-    const toogleDataChange = (e) => {
+    function toogleDataChange(e) {
         const { name, checked } = e.target
         setFormData((prev) => ({ ...prev, [name]: checked }))
     }
 
-    const selectDataChange = (e) => {
+    function selectDataChange(e) {
         const { name, value } = e.target
         setFormData((prev) => ({ ...prev, [name]: value }))
     }
 
-    const saveMeshData = async () => {
+    async function saveMeshData() {
         await setMeshData(projectId, formData)
     }
 
@@ -95,12 +98,13 @@ export default function MeshForm({ computeBoundingBox }) {
                 uid: result.data.meshes[0].uid,
                 path: result.data.meshes[0].path
             }))
+            dispatch(setSceneMode('mesh'))
         } else {
             // alert(result.message)
         }
     }
 
-    const fetchGenerateMesh = async (formData) => {
+    async function fetchGenerateMesh(formData) {
         setMeshState('in_progress')
         dispatch(setStateBar({ type: "status", visible: true, message: 'Mesh' }))
         const result = await createMesh(projectId, formData)
@@ -114,7 +118,7 @@ export default function MeshForm({ computeBoundingBox }) {
         }
     }
 
-    const generateMesh = () => {
+    function generateMesh() {
         const boundingBox = computeBoundingBox()
         const updatedFormData = { ...formData }
         for (let item in boundingBox) {
@@ -124,7 +128,22 @@ export default function MeshForm({ computeBoundingBox }) {
         fetchGenerateMesh(updatedFormData)
     }
 
-    const stopCreateMesh = async () => {
+    async function handleDownload() {
+        setDownloadDisabled(true)
+        const result = await downloadCase(projectId)
+        if (result.success) {
+            const fileUrl = `${BASE_SERVER_URL}${result.data}`
+            const link = document.createElement('a')
+            link.href = fileUrl
+            link.setAttribute('download', 'mesh.zip')
+            document.body.appendChild(link)
+            link.click()
+            setDownloadDisabled(false)
+            document.body.removeChild(link)
+        }
+    }
+
+    async function stopCreateMesh() {
         const result = await cancelCreateMesh(projectId)
         if (result.success) {
             setMeshState('not_generated')
@@ -249,19 +268,26 @@ export default function MeshForm({ computeBoundingBox }) {
                             <SvgSelector id='stop' />
                         </button>
                     </>
-
                 );
             case 'successfully_generated':
                 return (
                     <>
+                        <button type="button" disabled={downloadDisabled} className="w-8 h-8 rounded-md text-gray-500 p-[5px] border bg-day-50 hover:bg-day-100 
+                        active:bg-day-150 flex items-center justify-center mr-1
+                        disabled:opacity-40"
+                            onClick={handleDownload}>
+                            <SvgSelector id='download' />
+                        </button>
                         <div className="w-full flex flex-col text-xs ">
                             <p className='text-green-800'>Finished</p>
-                            <p className=''>Overall mesh quality: 00</p>
+                            <p>Overall mesh quality: 00</p>
                         </div>
-                        <button type="button" className="w-8 h-8 rounded-md text-gray-500 p-[5px] border bg-day-50 hover:bg-day-100 
-                        active:bg-day-150 flex items-center justify-center"
+
+                        <button type="button" className="h-8 rounded-md text-gray-500 p-[5px] border bg-day-50 hover:bg-day-100 
+                        active:bg-day-150 flex items-center justify-center space-x-1"
                             onClick={generateMesh}>
                             <SvgSelector id='update' />
+                            <p>Regenerate</p>
                         </button>
                     </>
                 );
@@ -291,7 +317,7 @@ export default function MeshForm({ computeBoundingBox }) {
                     </button>
                 </div>
             </div>
-            {Object.keys(geoms).length === 0 ?
+            {!geoms.length ?
                 <div className="flex m-2 items-center gap-2 rounded-md px-2 h-9 text-base text-red-700 bg-red-50">
                     Add geometry to generate mesh
                 </div> :
@@ -363,9 +389,9 @@ export default function MeshForm({ computeBoundingBox }) {
                         </div> : ''}
                     </div>
                 </div>}
-            {Object.keys(geoms).length !== 0 && <div className='w-full border-t flex flex-row justify-end items-center p-3 space-x-[6px]'>
+            {geoms.length ? <div className='w-full border-t flex flex-row justify-end items-center p-3 space-x-[6px]'>
                 <StateBar />
-            </div>}
+            </div> : ''}
         </form>
     )
 }

@@ -79,13 +79,13 @@ export default function GeometriesPanel({ onHidePartObject }) {
     }
 
     const Clip = ({ clip }) => {
-        const { path, uid } = clip;
+        const { name, uid, path } = clip;
         return (
             <div className={`cursor-pointer w-full flex items-center justify-between rounded-md text-day-350 h-9 
                                     hover:bg-day-150 active:bg-day-200 overflow-hidden group
                                     ${currentMesh.uid === uid ? 'bg-day-150' : ''}`}
                 onClick={() => dispatch(setCurrentMesh({ uid, path, isClip: true }))}>
-                <p className='pl-[9px] text-ellipsis whitespace-nowrap overflow-hidden'>{`Clip_${uid}`}</p>
+                <p className='pl-[9px] text-ellipsis whitespace-nowrap overflow-hidden'>{name}</p>
                 <div className='pr-2 flex flex-row items-center'>
                     <button className='invisible group-hover:visible'
                         onClick={() => handleDeleteClip(uid)}>
@@ -97,14 +97,14 @@ export default function GeometriesPanel({ onHidePartObject }) {
     }
 
     const Mesh = ({ mesh }) => {
-        const { clipMeshes, path, uid } = mesh;
+        const { name, uid, path, clipMeshes } = mesh;
         return (
             <div>
                 <div className={`cursor-pointer w-full flex items-center justify-between rounded-md text-day-350 h-9 
                         hover:bg-day-150 active:bg-day-200 overflow-hidden group
                         ${currentMesh.uid === uid ? 'bg-day-150' : ''}`}
                     onClick={() => dispatch(setCurrentMesh({ uid, path, isClip: false }))}>
-                    <p className='pl-[9px] text-ellipsis whitespace-nowrap overflow-hidden'>{`Mesh_${uid}`}</p>
+                    <p className='pl-[9px] text-ellipsis whitespace-nowrap overflow-hidden'>{name}</p>
                     <div className='pr-2 flex flex-row items-center'>
                         <button className='invisible group-hover:visible'
                             onClick={handleDeleteClick}>

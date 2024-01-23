@@ -4,6 +4,7 @@ import SvgSelector from '../SvgSelector'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteGeometries, updateGeometries } from '@/store/slices/projectSlice'
 import Modal from '../Modal'
+import { setMeshes } from '@/store/slices/meshSlice'
 
 export default function Geometry({ geom = [], hidePartObject }) {
     const [settingOpen, setSettingOpen] = useState(false)
@@ -73,6 +74,7 @@ export default function Geometry({ geom = [], hidePartObject }) {
 
     function deleteGeometry() {
         dispatch(deleteGeometries({ projectId: projectId, deletedGeometry: geometry }))
+        dispatch(setMeshes({ meshes: [] }))
         setModal(false)
     }
 
