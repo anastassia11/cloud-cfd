@@ -408,5 +408,65 @@ export default function SvgSelector({ id = '', ...props }) {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg >
             )
+        case 'sphere':
+            return (
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlSpace="preserve"
+                    viewBox="0 0 20 20"
+                    {...props}
+                >
+                    <radialGradient
+                        id="icon-geo-primitive-sphere_svg__a"
+                        cx={10}
+                        cy={9.997}
+                        r={9}
+                        gradientUnits="userSpaceOnUse"
+                    >
+                        <stop
+                            offset={0}
+                            style={{
+                                stopColor: "#ebebeb",
+                            }}
+                        />
+                        <stop
+                            offset={0.178}
+                            style={{
+                                stopColor: "#e5e5e5",
+                            }}
+                        />
+                        <stop
+                            offset={0.416}
+                            style={{
+                                stopColor: "#d4d4d4",
+                            }}
+                        />
+                        <stop
+                            offset={0.689}
+                            style={{
+                                stopColor: "#b8b8b8",
+                            }}
+                        />
+                        <stop
+                            offset={0.985}
+                            style={{
+                                stopColor: "#929291",
+                            }}
+                        />
+                        <stop
+                            offset={1}
+                            style={{
+                                stopColor: "#90908f",
+                            }}
+                        />
+                    </radialGradient>
+                    <circle
+                        cx={10}
+                        cy={10}
+                        r={9}
+                        fill="url(#icon-geo-primitive-sphere_svg__a)"
+                    />
+                </svg>
+            )
     }
 }

@@ -31,6 +31,17 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
         })
     }
 
+    const handleSphereClick = () => {
+        const sphereGeom = new THREE.SphereGeometry(8, 128, 64)
+        const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true })
+        const sphere = new THREE.Mesh(sphereGeom, sphereMaterial);
+        setPrimitiveData({
+            visible: true, name: 'sphere', mesh: sphere,
+            params: { radius: sphereGeom.parameters.radius },
+            position: sphere.position
+        })
+    }
+
     useEffect(() => {
         selectModeChange(selectMode)
     }, [selectMode])
@@ -191,6 +202,12 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
                             onClick={handleCylinderClick}>
                             <SvgSelector id='cylinder' className='w-[20px] text-day-350' />
                             <p className='text-[11px] tracking-wide'>Cylinder</p>
+                        </button>
+                        <button className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
+                                        hover:bg-day-100 rounded-md h-fit'
+                            onClick={handleSphereClick}>
+                            <SvgSelector id='sphere' className='w-[20px] text-day-350' />
+                            <p className='text-[11px] tracking-wide'>Sphere</p>
                         </button>
                     </div>
                 </div>

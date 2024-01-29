@@ -16,12 +16,14 @@ import StateBar from './StateBar'
 import ClipForm from './ClipForm'
 import Modal from '../Modal'
 import { setMeshes } from '@/store/slices/meshSlice'
+import SphereForm from './SphereForm'
 
 export default function Workbench() {
     const dispatch = useDispatch()
     const transformRef = useRef(null)
     const boxRef = useRef(null)
     const cylinderRef = useRef(null)
+    const sphereRef = useRef(null)
     const geomRef = useRef(null)
 
     const geometryScene = useRef(null)
@@ -67,6 +69,8 @@ export default function Workbench() {
             geometrySceneRef.current.changeBoxData(primitiveData)
         } else if (primitiveData.name === 'cylinder') {
             geometrySceneRef.current.changeCylinderData(primitiveData)
+        } else if (primitiveData.name === 'sphere') {
+            geometrySceneRef.current.changeSphereData(primitiveData)
         }
     }, [primitiveData])
 
@@ -230,6 +234,17 @@ export default function Workbench() {
                             relative`}>
                                 <CylinderForm cylinderDataProp={primitiveData}
                                     onCylinderDataChange={({ height, radius, x, y, z }) => setPrimitiveData(prev => ({
+                                        ...prev, params: { height, radius }, position: { x, y, z }
+                                    }))}
+                                    onCloseForm={callCloseForm}
+                                    onCreate={addPrimitive} />
+                            </div> : ''}
+
+                        {primitiveData.visible && primitiveData.name === 'sphere' ?
+                            <div ref={sphereRef} className={`min-w-0 w-[300px] self-end mt-[10px] 
+                            relative`}>
+                                <SphereForm sphereDataProp={primitiveData}
+                                    onSphereDataChange={({ height, radius, x, y, z }) => setPrimitiveData(prev => ({
                                         ...prev, params: { height, radius }, position: { x, y, z }
                                     }))}
                                     onCloseForm={callCloseForm}

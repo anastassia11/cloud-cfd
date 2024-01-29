@@ -135,7 +135,7 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
 
     useImperativeHandle(ref, () => ({
         hidePartObject, handlePositionChange, handleCloseForm, addTransformControl,
-        changeBoxData, changeCylinderData, addToGeomScene, removeFromGeomScene, addPrimitive, computeBoundingBox
+        changeBoxData, changeCylinderData, changeSphereData, addToGeomScene, removeFromGeomScene, addPrimitive, computeBoundingBox
     }))
 
     async function loadGeoms() {
@@ -538,6 +538,20 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
             if (object.isMesh && object.uuid === newData.mesh.uuid) {
                 object.geometry.dispose()
                 object.geometry = newCylinderPatternGeom
+                object.position.set(x, y, z)
+                object.material = newData.mesh.material
+            }
+        })
+    }
+
+    const changeSphereData = (newData) => {
+        const { x, y, z } = newData.position
+        const { radius } = newData.params
+        const newSpherePatternGeom = new THREE.SphereGeometry(radius, 16 * radius, 8 * radius);
+        sceneRef.current.children.forEach((object) => {
+            if (object.isMesh && object.uuid === newData.mesh.uuid) {
+                object.geometry.dispose()
+                object.geometry = newSpherePatternGeom
                 object.position.set(x, y, z)
                 object.material = newData.mesh.material
             }
