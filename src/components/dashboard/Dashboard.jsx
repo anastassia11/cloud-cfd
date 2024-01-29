@@ -35,7 +35,6 @@ export default function Dashboard() {
     const deleteUserProject = async (projectId) => {
         const result = await deleteProject(projectId)
         if (result.success) {
-            console.log('deleteUserProject success')
             setProjects(prevProjects => prevProjects.filter((project) => project.id !== projectId))
         } else {
             alert(result.message)

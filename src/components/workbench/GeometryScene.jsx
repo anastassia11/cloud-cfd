@@ -31,10 +31,11 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
     const geoms = useSelector(state => state.project.geometries) ?? []
     const formName = useSelector(state => state.setting.formName)
     const point = useSelector(state => state.mesh.point)
+    const selectedParts = useSelector(state => state.project.selectedParts) ?? []
+    const selectedPartsRef = useRef(selectedParts);
 
     const [meshes, setMeshes] = useState([])
     const [groups, setGroups] = useState([])
-    const [selectedFaces, setSelectedFaces] = useState([])
 
     const baseMaterial = new THREE.MeshPhongMaterial({
         color: 0xa0a0a0,
@@ -89,6 +90,10 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
     }, [])
 
     useEffect(() => {
+        selectedPartsRef.current = selectedParts;
+    }, [selectedParts]);
+
+    useEffect(() => {
         if (formName !== 'mesh' || !point.visible) {
             addListeners()
         }
@@ -97,11 +102,12 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
 
     useEffect(() => {
         changeMaterials(renderMode)
-    }, [renderMode, selectedFaces])
+    }, [renderMode])
 
     useEffect(() => {
-        dispatch(setSelectedParts(selectedFaces.map((face) => face.uid)))
-    }, [selectedFaces])
+        // formName !== 'mesh' && changeMaterials(renderMode)
+        changeMaterials(renderMode)
+    }, [selectedParts])
 
     useEffect(() => {
         changePointVisible()
@@ -135,11 +141,11 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
     async function loadGeoms() {
         dispatch(setLoader(true))
         const result = await getGeometries(projectId)
-        if (result.success) {
+        if (result.success && result.status === 200) {
             dispatch(setGeometries({ geometries: result.data.geometryDataList }))
             loadSTL(result.data.geometryDataList)
             dispatch(setLoader(false))
-        } else {
+        } else if (result.status !== 204 && result.status !== 200) {
             alert(result.message)
             dispatch(setLoader(false))
         }
@@ -171,6 +177,7 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
                             mesh.castShadow = true;
                             mesh.receiveShadow = true;
                             mesh.uid = model.uid;
+                            mesh.name = model.name;
                             mesh.visible = model.visible;
                             group.add(mesh);
                             setMeshes((prevMeshes) => {
@@ -336,7 +343,7 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         sceneRef.current.add(transformControl.current)
     }
 
-    const handleClick = (event) => {
+    function handleClick(event) {
         event.stopPropagation()
         const mouse = new THREE.Vector2();
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -349,42 +356,40 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
                 const intersects = raycaster.intersectObjects(group.children, true);
                 const intersectedFace = intersects.length > 0 ? intersects[0].object : null;
                 // Логика добавления выбранных граней в стейт selectedFaces (массив) 
-                setSelectedFaces((prevFaces) => {
-                    const selectedUids = prevFaces.map((prevFace) => prevFace.uid);
-                    if (selectedUids.includes(intersectedFace?.uid)) {
-                        // Если выбранная грань уже есть в массиве, 
-                        // проверяем, все ли грани из группы есть в массиве
-                        const allGroupFacesSelected = group.children.every((child) => child.isMesh && selectedUids.includes(child.uid));
-                        if (allGroupFacesSelected) {
-                            // Если все грани из группы есть, удаляем все грани
-                            return [];
-                        } else {
-                            // Если не все грани из группы выбраны, добавляем 
-                            // в массив недостающие грани
-                            const newFaces = group.children.filter((child) => child.isMesh && !selectedUids.includes(child.uid));
-                            return [...prevFaces, ...newFaces];
-                        }
+                const selectedUids = selectedPartsRef.current.map(({ uid }) => uid);
+                if (selectedUids.includes(intersectedFace?.uid)) {
+                    // Если выбранная грань уже есть в массиве, 
+                    // проверяем, все ли грани из группы есть в массиве
+                    const allGroupFacesSelected = group.children.every((child) => child.isMesh && selectedUids.includes(child.uid));
+                    if (allGroupFacesSelected) {
+                        // Если все грани из группы есть, удаляем все грани
+                        dispatch(setSelectedParts([]))
                     } else {
-                        // Если выбранной грани нет в массиве, добавить все грани группы, которых еще нет
-                        const newFaces = group.children.filter((child) => child.isMesh && !selectedUids.includes(child.uid));
-                        return [...prevFaces, ...newFaces];
+                        // Если не все грани из группы выбраны, добавляем 
+                        // в массив недостающие грани
+                        newFaces = group.children
+                            .filter((child) => child.isMesh && !selectedUids.includes(child.uid))
+                            .map((child) => ({ name: child.name, uid: child.uid }));
+                        dispatch(setSelectedParts([...selectedPartsRef.current, ...newFaces]))
                     }
-                });
+                } else {
+                    // Если выбранной грани нет в массиве, добавить все грани группы, которых еще нет
+                    newFaces = group.children
+                        .filter((child) => child.isMesh && !selectedUids.includes(child.uid))
+                        .map((child) => ({ name: child.name, uid: child.uid }));
+                    dispatch(setSelectedParts([...selectedPartsRef.current, ...newFaces]))
+                }
             });
 
         } else if (selectMode === 'face') {
             const intersects = raycaster.intersectObjects(meshes, true)
             const intersectedFace = intersects.length > 0 ? intersects[0].object : null;
-            setSelectedFaces((prevFaces) => {
-                const selectedUids = prevFaces.map((prevFace) => prevFace.uid);
-                if (selectedUids.includes(intersectedFace?.uid)) {
-                    // Если выбранная грань уже есть в массиве, удалить ее из массива
-                    return prevFaces.filter((prevFace) => prevFace.uid !== intersectedFace.uid);
-                } else {
-                    // Если выбранной грани нет в массиве, добавить ее в массив
-                    return intersectedFace ? [...prevFaces, intersectedFace] : prevFaces;
-                }
-            });
+            const selectedUids = selectedPartsRef.current.map(({ uid }) => uid);
+            if (selectedUids.includes(intersectedFace?.uid)) {
+                dispatch(setSelectedParts(selectedPartsRef.current.filter((part) => part.uid !== intersectedFace.uid)))
+            } else {
+                intersectedFace ? dispatch(setSelectedParts([...selectedPartsRef.current, { name: intersectedFace.name, uid: intersectedFace.uid }])) : dispatch(setSelectedParts(selectedPartsRef.current))
+            }
         }
     }
 
@@ -430,7 +435,8 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         sceneRef.current.children.forEach(child => {
             if (child.isGroup) {
                 child.children.forEach(item => {
-                    if (selectedFaces.includes(item)) {
+                    const selectedPartsUids = selectedParts.map(({ uid }) => uid)
+                    if (selectedPartsUids.includes(item.uid)) {
                         item.material = _selectedmaterial.clone();
                     } else {
                         item.material = _material.clone();
@@ -454,14 +460,14 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
             point3D.position.set(...center)
             sceneRef.current.add(point3D);
             addTransformControl(point3D);
-            changeMaterials('translucent');
+            // changeMaterials('translucent');
         } else {
             sceneRef.current.children.forEach(child => {
                 if (child.type === 'insidePoint') {
                     sceneRef.current.remove(child);
                     transformControl.current.detach();
                     sceneRef.current.remove(transformControl.current);
-                    changeMaterials(renderMode);
+                    // changeMaterials(renderMode);
                 }
             })
         }

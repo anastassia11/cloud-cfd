@@ -46,7 +46,6 @@ export default function DemoHeader() {
                     </div>
 
                     <div className='flex-row items-center space-x-1 hidden md:flex'>
-
                         <button
                             className='text-day-350 hover:bg-day-50 flex items-center hover:border-b-2 
                             hover:border-orange-100 duration-100 h-[56px] px-3'
@@ -96,9 +95,7 @@ export default function DemoHeader() {
                 <div className='absolute top-[54px] w-full'>
                     <BarLoader color="#e66e0d" width='100%' speedMultiplier={0.3} height={2} loading={loader} />
                 </div>
-
             </header >
         </>
-
     )
 }

@@ -9,6 +9,7 @@ import { Oval } from 'react-loader-spinner'
 import Modal from '../Modal'
 import Geometry from '../geometries-panel/Geometry'
 import GeometryRow from './GeometryRow'
+import { setLoader } from '@/store/slices/loaderSlice'
 
 export default function GeometryForm({ }) {
     const geoms = useSelector(state => state.project.geometries)
@@ -53,9 +54,9 @@ export default function GeometryForm({ }) {
 
     async function loadGeoms() {
         const result = await getGeometries(projectId)
-        if (result.success) {
+        if (result.success && result.status === 200) {
             dispatch(setGeometries({ geometries: result.data.geometryDataList }))
-        } else {
+        } else if (result.status !== 204 && result.status !== 200) {
             alert(result.message)
         }
     }

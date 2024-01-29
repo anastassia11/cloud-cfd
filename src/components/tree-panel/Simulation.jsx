@@ -36,12 +36,13 @@ export default function Simulation({ id, name }) {
 
     function handleMeshClick() {
         dispatch(setSetting({ formName: 'mesh', formTitle: 'Mesh' }))
-        meshes.length && dispatch(setSceneMode('mesh'))
+        // meshes.length && dispatch(setSceneMode('mesh'))
+        dispatch(setSceneMode('geom'))
     }
 
     function handleSettingClick(formName, formTitle, inputs) {
         dispatch(setSetting({ formName, formTitle, inputs }))
-        dispatch(setSceneMode('geom'))
+        // dispatch(setSceneMode('geom'))
     }
 
     const Setting = ({ formName, formTitle, inputs = {} }) => {

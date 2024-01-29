@@ -11,8 +11,8 @@ export default async function getGeometries(projectId) {
                     'Authorization': `Bearer ${JSON.parse(localStorage.getItem('tokenData')).token}`
                 }
             })
-        if (response.status === 200) {
-            return { success: true, data: response.data }
+        if (response.status === 200 || response.status === 204) {
+            return { success: true, data: response.data, status: response.status }
         } else {
             throw new Error('Error getting geometries')
         }

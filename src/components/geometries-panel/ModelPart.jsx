@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import SvgSelector from '../SvgSelector'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { setSelectedParts } from '@/store/slices/projectSlice'
 
 export default function ModelPart({ modelPartProp, updateModelPart }) {
+    const dispatch = useDispatch()
     const [input, setInput] = useState(false)
     const [modelPart, setModelPart] = useState(modelPartProp)
-    const selectedModelParts = useSelector(state => state.project.selectedParts)
+    const selectedParts = useSelector(state => state.project.selectedParts)
 
-    const handleVisibleClick = () => {
+    const handleVisibleClick = (e) => {
+        e.stopPropagation()
         const newVisible = !modelPart.visible
         setModelPart(prevModelPart => ({ ...prevModelPart, visible: newVisible }))
         updateModelPart({ ...modelPart, visible: newVisible })
@@ -23,6 +26,17 @@ export default function ModelPart({ modelPartProp, updateModelPart }) {
         setInput(false)
     }
 
+    const handlePartClick = () => {
+        const selectedUids = selectedParts.map(({ uid }) => uid);
+        let newSelectedParts
+        if (selectedUids.includes(modelPart.uid)) {
+            newSelectedParts = selectedParts.filter(({ uid }) => uid !== modelPart.uid)
+        } else {
+            newSelectedParts = [...selectedParts, { uid: modelPart.uid, name: modelPart.name }]
+        }
+        dispatch(setSelectedParts(newSelectedParts))
+    }
+
     return (
         input ? <div className='flex flex-row items-center space-x-2 justify-between'>
             <input type="text" id='inputId' value={modelPart.name} onChange={e => handleNameChange(e)}
@@ -35,11 +49,12 @@ export default function ModelPart({ modelPartProp, updateModelPart }) {
                 <SvgSelector id='check' />
             </button>
         </div> :
-            <div className={`group w-full flex items-center justify-between rounded-md overflow-hidden
+            <div className={`group w-full flex items-center justify-between rounded-md overflow-hidden cursor-pointer
             ${modelPart.visible ? 'text-day-350' : 'text-day-250'} h-9 ${modelPart.visible && 'hover:bg-day-150'} 
-            duration-300`}>
+            duration-300`}
+                onClick={handlePartClick}>
                 <p className={`pl-2 text-ellipsis whitespace-nowrap overflow-hidden
-                ${selectedModelParts.some((item) => item === modelPart.uid) ? 'font-bold' : ''}
+                ${selectedParts.some(({ uid }) => uid === modelPart.uid) ? 'font-bold' : ''}
                 `}>
                     {modelPart.name}
                 </p>

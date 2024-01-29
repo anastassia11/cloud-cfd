@@ -43,7 +43,6 @@ const projectSlice = createSlice({
             const deletedGeom = action.payload.deletedGeometry
             state.geometries = state.geometries.filter((geom) => geom.uid !== deletedGeom.uid)
             const result = updateGeometry(state.projectId, state.geometries)
-
         },
 
         setSimulations(state, action) {

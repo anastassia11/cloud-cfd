@@ -21,7 +21,7 @@ export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
         normalX: 0,
         normalY: 1,
         normalZ: 0,
-        shouldClip: true
+        shouldClip: false
     });
 
     useEffect(() => {
@@ -65,7 +65,6 @@ export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
             { idProject: projectId, uid, points: [params] }
         const result = await createClip(requestBody);
         if (result.success) {
-            console.log(result.data)
             const { uid, path } = result.data;
             onCloseForm();
             fetchMeshes();
