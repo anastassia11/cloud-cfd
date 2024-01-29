@@ -82,8 +82,8 @@ export default function Geometry({ geom = [], hidePartObject }) {
         <p>
             {`'${geometry.name}' will be deleted forever.`}
         </p>
-        {meshes.length ? <div className='flex flex-row self-end mt-2'>
-            <SvgSelector id='warning' />
+        {meshes.length ? <div className='flex flex-row items-center p-1.5 self-end mt-2 rounded-md bg-yellow-50 border border-yellow-300'>
+            <SvgSelector id='warning-empty' />
             <p className='ml-2 font-semibold'>Mesh will be deleted.</p>
         </div> : ''}
     </>

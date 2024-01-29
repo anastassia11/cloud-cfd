@@ -43,6 +43,13 @@ export default function CylinderForm({ cylinderDataProp, onCylinderDataChange, o
         )
     }
 
+    const title = <>
+        {<div className='flex flex-row self-end'>
+            <SvgSelector id='warning' />
+            <p className='ml-2 font-semibold'>Warning</p>
+        </div>}
+    </>
+
     return (
         <>
 

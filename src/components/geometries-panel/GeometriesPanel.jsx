@@ -48,7 +48,7 @@ export default function GeometriesPanel({ onHidePartObject }) {
     async function deleteMeshes() {
         const result = await deleteMesh(projectId)
         if (result.success) {
-            dispatch(setMeshes({ meshes: {} }))
+            dispatch(setMeshes({ meshes: [] }))
         } else {
             alert(result.message)
         }

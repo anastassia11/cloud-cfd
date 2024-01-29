@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import SettingForm from '../tree-panel/SettingForm'
 import TreePanel from '../tree-panel/TreePanel'
 import BoxForm from './BoxForm'
@@ -15,8 +15,10 @@ import MeshForm from '../tree-panel/MeshForm'
 import StateBar from './StateBar'
 import ClipForm from './ClipForm'
 import Modal from '../Modal'
+import { setMeshes } from '@/store/slices/meshSlice'
 
 export default function Workbench() {
+    const dispatch = useDispatch()
     const transformRef = useRef(null)
     const boxRef = useRef(null)
     const cylinderRef = useRef(null)
@@ -137,6 +139,7 @@ export default function Workbench() {
         const stlBlob = new Blob([stlData], { type: 'application/octet-stream' })
         const file = new File([stlBlob], `${primitiveData.name}.stl`)
         geometrySceneRef.current.addPrimitive({ 'Angle': '120', 'IdProject': projectId, 'File': file })
+        dispatch(setMeshes({ meshes: [] }))
     }
 
     function changeTransformData(newData) {
