@@ -135,7 +135,7 @@ export default function MeshForm({ computeBoundingBox }) {
                 path: result.data.meshes[0].path
             }))
             dispatch(setSceneMode('mesh'))
-            dispatch(setSetting({ formName: '' }))
+            dispatch(resetSetting())
         } else {
             // alert(result.message)
         }
