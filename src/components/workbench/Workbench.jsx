@@ -1,9 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import SettingForm from '../tree-panel/SettingForm'
 import TreePanel from '../tree-panel/TreePanel'
-import BoxForm from './BoxForm'
 import ControlPanel from './ControlPanel'
-import CylinderForm from './CylinderForm'
 import GeometriesPanel from '../geometries-panel/GeometriesPanel'
 import TransformForm from './TransformForm'
 import { useEffect, useRef, useState } from 'react'
@@ -14,16 +12,13 @@ import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
 import MeshForm from '../tree-panel/MeshForm'
 import StateBar from './StateBar'
 import ClipForm from './ClipForm'
-import Modal from '../Modal'
 import { setMeshes } from '@/store/slices/meshSlice'
-import SphereForm from './SphereForm'
+import PrimitiveForm from './PrimitiveForm'
 
 export default function Workbench() {
     const dispatch = useDispatch()
     const transformRef = useRef(null)
-    const boxRef = useRef(null)
-    const cylinderRef = useRef(null)
-    const sphereRef = useRef(null)
+    const primitiveRef = useRef(null)
     const geomRef = useRef(null)
 
     const geometryScene = useRef(null)
@@ -205,9 +200,9 @@ export default function Workbench() {
 
                     <div className='right-0 flex flex-col max-h-[calc(100vh-73px)] overflow-hidden'>
                         <div ref={geomRef} className={`min-w-0 w-[300px] ml-[12px] relative 
-                        max-h-[calc(100vh-73px-${(boxRef.current ? boxRef.current.offsetHeight : 0)}px-
-                        ${transformRef.current ? transformRef.current.offsetHeight : 0}px - 
-                        ${cylinderRef.current ? cylinderRef.current.offsetHeight : 0}px)]
+                        max-h-[calc(100vh-73px-${(primitiveRef.current ? primitiveRef.current.offsetHeight : 0)}px-
+                        ${transformRef.current ? transformRef.current.offsetHeight : 0}px-
+                    ]
                         min-h-[50px] overflow-clip`}>
                             <GeometriesPanel onHidePartObject={callHidePartObject} />
                         </div>
@@ -218,35 +213,12 @@ export default function Workbench() {
                                 onPositionChange={callPositionChange} onCloseForm={callCloseForm} />
                         </div> : ''}
 
-                        {primitiveData.visible && primitiveData.name === 'box' ?
-                            <div ref={boxRef} className={`min-w-0 w-[300px] self-end mt-[10px] 
-                        relative`}>
-                                <BoxForm boxDataProp={primitiveData}
-                                    onBoxDataChange={({ width, height, depth, x, y, z }) => setPrimitiveData(prev => ({
-                                        ...prev, params: { width, height, depth }, position: { x, y, z }
-                                    }))}
-                                    onCloseForm={callCloseForm}
-                                    onCreate={addPrimitive} />
-                            </div> : ''}
-
-                        {primitiveData.visible && primitiveData.name === 'cylinder' ?
-                            <div ref={cylinderRef} className={`min-w-0 w-[300px] self-end mt-[10px] 
+                        {primitiveData.visible ?
+                            <div ref={primitiveRef} className={`min-w-0 w-[300px] self-end mt-[10px] 
                             relative`}>
-                                <CylinderForm cylinderDataProp={primitiveData}
-                                    onCylinderDataChange={({ height, radius, x, y, z }) => setPrimitiveData(prev => ({
-                                        ...prev, params: { height, radius }, position: { x, y, z }
-                                    }))}
-                                    onCloseForm={callCloseForm}
-                                    onCreate={addPrimitive} />
-                            </div> : ''}
-
-                        {primitiveData.visible && primitiveData.name === 'sphere' ?
-                            <div ref={sphereRef} className={`min-w-0 w-[300px] self-end mt-[10px] 
-                            relative`}>
-                                <SphereForm sphereDataProp={primitiveData}
-                                    onSphereDataChange={({ height, radius, x, y, z }) => setPrimitiveData(prev => ({
-                                        ...prev, params: { height, radius }, position: { x, y, z }
-                                    }))}
+                                <PrimitiveForm name='cylinder'
+                                    primitiveDataProp={primitiveData}
+                                    onPrimitiveDataChange={(newData) => setPrimitiveData(newData)}
                                     onCloseForm={callCloseForm}
                                     onCreate={addPrimitive} />
                             </div> : ''}

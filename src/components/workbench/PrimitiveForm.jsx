@@ -3,21 +3,45 @@ import SvgSelector from '../SvgSelector'
 import Modal from '../Modal'
 import { useSelector } from 'react-redux'
 
-export default function SphereForm({ sphereDataProp, onSphereDataChange, onCloseForm, onCreate }) {
-    const [sphereData, setSphereData] = useState({ ...sphereDataProp.params, ...sphereDataProp.position })
+export default function PrimitiveForm({ primitiveDataProp, onPrimitiveDataChange, onCloseForm, onCreate }) {
+    const [primitiveData, setPrimitiveData] = useState(primitiveDataProp)
     const [paramsVisible, setParamsVisible] = useState(true)
     const [positionVisible, setPositionVisible] = useState(true)
     const [modal, setModal] = useState(false)
     const meshes = useSelector(state => state.mesh.meshes) ?? []
+    const paramsKeys = Object.keys(primitiveDataProp.params)
+    const positionKeys = Object.keys(primitiveDataProp.position)
 
     useEffect(() => {
-        setSphereData({ ...sphereDataProp.params, ...sphereDataProp.position })
-    }, [sphereDataProp])
+        setPrimitiveData(primitiveDataProp)
+    }, [primitiveDataProp])
 
-    const inputDataChange = (e) => {
+    const handleParamsChange = (e) => {
         const { name, value } = e.target;
-        setSphereData((prev) => ({ ...prev, [name]: Number(value) }));
-        onSphereDataChange({ ...sphereData, [name]: Number(value) })
+        setPrimitiveData((prev) => ({
+            ...prev, params: {
+                ...prev.params,
+                [name]: Number(value)
+            }
+        }));
+        onPrimitiveDataChange({
+            ...primitiveData,
+            params: { ...primitiveData.params, [name]: Number(value) }
+        })
+    }
+
+    const handlePositionChange = (e) => {
+        const { name, value } = e.target;
+        setPrimitiveData((prev) => ({
+            ...prev, position: {
+                ...prev.position,
+                [name]: Number(value)
+            }
+        }));
+        onPrimitiveDataChange({
+            ...primitiveData,
+            position: { ...primitiveData.position, [name]: Number(value) }
+        })
     }
 
     const handleFormSubmit = (e) => {
@@ -29,12 +53,12 @@ export default function SphereForm({ sphereDataProp, onSphereDataChange, onClose
         onCloseForm('primitiveForm')
     }
 
-    const Input = ({ label, name }) => {
+    const Input = ({ label, name, valueProp, onChangeProp }) => {
         return (
             <div className='flex flex-row items-center justify-between'>
                 <label className=''>{label}</label>
                 <div className='flex flex-row items-center mr-2 '>
-                    <input type='number' step='any' name={name} id={name} value={sphereData[name]} onChange={inputDataChange}
+                    <input type='number' step='any' name={name} id={name} value={valueProp} onChange={onChangeProp}
                         className='h-8 w-[140px] p-2 focus:outline-[0] text-day-350 border rounded-md outline-none 
                             bg-day-00 shadow-sm border-day-200 focus:border-[#c9c9c9]'/>
                     <p className='ml-2'>m</p>
@@ -52,9 +76,10 @@ export default function SphereForm({ sphereDataProp, onSphereDataChange, onClose
 
     return (
         <>
+
             <form onSubmit={handleFormSubmit} className='flex flex-col bg-day-00 rounded-md shadow p-3 text-day-350'>
                 <div className='flex flex-row justify-between items-center border-b pb-2'>
-                    <p className='self-end font-semibold'>Sphere</p>
+                    <p className='self-end font-semibold'>{primitiveDataProp.name.charAt(0).toUpperCase() + primitiveDataProp.name.slice(1)}</p>
                     <div className='flex flex-row space-x-[6px]'>
                         <button type="button"
                             className="text-base font-medium text-white 
@@ -72,7 +97,7 @@ export default function SphereForm({ sphereDataProp, onSphereDataChange, onClose
                     </div>
                 </div>
                 <div className='flex flex-col mt-3 text-day-350'>
-                    <div className='flex flex-col justify-between mt-2 space-y-2'>
+                    <div className='flex flex-col justify-between space-y-2'>
                         <>
                             <div className='flex flex-row cursor-pointer'
                                 onClick={() => setParamsVisible(prev => !prev)}>
@@ -84,7 +109,14 @@ export default function SphereForm({ sphereDataProp, onSphereDataChange, onClose
                                 <p className='font-semibold ml-[7px]'>Parameters</p>
                             </div>
                             {paramsVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
-                                {Input({ label: 'Radius', name: 'radius' })}
+                                {paramsKeys.map(key =>
+                                    Input({
+                                        label: key.charAt(0).toUpperCase() + key.slice(1),
+                                        name: key,
+                                        valueProp: primitiveData.params[key],
+                                        onChangeProp: handleParamsChange
+                                    })
+                                )}
                             </div> : ''}
                         </>
                         <>
@@ -98,9 +130,14 @@ export default function SphereForm({ sphereDataProp, onSphereDataChange, onClose
                                 <p className='font-semibold ml-[7px]'>Position</p>
                             </div>
                             {positionVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
-                                {Input({ label: 'X', name: 'x' })}
-                                {Input({ label: 'Y', name: 'y' })}
-                                {Input({ label: 'Z', name: 'z' })}
+                                {positionKeys.map(key =>
+                                    Input({
+                                        label: key.charAt(0).toUpperCase() + key.slice(1),
+                                        name: key,
+                                        valueProp: primitiveData.position[key],
+                                        onChangeProp: handlePositionChange
+                                    })
+                                )}
                             </div> : ''}
                         </>
                     </div>

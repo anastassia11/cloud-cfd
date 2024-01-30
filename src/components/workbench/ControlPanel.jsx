@@ -16,7 +16,11 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
         const box = new THREE.Mesh(boxGeom, boxMaterial);
         setPrimitiveData({
             visible: true, name: 'box', mesh: box,
-            params: boxGeom.parameters, position: box.position
+            params: {
+                width: boxGeom.parameters.width,
+                height: boxGeom.parameters.height,
+                depth: boxGeom.parameters.depth
+            }, position: box.position
         })
     }
 
@@ -26,7 +30,10 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
         const cylinder = new THREE.Mesh(cylinderGeom, cylinderMaterial);
         setPrimitiveData({
             visible: true, name: 'cylinder', mesh: cylinder,
-            params: { height: cylinderGeom.parameters.height, radius: cylinderGeom.parameters.radiusTop },
+            params: {
+                height: cylinderGeom.parameters.height,
+                radius: cylinderGeom.parameters.radiusTop
+            },
             position: cylinder.position
         })
     }
@@ -37,7 +44,9 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
         const sphere = new THREE.Mesh(sphereGeom, sphereMaterial);
         setPrimitiveData({
             visible: true, name: 'sphere', mesh: sphere,
-            params: { radius: sphereGeom.parameters.radius },
+            params: {
+                radius: sphereGeom.parameters.radius
+            },
             position: sphere.position
         })
     }
