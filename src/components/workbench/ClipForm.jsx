@@ -142,7 +142,6 @@ export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
                         onClick={() => setParams((prev) => ({ ...prev, normalX: 0, normalY: 0, normalZ: 1 }))}>
                         Z Normal
                     </button>
-
                 </div>
                 <button type='button' className="px-2 rounded-md text-day-300 h-8 border bg-day-50 hover:bg-day-100 
                             active:bg-day-150 items-center justify-center disabled:opacity-50

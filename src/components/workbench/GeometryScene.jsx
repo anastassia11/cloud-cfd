@@ -135,7 +135,7 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
 
     useImperativeHandle(ref, () => ({
         hidePartObject, handlePositionChange, handleCloseForm, addTransformControl,
-        changeBoxData, changeCylinderData, changeSphereData, addToGeomScene, removeFromGeomScene, addPrimitive, computeBoundingBox
+        changePrimitiveData, addToGeomScene, removeFromGeomScene, addPrimitive, computeBoundingBox
     }))
 
     async function loadGeoms() {
@@ -516,47 +516,84 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         })
     }
 
-    const changeBoxData = (newData) => {
-        const { x, y, z } = newData.position
-        const { width, height, depth } = newData.params
-        const newBoxPatternGeom = new THREE.BoxGeometry(width, height, depth);
-        sceneRef.current.children.forEach((object) => {
-            if (object.isMesh && object.uuid === newData.mesh.uuid) {
-                object.geometry.dispose()
-                object.geometry = newBoxPatternGeom
-                object.position.set(x, y, z)
-                object.material = newData.mesh.material
-            }
-        })
-    }
+    const changePrimitiveData = (newData) => {
+        const { x, y, z } = newData.position;
+        const { axisX, axisY, axisZ } = newData.axis;
+        const normalVector = new THREE.Vector3(axisX, axisY, axisZ);
+        let newGeom;
 
-    const changeCylinderData = (newData) => {
-        const { x, y, z } = newData.position
-        const { radius, height } = newData.params
-        const newCylinderPatternGeom = new THREE.CylinderGeometry(radius, radius, height);
-        sceneRef.current.children.forEach((object) => {
-            if (object.isMesh && object.uuid === newData.mesh.uuid) {
-                object.geometry.dispose()
-                object.geometry = newCylinderPatternGeom
-                object.position.set(x, y, z)
-                object.material = newData.mesh.material
-            }
-        })
-    }
+        if (newData.name === 'box') {
+            const { width, height, depth } = newData.params;
+            newGeom = new THREE.BoxGeometry(width, height, depth);
+        } else if (newData.name === 'cylinder') {
+            const { radius, height } = newData.params;
+            newGeom = new THREE.CylinderGeometry(radius, radius, height);
+        } else if (newData.name === 'sphere') {
+            const { radius } = newData.params;
+            newGeom = new THREE.SphereGeometry(radius, 16 * radius, 8 * radius);
+        }
 
-    const changeSphereData = (newData) => {
-        const { x, y, z } = newData.position
-        const { radius } = newData.params
-        const newSpherePatternGeom = new THREE.SphereGeometry(radius, 16 * radius, 8 * radius);
         sceneRef.current.children.forEach((object) => {
             if (object.isMesh && object.uuid === newData.mesh.uuid) {
-                object.geometry.dispose()
-                object.geometry = newSpherePatternGeom
-                object.position.set(x, y, z)
-                object.material = newData.mesh.material
+                object.geometry.dispose();
+                object.geometry = newGeom;
+                object.position.set(x, y, z);
+                object.lookAt(new THREE.Vector3(object.position.x + normalVector.x, object.position.y + normalVector.y, object.position.z + normalVector.z));
+                object.material = newData.mesh.material;
             }
-        })
-    }
+        });
+    };
+
+    // const changeBoxData = (newData) => {
+    //     const { x, y, z } = newData.position
+    //     const { width, height, depth } = newData.params
+    //     const { axisX, axisY, axisZ } = newData.axis
+    //     const normalVector = new THREE.Vector3(axisX, axisY, axisZ)
+    //     const newBoxPatternGeom = new THREE.BoxGeometry(width, height, depth);
+    //     sceneRef.current.children.forEach((object) => {
+    //         if (object.isMesh && object.uuid === newData.mesh.uuid) {
+    //             object.geometry.dispose()
+    //             object.geometry = newBoxPatternGeom
+    //             object.position.set(x, y, z)
+    //             object.lookAt(new THREE.Vector3(object.position.x + normalVector.x, object.position.y + normalVector.y, object.position.z + normalVector.z));
+    //             object.material = newData.mesh.material
+    //         }
+    //     })
+    // }
+
+    // const changeCylinderData = (newData) => {
+    //     const { x, y, z } = newData.position
+    //     const { radius, height } = newData.params
+    //     const { axisX, axisY, axisZ } = newData.axis
+    //     const normalVector = new THREE.Vector3(axisX, axisY, axisZ)
+    //     const newCylinderPatternGeom = new THREE.CylinderGeometry(radius, radius, height);
+    //     sceneRef.current.children.forEach((object) => {
+    //         if (object.isMesh && object.uuid === newData.mesh.uuid) {
+    //             object.geometry.dispose()
+    //             object.geometry = newCylinderPatternGeom
+    //             object.position.set(x, y, z)
+    //             object.lookAt(new THREE.Vector3(object.position.x + normalVector.x, object.position.y + normalVector.y, object.position.z + normalVector.z));
+    //             object.material = newData.mesh.material
+    //         }
+    //     })
+    // }
+
+    // const changeSphereData = (newData) => {
+    //     const { x, y, z } = newData.position
+    //     const { radius } = newData.params
+    //     const { axisX, axisY, axisZ } = newData.axis
+    //     const normalVector = new THREE.Vector3(axisX, axisY, axisZ)
+    //     const newSpherePatternGeom = new THREE.SphereGeometry(radius, 16 * radius, 8 * radius);
+    //     sceneRef.current.children.forEach((object) => {
+    //         if (object.isMesh && object.uuid === newData.mesh.uuid) {
+    //             object.geometry.dispose()
+    //             object.geometry = newSpherePatternGeom
+    //             object.position.set(x, y, z)
+    //             object.lookAt(new THREE.Vector3(object.position.x + normalVector.x, object.position.y + normalVector.y, object.position.z + normalVector.z));
+    //             object.material = newData.mesh.material
+    //         }
+    //     })
+    // }
 
     const addToGeomScene = (object) => {
         sceneRef.current.add(object)

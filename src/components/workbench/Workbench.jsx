@@ -52,7 +52,8 @@ export default function Workbench() {
         name: '',
         mesh: {},
         params: {},
-        position: {}
+        position: {},
+        axis: {}
     })
 
     const [clipPlane, setClipPlane] = useState({
@@ -60,13 +61,7 @@ export default function Workbench() {
     })
 
     useEffect(() => {
-        if (primitiveData.name === 'box') {
-            geometrySceneRef.current.changeBoxData(primitiveData)
-        } else if (primitiveData.name === 'cylinder') {
-            geometrySceneRef.current.changeCylinderData(primitiveData)
-        } else if (primitiveData.name === 'sphere') {
-            geometrySceneRef.current.changeSphereData(primitiveData)
-        }
+        geometrySceneRef.current.changePrimitiveData(primitiveData)
     }, [primitiveData])
 
         ; (function init() {

@@ -10,47 +10,6 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
     const [selectMode, setSelectMode] = useState(selectModeProp)
     const [renderMode, setRenderMode] = useState(renderModeProp)
 
-    const handleBoxClick = () => {
-        const boxGeom = new THREE.BoxGeometry(3, 30, 30);
-        const boxMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
-        const box = new THREE.Mesh(boxGeom, boxMaterial);
-        setPrimitiveData({
-            visible: true, name: 'box', mesh: box,
-            params: {
-                width: boxGeom.parameters.width,
-                height: boxGeom.parameters.height,
-                depth: boxGeom.parameters.depth
-            }, position: box.position
-        })
-    }
-
-    const handleCylinderClick = () => {
-        const cylinderGeom = new THREE.CylinderGeometry(5, 5, 20)
-        const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true })
-        const cylinder = new THREE.Mesh(cylinderGeom, cylinderMaterial);
-        setPrimitiveData({
-            visible: true, name: 'cylinder', mesh: cylinder,
-            params: {
-                height: cylinderGeom.parameters.height,
-                radius: cylinderGeom.parameters.radiusTop
-            },
-            position: cylinder.position
-        })
-    }
-
-    const handleSphereClick = () => {
-        const sphereGeom = new THREE.SphereGeometry(8, 128, 64)
-        const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true })
-        const sphere = new THREE.Mesh(sphereGeom, sphereMaterial);
-        setPrimitiveData({
-            visible: true, name: 'sphere', mesh: sphere,
-            params: {
-                radius: sphereGeom.parameters.radius
-            },
-            position: sphere.position
-        })
-    }
-
     useEffect(() => {
         selectModeChange(selectMode)
     }, [selectMode])
@@ -58,6 +17,55 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
     useEffect(() => {
         renderModeChange(renderMode)
     }, [renderMode])
+
+    const createPrimitive = (type) => {
+        let geom, material, mesh, params;
+        switch (type) {
+            case 'box':
+                params = {
+                    width: 10,
+                    height: 10,
+                    depth: 10
+                };
+                geom = new THREE.BoxGeometry(params.width, params.height, params.depth);
+                material = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
+                mesh = new THREE.Mesh(geom, material);
+                break;
+            case 'cylinder':
+                params = {
+                    radius: 5,
+                    height: 20
+                };
+                geom = new THREE.CylinderGeometry(params.radius, params.radius, params.height);
+                material = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
+                mesh = new THREE.Mesh(geom, material);
+                break;
+            case 'sphere':
+                params = {
+                    radius: 8
+                };
+                geom = new THREE.SphereGeometry(params.radius, 16 * params.radius, 8 * params.radius);
+                material = new THREE.MeshBasicMaterial({ color: 0x0078d3, opacity: 0.5, transparent: true });
+                mesh = new THREE.Mesh(geom, material);
+                break;
+            default:
+                throw new Error(`Unsupported primitive type: ${type}`);
+        }
+        const normalVector = new THREE.Vector3(0, 0, 1);
+        mesh.lookAt(new THREE.Vector3(mesh.position.x + normalVector.x, mesh.position.y + normalVector.y, mesh.position.z + normalVector.z));
+        setPrimitiveData({
+            visible: true,
+            name: type,
+            mesh: mesh,
+            params: params,
+            position: mesh.position,
+            axis: {
+                axisX: normalVector.x,
+                axisY: normalVector.y,
+                axisZ: normalVector.z
+            }
+        })
+    }
 
     return (
         <div className='flex h-[40px] items-center justify-end grow justify-self-end'>
@@ -202,19 +210,19 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
                     <div className='flex flex-col justify-center h-fit'>
                         <button className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
                                         hover:bg-day-100 rounded-md h-fit'
-                            onClick={handleBoxClick}>
+                            onClick={() => createPrimitive('box')}>
                             <SvgSelector id='cube' className='w-[20px] text-day-350' />
                             <p className='text-[11px] tracking-wide'>Box</p>
                         </button>
                         <button className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
                                         hover:bg-day-100 rounded-md h-fit'
-                            onClick={handleCylinderClick}>
+                            onClick={() => createPrimitive('cylinder')}>
                             <SvgSelector id='cylinder' className='w-[20px] text-day-350' />
                             <p className='text-[11px] tracking-wide'>Cylinder</p>
                         </button>
                         <button className='flex flex-col pt-2 items-center space-x-1 text-day-1000 
                                         hover:bg-day-100 rounded-md h-fit'
-                            onClick={handleSphereClick}>
+                            onClick={() => createPrimitive('sphere')}>
                             <SvgSelector id='sphere' className='w-[20px] text-day-350' />
                             <p className='text-[11px] tracking-wide'>Sphere</p>
                         </button>
