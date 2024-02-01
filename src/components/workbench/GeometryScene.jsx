@@ -274,6 +274,17 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         );
         composer.addPass(outlinePass.current);
         transformControl.current = new TransformControls(camera.current, renderer.current.domElement);
+        window.addEventListener('keydown', function (event) {
+            switch (event.code) {
+                case 'KeyW':
+                    transformControl.current.setMode('translate');
+                    break;
+
+                case 'KeyE':
+                    transformControl.current.setMode('rotate');
+                    break;
+            }
+        });
     }
 
     function animate() {
@@ -543,57 +554,6 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
             }
         });
     };
-
-    // const changeBoxData = (newData) => {
-    //     const { x, y, z } = newData.position
-    //     const { width, height, depth } = newData.params
-    //     const { axisX, axisY, axisZ } = newData.axis
-    //     const normalVector = new THREE.Vector3(axisX, axisY, axisZ)
-    //     const newBoxPatternGeom = new THREE.BoxGeometry(width, height, depth);
-    //     sceneRef.current.children.forEach((object) => {
-    //         if (object.isMesh && object.uuid === newData.mesh.uuid) {
-    //             object.geometry.dispose()
-    //             object.geometry = newBoxPatternGeom
-    //             object.position.set(x, y, z)
-    //             object.lookAt(new THREE.Vector3(object.position.x + normalVector.x, object.position.y + normalVector.y, object.position.z + normalVector.z));
-    //             object.material = newData.mesh.material
-    //         }
-    //     })
-    // }
-
-    // const changeCylinderData = (newData) => {
-    //     const { x, y, z } = newData.position
-    //     const { radius, height } = newData.params
-    //     const { axisX, axisY, axisZ } = newData.axis
-    //     const normalVector = new THREE.Vector3(axisX, axisY, axisZ)
-    //     const newCylinderPatternGeom = new THREE.CylinderGeometry(radius, radius, height);
-    //     sceneRef.current.children.forEach((object) => {
-    //         if (object.isMesh && object.uuid === newData.mesh.uuid) {
-    //             object.geometry.dispose()
-    //             object.geometry = newCylinderPatternGeom
-    //             object.position.set(x, y, z)
-    //             object.lookAt(new THREE.Vector3(object.position.x + normalVector.x, object.position.y + normalVector.y, object.position.z + normalVector.z));
-    //             object.material = newData.mesh.material
-    //         }
-    //     })
-    // }
-
-    // const changeSphereData = (newData) => {
-    //     const { x, y, z } = newData.position
-    //     const { radius } = newData.params
-    //     const { axisX, axisY, axisZ } = newData.axis
-    //     const normalVector = new THREE.Vector3(axisX, axisY, axisZ)
-    //     const newSpherePatternGeom = new THREE.SphereGeometry(radius, 16 * radius, 8 * radius);
-    //     sceneRef.current.children.forEach((object) => {
-    //         if (object.isMesh && object.uuid === newData.mesh.uuid) {
-    //             object.geometry.dispose()
-    //             object.geometry = newSpherePatternGeom
-    //             object.position.set(x, y, z)
-    //             object.lookAt(new THREE.Vector3(object.position.x + normalVector.x, object.position.y + normalVector.y, object.position.z + normalVector.z));
-    //             object.material = newData.mesh.material
-    //         }
-    //     })
-    // }
 
     const addToGeomScene = (object) => {
         sceneRef.current.add(object)

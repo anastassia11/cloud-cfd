@@ -3,7 +3,7 @@ import { Oval } from 'react-loader-spinner'
 import SvgSelector from '../SvgSelector'
 import Modal from '../Modal'
 import { useDispatch, useSelector } from 'react-redux'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { setMeshes } from '@/store/slices/meshSlice'
 
 export default function GeometryRow({ geometry, loading }) {

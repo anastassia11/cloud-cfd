@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { memo, useEffect, useRef, useState } from "react"
 import SvgSelector from "../SvgSelector"
 import addGeometry from '@/api/set_geometry'
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,24 +12,22 @@ import GeometryRow from './GeometryRow'
 import { setLoader } from '@/store/slices/loaderSlice'
 import { setMeshes } from '@/store/slices/meshSlice'
 
-export default function GeometryForm({ }) {
-    const geoms = useSelector(state => state.project.geometries)
+const GeometryForm = memo(({ }) => {
+    const geoms = useSelector(state => state.project.geometries) ?? []
     const projectId = useSelector(state => state.project.projectId)
     const meshes = useSelector(state => state.mesh.meshes) ?? []
 
     const [drag, setDrag] = useState(false)
-    const [loading, setLoading] = useState([])
-    const [files, setFiles] = useState(geoms || [])
-    const [fileCount, setFileCount] = useState(geoms?.length ?? 0)
+
+    const [loading, setLoading] = useState(new Array(geoms.length).fill(false))
+    const [files, setFiles] = useState(geoms)
+    const [fileCount, setFileCount] = useState(geoms.length)
+
+
     const [modal, setModal] = useState(false)
     const newFiles = useRef(null)
 
     const dispatch = useDispatch()
-
-    useEffect(() => {
-        geoms && setFiles(geoms)
-        setFileCount(geoms?.length ?? 0)
-    }, [geoms])
 
     const handleGeometrySubmit = (e) => {
         e.preventDefault()
@@ -63,27 +61,12 @@ export default function GeometryForm({ }) {
     }
 
     async function handleSetGeometry(geometryData, index) {
-        setLoading((prevLoading) => {
-            const newLoading = [...prevLoading]
-            newLoading[index] = true
-            return newLoading
-        })
-
         const result = await addGeometry(geometryData)
         if (result.success) {
-            loadGeoms()
-            setLoading((prevLoading) => {
-                const newLoading = [...prevLoading]
-                newLoading[index] = false
-                return newLoading
-            })
+            setLoading((prevLoading) => ({ ...prevLoading, [index]: false }));
         } else {
             alert(result.message)
-            setLoading((prevLoading) => {
-                const newLoading = [...prevLoading]
-                newLoading[index] = false
-                return newLoading
-            })
+            setLoading((prevLoading) => ({ ...prevLoading, [index]: false }));
         }
     }
 
@@ -93,13 +76,15 @@ export default function GeometryForm({ }) {
         meshes.length ? setModal(true) : handleLoadClick()
     }
 
-    function handleLoadClick() {
+    async function handleLoadClick() {
         setModal(false)
         setFiles((prevFiles) => [...prevFiles, ...newFiles.current])
+        setLoading((prevLoading) => [...prevLoading, ...newFiles.current.map(() => true)])
         setFileCount((prevCount) => prevCount + newFiles.current.length)
-        newFiles.current.forEach((file, index) => {
-            handleSetGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file }, fileCount + index)
-        })
+        await Promise.all(newFiles.current.map(async (file, index) => {
+            await handleSetGeometry({ 'Angle': '120', 'IdProject': projectId, 'File': file }, fileCount + index);
+        }));
+        loadGeoms()
         dispatch(setMeshes({ meshes: [] }))
     }
 
@@ -110,13 +95,14 @@ export default function GeometryForm({ }) {
         </div>}
     </>
 
-    const filesArray = <div className='mt-2'>
-        {files?.map((file, index) => (
-            <div key={index}>
-                <GeometryRow geometry={file} loading={loading[index]} />
-            </div>
-        ))}
-    </div>
+    const filesArray =
+        <div className='mt-2'>
+            {files?.map((file, index) => {
+                return <div key={index}>
+                    <GeometryRow geometry={file} loading={loading[index]} />
+                </div>
+            })}
+        </div>
 
     const upload = <div className='h-36 pt-3'>
         {drag
@@ -168,4 +154,5 @@ export default function GeometryForm({ }) {
                 title={title} message='Mesh will be deleted.' btnTitle='OK' /> : ''}
         </>
     )
-}
+})
+export default GeometryForm;

@@ -80,7 +80,7 @@ export default function PrimitiveForm({ primitiveDataProp, onPrimitiveDataChange
 
     const Input = ({ label, name, valueProp, onChangeProp }) => {
         return (
-            <div className='flex flex-row items-center justify-between'>
+            <div className='flex flex-row items-center justify-between '>
                 <label className=''>{label}</label>
                 <div className='flex flex-row items-center mr-2 '>
                     <input type='number' step='any' name={name} id={name} value={valueProp} onChange={onChangeProp}
@@ -140,7 +140,11 @@ export default function PrimitiveForm({ primitiveDataProp, onPrimitiveDataChange
                 </div>
                 <div className='flex flex-col mt-3 text-day-350'>
                     <div className='flex flex-col justify-between space-y-2'>
-                        <div className='flex flex-row cursor-pointer'
+
+
+
+
+                        <div className='flex flex-row cursor-pointer items-center'
                             onClick={() => setParamsVisible(prev => !prev)}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                                 className={`min-w-[20px] h-5 duration-300 ${paramsVisible ? 'rotate-180' : ''}`}>
@@ -159,14 +163,14 @@ export default function PrimitiveForm({ primitiveDataProp, onPrimitiveDataChange
                                 })
                             )}
                         </div> : ''}
-                        <div className='flex flex-row cursor-pointer'
+                        <div className='flex flex-row cursor-pointer items-center'
                             onClick={() => setPositionVisible(prev => !prev)}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                                 className={`min-w-[20px] h-5 duration-300 ${positionVisible ? 'rotate-180' : ''}`}>
                                 <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 
                         1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
                             </svg>
-                            <p className='font-semibold ml-[7px]'>Center</p>
+                            <p className='font-semibold ml-[7px] mr-2'>Center</p>
                         </div>
                         {positionVisible ? <div className='flex flex-col space-y-2 ml-[27px] mt-2'>
                             {positionKeys.map(key =>
@@ -179,7 +183,7 @@ export default function PrimitiveForm({ primitiveDataProp, onPrimitiveDataChange
                             )}
                         </div> : ''}
                         {primitiveData.name !== 'sphere' && <>
-                            <div className='flex flex-row cursor-pointer'
+                            <div className='flex flex-row cursor-pointer items-center'
                                 onClick={() => setAxisVisible(prev => !prev)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                                     className={`min-w-[20px] h-5 duration-300 ${axisVisible ? 'rotate-180' : ''}`}>
