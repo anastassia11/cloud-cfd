@@ -90,11 +90,14 @@ export default function MeshForm({ computeBoundingBox }) {
         dispatch(resetSetting())
     }
 
-    function handleLayerChange(surfaceLayers) {
+    function handleStlParamsChange(newParams) {
         const _geoms = formData.StlGeomertrys
         _geoms.forEach(({ Regions }) => {
-            Regions.forEach(({ BoundaryLayer, uid }) => {
-                BoundaryLayer.NSurfaceLayers = surfaceLayers[uid];
+            Regions.forEach(({ BoundaryLayer, uid, RefinementSettings }) => {
+                BoundaryLayer.NSurfaceLayers = newParams[uid].NSurfaceLayers;
+                RefinementSettings.Min = newParams[uid].Min;
+                RefinementSettings.Max = newParams[uid].Max;
+                RefinementSettings.IsEnabled = newParams[uid].Min === 0 && newParams[uid].Max === 0 ? false : true
             })
         });
         setFormData((prev) => ({ ...prev, StlGeomertrys: _geoms }));
@@ -384,7 +387,7 @@ export default function MeshForm({ computeBoundingBox }) {
                             {formData.LayersThicknessType === "Thickness" &&
                                 Input({ label: 'Thickness', name: 'Thickness' })}
                         </div>
-                        <BoundaryLayer onLayerChange={handleLayerChange} stlGeometries={formData.StlGeomertrys} />
+                        <BoundaryLayer onParamsChange={handleStlParamsChange} stlGeometries={formData.StlGeomertrys} />
                     </>}
                     <div className='mt-1 px-2'>
                         <div className='flex flex-row cursor-pointer'

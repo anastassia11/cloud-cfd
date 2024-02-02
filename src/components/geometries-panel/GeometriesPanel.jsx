@@ -79,20 +79,26 @@ export default function GeometriesPanel({ onHidePartObject }) {
     }
 
     const Clip = ({ clip }) => {
+        // const [modalClip, setModalClip] = useState(false);
         const { name, uid, path } = clip;
         return (
-            <div className={`cursor-pointer w-full flex items-center justify-between rounded-md text-day-350 h-9 
+            <>
+                <div className={`cursor-pointer w-full flex items-center justify-between rounded-md text-day-350 h-9 
                                     hover:bg-day-150 active:bg-day-200 overflow-hidden group
                                     ${currentMesh.uid === uid ? 'bg-day-150' : ''}`}
-                onClick={() => dispatch(setCurrentMesh({ uid, path, isClip: true }))}>
-                <p className='pl-[9px] text-ellipsis whitespace-nowrap overflow-hidden'>{name}</p>
-                <div className='pr-2 flex flex-row items-center'>
-                    <button className='invisible group-hover:visible'
-                        onClick={() => handleDeleteClip(uid)}>
-                        <SvgSelector id='delete' className="h-5 w-5" />
-                    </button>
+                    onClick={() => dispatch(setCurrentMesh({ uid, path, isClip: true }))}>
+                    <p className='pl-[9px] text-ellipsis whitespace-nowrap overflow-hidden'>{name}</p>
+                    <div className='pr-2 flex flex-row items-center'>
+                        <button className='invisible group-hover:visible'
+                            onClick={() => handleDeleteClip(uid)}>
+                            <SvgSelector id='delete' className="h-5 w-5" />
+                        </button>
+                    </div>
                 </div>
-            </div>
+                {/* {modalClip ? <Modal onCloseClick={() => setModalClip(false)} onActionClick={() => handleDeleteClip(uid)}
+                    title='Delete clip' message={`${name} will be deleted forever.`} btnTitle='Delete' /> : ''} */}
+            </>
+
         )
     }
 

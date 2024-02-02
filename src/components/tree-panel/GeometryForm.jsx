@@ -1,15 +1,12 @@
-import { memo, useEffect, useRef, useState } from "react"
+import { memo, useRef, useState } from "react"
 import SvgSelector from "../SvgSelector"
 import addGeometry from '@/api/set_geometry'
 import { useDispatch, useSelector } from 'react-redux'
 import getGeometries from '@/api/get_geometries'
-import { deleteGeometries, setGeometries } from '@/store/slices/projectSlice'
+import { setGeometries } from '@/store/slices/projectSlice'
 import { resetSetting } from '@/store/slices/settingSlice'
-import { Oval } from 'react-loader-spinner'
 import Modal from '../Modal'
-import Geometry from '../geometries-panel/Geometry'
 import GeometryRow from './GeometryRow'
-import { setLoader } from '@/store/slices/loaderSlice'
 import { setMeshes } from '@/store/slices/meshSlice'
 
 const GeometryForm = memo(({ }) => {

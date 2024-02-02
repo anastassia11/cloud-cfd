@@ -87,7 +87,8 @@ export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
                     value={params[name]}
                     onChange={paramsChange}
                     disabled={loader}
-                    className='w-[150px] h-[6px] bg-gray-300 accent-orange-200 rounded-full appearance-none cursor-pointer disabled:opacity-50' />
+                    className='w-[150px] h-[6px] bg-gray-300 accent-orange-200 rounded-full appearance-none cursor-pointer 
+                    disabled:opacity-50 disabled:cursor-default disabled:accent-gray-300'/>
                 <input type='number' step='any' name={name} id={name}
                     value={params[name].toFixed(3)} onChange={paramsChange} disabled={loader}
                     className='h-8 w-[70px] text-center focus:outline-[0] text-day-350 border-b 
@@ -103,14 +104,14 @@ export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
                 <div className='flex flex-row space-x-[6px]'>
                     <button disabled={loader} type="button"
                         className="text-base font-medium text-white 
-                            bg-orange-200 hover:bg-orange-100 active:bg-orange-150 duration-300 
+                            bg-orange-200 hover:bg-orange-100 active:bg-orange-150 duration-300 disabled:bg-orange-200
                             rounded-md  w-8 h-8 border flex items-center justify-center disabled:opacity-50"
                         onClick={fetchCreateClip} >
                         <SvgSelector id='check' />
                     </button>
                     <button disabled={loader} type="button"
                         className="rounded-md text-day-300 w-8 h-8 border bg-day-50 hover:bg-day-100 
-                            active:bg-day-150 flex items-center justify-center disabled:opacity-50"
+                            active:bg-day-150 flex items-center justify-center disabled:opacity-50 disabled:bg-day-50"
                         onClick={onCloseForm} >
                         <SvgSelector id='close' />
                     </button>
@@ -127,24 +128,24 @@ export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
                 {Input({ label: 'Z', name: 'normalZ' })}
 
                 <div className='flex flex-row justify-between'>
-                    <button type='button' className="px-2 rounded-md text-day-300 h-8 border bg-day-50 hover:bg-day-100 
-                            active:bg-day-150 flex items-center justify-center disabled:opacity-50"
+                    <button disabled={loader} type='button' className="px-2 rounded-md text-day-300 h-8 border bg-day-50 hover:bg-day-100 
+                            active:bg-day-150 flex items-center justify-center disabled:opacity-50 disabled:bg-day-50"
                         onClick={() => setParams((prev) => ({ ...prev, normalX: 1, normalY: 0, normalZ: 0 }))}>
                         X Normal
                     </button>
-                    <button type='button' className="px-2 rounded-md text-day-300 h-8 border bg-day-50 hover:bg-day-100 
-                            active:bg-day-150 flex items-center justify-center disabled:opacity-50"
+                    <button disabled={loader} type='button' className="px-2 rounded-md text-day-300 h-8 border bg-day-50 hover:bg-day-100 
+                            active:bg-day-150 flex items-center justify-center disabled:opacity-50 disabled:bg-day-50"
                         onClick={() => setParams((prev) => ({ ...prev, normalX: 0, normalY: 1, normalZ: 0 }))}>
                         Y Normal
                     </button>
-                    <button type='button' className="px-2 rounded-md text-day-300 h-8 border bg-day-50 hover:bg-day-100 
-                            active:bg-day-150 flex items-center justify-center disabled:opacity-50"
+                    <button disabled={loader} type='button' className="px-2 rounded-md text-day-300 h-8 border bg-day-50 hover:bg-day-100 
+                            active:bg-day-150 flex items-center justify-center disabled:opacity-50 disabled:bg-day-50"
                         onClick={() => setParams((prev) => ({ ...prev, normalX: 0, normalY: 0, normalZ: 1 }))}>
                         Z Normal
                     </button>
                 </div>
-                <button type='button' className="px-2 rounded-md text-day-300 h-8 border bg-day-50 hover:bg-day-100 
-                            active:bg-day-150 items-center justify-center disabled:opacity-50
+                <button disabled={loader} type='button' className="px-2 rounded-md text-day-300 h-8 border bg-day-50 hover:bg-day-100 
+                            active:bg-day-150 items-center justify-center disabled:opacity-50 disabled:bg-day-50
                             flex flex-row space-x-2 w-full"
                     onClick={() => setParams((prev) => (
                         { ...prev, normalX: -params.normalX, normalY: -params.normalY, normalZ: -params.normalZ }

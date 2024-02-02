@@ -85,22 +85,9 @@ export default function ControlPanel({ selectModeProp, selectModeChange, renderM
                                     opacity-0 group-hover:opacity-100 '>
                             <div className='flex flex-col justify-center h-fit'>
                                 <button className='rounded-md w-8 h-8 flex items-center justify-center hover:bg-day-100'
-                                    onClick={() => setRenderMode('surfaces')}
-                                    data-tooltip-id="surfaces-render-mode"
-                                    data-tooltip-content="Surfaces"
-                                    data-tooltip-place="right"
-                                    data-tooltip-variant="light" >
+                                    onClick={() => setRenderMode('surfaces')}>
                                     <SvgSelector id='surfaces-render-mode' className='w-6' />
                                 </button>
-                                <Tooltip id="surfaces-render-mode"
-                                    style={{
-                                        fontSize: "11px",
-                                        height: "20px",
-                                        padding: "1px 8px 1px 8px",
-                                        whiteSpace: "nowrap",
-                                        display: "flex",
-                                        alignItems: "center",
-                                    }} />
                                 <button className='rounded-md w-8 h-8 flex items-center justify-center hover:bg-day-100'
                                     onClick={() => setRenderMode('translucent')}
                                     data-tooltip-id="translucent-render-mode"
