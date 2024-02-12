@@ -448,9 +448,9 @@ export default function DemoHome() {
                     <p className='text-day-350'>cloud.platform@mail.ru</p>
                 </a>
                 <div className='w-full flex flex-row items-top justify-between'>
-                    {/* <p className='text-sm text-day-300 flex-1 pr-3'>
+                    <p className='text-sm text-day-300 flex-1 pr-3'>
                         При поддержке Фонда содействия инновациям
-                    </p> */}
+                    </p>
                     <a href="mailto:cloud.platform@mail.ru" className="hidden md:flex flex-1 text-gray-400 space-x-2 flex-row w-full items-top justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
