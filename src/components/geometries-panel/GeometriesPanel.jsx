@@ -27,7 +27,7 @@ export default function GeometriesPanel({ onHidePartObject }) {
         !meshes.length && dispatch(setSceneMode('geom'))
     }, [meshes])
 
-    async function fetchMeshes() {
+    const fetchMeshes = async () => {
         const result = await getMeshDataJson(projectId)
         if (result.success) {
             dispatch(setMeshes({ meshes: result.data.meshes }))
@@ -40,12 +40,12 @@ export default function GeometriesPanel({ onHidePartObject }) {
         }
     }
 
-    function handleDeleteClick(e) {
+    const handleDeleteClick = (e) => {
         e.stopPropagation()
         setModalMesh(true)
     }
 
-    async function deleteMeshes() {
+    const deleteMeshes = async () => {
         const result = await deleteMesh(projectId)
         if (result.success) {
             dispatch(setMeshes({ meshes: [] }))
@@ -55,7 +55,7 @@ export default function GeometriesPanel({ onHidePartObject }) {
         setModalMesh(false)
     }
 
-    async function handleDeleteClip(uidClip) {
+    const handleDeleteClip = async (uidClip) => {
         const result = await deleteClip(projectId, uidClip)
         if (result.success) {
             let newMeshes = meshes.map(mesh => {
@@ -74,7 +74,7 @@ export default function GeometriesPanel({ onHidePartObject }) {
         }
     }
 
-    function handleMeshClick() {
+    const handleMeshClick = () => {
         meshes.length && dispatch(setSceneMode('mesh'))
     }
 
@@ -152,7 +152,7 @@ export default function GeometriesPanel({ onHidePartObject }) {
                 </button>
             </div>
             <div className='overflow-y-auto'>
-                {sceneMode === 'geom' && geoms.length > 0 ? <ul className='m-2'>
+                {sceneMode === 'geom' && geoms.length > 0 ? <ul className='my-2'>
                     {geoms.map(geom => (
                         <li key={geom.uid}>
                             <Geometry geom={geom} hidePartObject={onHidePartObject} />

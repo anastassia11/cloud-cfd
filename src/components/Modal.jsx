@@ -6,13 +6,13 @@ export default function Modal({ title, btnTitle, message, onActionClick, onClose
     const [loading, setLoading] = useState(false)
     const modalRef = useRef(null)
 
-    function handleKeyDown(e) {
+    const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             onActionClick()
         }
     }
 
-    function handleOkClick() {
+    const handleOkClick = () => {
         setLoading(true)
         onActionClick()
     }

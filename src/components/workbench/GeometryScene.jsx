@@ -138,7 +138,7 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         changePrimitiveData, addToGeomScene, removeFromGeomScene, addPrimitive, computeBoundingBox
     }))
 
-    async function loadGeoms() {
+    const loadGeoms = async () => {
         dispatch(setLoader(true))
         const result = await getGeometries(projectId)
         if (result.success && result.status === 200) {
@@ -151,7 +151,7 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         }
     }
 
-    async function sendPreview(preview) {
+    const sendPreview = async (preview) => {
         const result = await setPreview(projectId, preview)
         if (result.success) {
 
@@ -160,7 +160,7 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         }
     }
 
-    async function loadSTL(geometryDataList) {
+    const loadSTL = async (geometryDataList) => {
         const stlLoader = new STLLoader();
         geometryDataList?.forEach((geom) => {
             if (!groups.some(group => group.uid === geom.uid)) {
@@ -204,13 +204,13 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         }
     }
 
-    function onWindowResize() {
+    const onWindowResize = () => {
         camera.current.aspect = window.innerWidth / window.innerHeight;
         camera.current.updateProjectionMatrix();
         renderer.current.setSize(window.innerWidth, window.innerHeight - 56);
     }
 
-    function init() {
+    const init = () => {
         sceneRef.current = new THREE.Scene()
         window.addEventListener('resize', onWindowResize)
 
@@ -287,14 +287,14 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         });
     }
 
-    function animate() {
+    const animate = () => {
         requestAnimationFrame(animate)
         renderer.current.render(sceneRef.current, camera.current)
         orbitControls.update()
         composer.render()
     }
 
-    function takeSnapshot() {
+    const takeSnapshot = () => {
         const dataUrl = renderer.current.domElement.toDataURL('image/jpeg');
         const byteCharacters = atob(dataUrl.split(',')[1]);
         const byteNumbers = new Array(byteCharacters.length);
@@ -306,26 +306,26 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         sendPreview(blob);
     }
 
-    function addListeners() {
+    const addListeners = () => {
         renderer.current.domElement.addEventListener("click", handleClick)
         renderer.current.domElement.addEventListener("pointermove", handleHover)
     }
 
-    function removeListeners() {
+    const removeListeners = () => {
         renderer.current.domElement.removeEventListener("click", handleClick)
         renderer.current.domElement.removeEventListener("pointermove", handleHover)
     }
 
-    function addTransformListeners() {
+    const addTransformListeners = () => {
         transformControl.current.addEventListener('dragging-changed', handleTransformMove)
         transformControl.current.addEventListener('change', handleTransformChange)
     }
-    function removeTransformListeners() {
+    const removeTransformListeners = () => {
         transformControl.current.removeEventListener('dragging-changed', handleTransformMove)
         transformControl.current.removeEventListener('change', handleTransformMove)
     }
 
-    function handleTransformChange() {
+    const handleTransformChange = () => {
         const objectTypes = {
             'Mesh': () => setPrimitiveData({ position: transformControl.current?.object?.position }),
             'Group': () => setTransformFormData({ position: transformControl.current?.object?.position }),
@@ -344,17 +344,17 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         }
     }
 
-    function handleTransformMove(event) {
+    const handleTransformMove = (event) => {
         orbitControls.enabled = !event.value;
     }
 
-    function addTransformControl(object) {
+    const addTransformControl = (object) => {
         transformControl.current.attach(object)
         transformControl.current.uid = object.uid
         sceneRef.current.add(transformControl.current)
     }
 
-    function handleClick(event) {
+    const handleClick = (event) => {
         event.stopPropagation()
         const mouse = new THREE.Vector2();
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -378,14 +378,14 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
                     } else {
                         // Если не все грани из группы выбраны, добавляем 
                         // в массив недостающие грани
-                        newFaces = group.children
+                        const newFaces = group.children
                             .filter((child) => child.isMesh && !selectedUids.includes(child.uid))
                             .map((child) => ({ name: child.name, uid: child.uid }));
                         dispatch(setSelectedParts([...selectedPartsRef.current, ...newFaces]))
                     }
                 } else {
                     // Если выбранной грани нет в массиве, добавить все грани группы, которых еще нет
-                    newFaces = group.children
+                    const newFaces = group.children
                         .filter((child) => child.isMesh && !selectedUids.includes(child.uid))
                         .map((child) => ({ name: child.name, uid: child.uid }));
                     dispatch(setSelectedParts([...selectedPartsRef.current, ...newFaces]))
@@ -518,7 +518,7 @@ function GeometryScene({ selectMode, renderMode, setTransformFormData, setPrimit
         sceneRef.current.remove(transformControl.current)
     }
 
-    function hidePartObject(model) {
+    const hidePartObject = (model) => {
         meshes.forEach((mesh) => {
             if (mesh.uid === model.uid) {
                 mesh.visible = !mesh.visible

@@ -13,12 +13,12 @@ export default function GeometryRow({ geometry, loading }) {
 
     const dispatch = useDispatch()
 
-    function handleDeleteClick(e) {
+    const handleDeleteClick = (e) => {
         e.stopPropagation()
         setDeleteModal(true)
     }
 
-    function deleteGeometry() {
+    const deleteGeometry = () => {
         dispatch(deleteGeometries({ projectId: projectId, deletedGeometry: geometry }))
         dispatch(setMeshes({ meshes: [] }))
         setDeleteModal(false)

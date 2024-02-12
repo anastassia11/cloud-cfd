@@ -1,8 +1,7 @@
-import React from 'react'
-import GeometryForm from './GeometryForm'
-import FormGenerator from './FormGenerator'
+import React, { useEffect } from 'react'
+import GeometryForm from './forms/GeometryForm'
 import { useSelector } from 'react-redux'
-import MeshForm from './MeshForm'
+import LayerForm from './forms/LayerForm'
 
 export default function SettingForm({ }) {
     const formTitle = useSelector(state => state.setting.formTitle)
@@ -12,6 +11,8 @@ export default function SettingForm({ }) {
     const Form = () => {
         if (formName === 'geomerty') {
             return <GeometryForm />
+        } else if (typeof formName === 'string' && formName.startsWith('layer')) {
+            return <LayerForm />
         }
         // else return <FormGenerator value={inputs} formName={formName} formTitle={formTitle} />
 

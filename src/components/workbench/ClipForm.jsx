@@ -33,7 +33,7 @@ export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
         setParams((prev) => ({ ...prev, [name]: Number(value) }));
     }
 
-    function findClipMeshByUid(meshes, clipUid) {
+    const findClipMeshByUid = (meshes, clipUid) => {
         for (const mesh of meshes) {
             for (const clipMesh of mesh.clipMeshes) {
                 if (clipMesh.uid === clipUid) {
@@ -48,7 +48,7 @@ export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
         return null;
     }
 
-    async function fetchMeshes() {
+    const fetchMeshes = async () => {
         const result = await getMeshDataJson(projectId)
         if (result.success) {
             dispatch(setMeshes({ meshes: result.data.meshes }))
@@ -56,8 +56,7 @@ export default function ClipForm({ onCloseForm, onChangeClip, boundingBox }) {
             // alert(result.message)
         }
     }
-
-    async function fetchCreateClip() {
+    const fetchCreateClip = async () => {
         dispatch(setLoader(true));
 
         const { uid, path, isClip } = currentMesh;

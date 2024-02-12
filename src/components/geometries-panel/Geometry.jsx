@@ -37,7 +37,7 @@ export default function Geometry({ geom = [], hidePartObject }) {
         // }
     }, [input])
 
-    function handleUpdate(updatedModelPart) {
+    const handleUpdate = (updatedModelPart) => {
         const updatedGeometry = {
             ...geometry,
             models: geometry.models.map((model) => {
@@ -52,27 +52,27 @@ export default function Geometry({ geom = [], hidePartObject }) {
         hidePartObject(updatedModelPart)
     }
 
-    function handleNameChange(e) {
+    const handleNameChange = (e) => {
         e.stopPropagation()
         setGeometry(prevGeometry => ({ ...prevGeometry, name: e.target.value }))
     }
 
-    function handleDoneClick() {
+    const handleDoneClick = () => {
         dispatch(updateGeometries(({ updatedGeometry: geometry })))
         setInput(false)
     }
 
-    function handleEditClick(e) {
+    const handleEditClick = (e) => {
         e.stopPropagation()
         setInput(true)
     }
 
-    function handleDeleteClick(e) {
+    const handleDeleteClick = (e) => {
         e.stopPropagation()
         setModal(true)
     }
 
-    function deleteGeometry() {
+    const deleteGeometry = () => {
         dispatch(deleteGeometries({ projectId: projectId, deletedGeometry: geometry }))
         dispatch(setMeshes({ meshes: [] }))
         setModal(false)

@@ -27,12 +27,6 @@ export default function FormGenerator({ formName, formTitle }) {
         dispatch(resetSetting())
     }
 
-    // useEffect(() => {
-    //     if (value) {
-    //         setFormValues(value);
-    //     }
-    // }, [value])
-
     const inputs = Object.keys(formValues ? formValues : []).map((key) => {
         const isSelect = formValues[key].select
         const input = isSelect

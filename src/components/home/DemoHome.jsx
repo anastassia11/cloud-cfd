@@ -424,6 +424,8 @@ export default function DemoHome() {
                                             focus:border-indigo-600 shadow-sm rounded-lg" />
 
                                 </div>
+                                {/* <p className='text-xs'>Нажимая на кнопку «Отправить», вы даете согласие на обработку персональных данных.
+                                    Подробнее об обработке данных читайте в  Политике.</p> */}
                                 <button type='submit'
                                     className="w-full px-4 py-2 text-white font-medium shadow-md
                                     bg-orange-100 hover:bg-orange-150 hover:shadow-lg active:bg-orange-200 
@@ -436,15 +438,29 @@ export default function DemoHome() {
             </section>
 
             <footer className="lg:pt-10 lg:pb-10 px-4 md:px-8 py-6 border-t flex flex-col items-center space-y-2 
-                bg-day-50"
+                bg-day-50 w-full"
                 id='contacts'>
                 <p className='text-orange-100 font-semibold'>Контакты</p>
-                <a href="mailto:cloud.platform@mail.ru" className="text-gray-400 space-x-2 flex flex-row">
+                <a href="mailto:cloud.platform@mail.ru" className="flex md:hidden text-gray-400 space-x-2 flex-row w-full items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                     </svg>
                     <p className='text-day-350'>cloud.platform@mail.ru</p>
                 </a>
+                <div className='w-full flex flex-row items-top justify-between'>
+                    {/* <p className='text-sm text-day-300 flex-1 pr-3'>
+                        При поддержке Фонда содействия инновациям
+                    </p> */}
+                    <a href="mailto:cloud.platform@mail.ru" className="hidden md:flex flex-1 text-gray-400 space-x-2 flex-row w-full items-top justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                        </svg>
+                        <p className='text-day-350'>cloud.platform@mail.ru</p>
+                    </a>
+                    {/* <p className='flex-1 text-sm text-day-300 text-right pl-3'>
+                        Политика обработки персональных данных
+                    </p> */}
+                </div>
             </footer>
         </div >
 

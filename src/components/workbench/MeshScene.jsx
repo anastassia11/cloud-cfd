@@ -96,13 +96,13 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         addClipPlane, deleteClipPlane, changeClipPlane
     }))
 
-    function onWindowResize() {
+    const onWindowResize = () => {
         camera.current.aspect = window.innerWidth / window.innerHeight;
         camera.current.updateProjectionMatrix();
         renderer.current.setSize(window.innerWidth, window.innerHeight - 56);
     }
 
-    function init() {
+    const init = () => {
         window.addEventListener('resize', onWindowResize);
         sceneRef.current = new THREE.Scene();
         sceneRef.current.background = new THREE.Color(0xf0f0f0);
@@ -170,27 +170,27 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         transformControl.current = new TransformControls(camera.current, renderer.current.domElement);
     }
 
-    function animate() {
+    const animate = () => {
         requestAnimationFrame(animate)
         renderer.current.render(sceneRef.current, camera.current)
         orbitControls.update()
         composer.render()
     }
 
-    function addTransformListeners() {
+    const addTransformListeners = () => {
         transformControl.current.addEventListener('dragging-changed', handleTransformMove)
         transformControl.current.addEventListener('change', handleTransformChange)
     }
-    function removeTransformListeners() {
+    const removeTransformListeners = () => {
         transformControl.current.removeEventListener('dragging-changed', handleTransformMove)
         transformControl.current.removeEventListener('change', handleTransformMove)
     }
 
-    function handleTransformMove(event) {
+    const handleTransformMove = (event) => {
         orbitControls.enabled = !event.value;
     }
 
-    function handleTransformChange() {
+    const handleTransformChange = () => {
         const objectTypes = {
             'insidePoint': () => dispatch(setPoint({
                 position: {
@@ -207,7 +207,7 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         }
     }
 
-    function addClipPlane() {
+    const addClipPlane = () => {
         const { XMin, XMax, YMin, YMax, ZMin, ZMax } = boundingBox();
         const delta = 1.5 * Math.max(XMax - XMin, YMax - YMin, ZMax - ZMin);
         const center = [(XMin + XMax) / 2, (YMin + YMax) / 2, (ZMin + ZMax) / 2];
@@ -229,12 +229,12 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         sceneRef.current.add(planeRef.current);
     }
 
-    function deleteClipPlane() {
+    const deleteClipPlane = () => {
         sceneRef.current.remove(arrowRef.current);
         sceneRef.current.remove(planeRef.current);
     }
 
-    function changeClipPlane(params) {
+    const changeClipPlane = (params) => {
         const { normalX, normalY, normalZ, centerX, centerY, centerZ } = params;
         const normalVector = new THREE.Vector3(normalX, normalY, normalZ).normalize();
 
@@ -245,7 +245,7 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         planeRef.current.lookAt(new THREE.Vector3(centerX + normalVector.x, centerY + normalVector.y, centerZ + normalVector.z));
     }
 
-    function addTransformControl(object) {
+    const addTransformControl = (object) => {
         transformControl.current.attach(object)
         transformControl.current.uid = object.uid
         sceneRef.current.add(transformControl.current)
@@ -281,7 +281,7 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         })
     }
 
-    function createSurfaseGeometry(_meshGeometryData) {
+    const createSurfaseGeometry = (_meshGeometryData) => {
         const geometry = new THREE.BufferGeometry();
         const vertices = new Float32Array(_meshGeometryData.points);
         const indices = _meshGeometryData.faces;
@@ -303,7 +303,7 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         return mesh;
     }
 
-    function createLinesGeometry(_meshGeometryData) {
+    const createLinesGeometry = (_meshGeometryData) => {
         const lineGeometry = new THREE.BufferGeometry();
         const lineVertices = new Float32Array(_meshGeometryData.points);
         const lineIndices = _meshGeometryData.edges;
@@ -315,7 +315,7 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         return lineSegments;
     }
 
-    function updateMeshColor(meshToUpdate, colorMap, _meshValuesData, useMaxMinVisibleValue = false, colorCount = 32) {
+    const updateMeshColor = (meshToUpdate, colorMap, _meshValuesData, useMaxMinVisibleValue = false, colorCount = 32) => {
         lut.current.setColorMap(colorMap, colorCount);
         if (colorMap === "solidColor") {
             lut.current.setMax(1);
@@ -349,7 +349,7 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         colors.needsUpdate = true;
     }
 
-    async function reloadMeshGeometry(_meshFolderUrl) {
+    const reloadMeshGeometry = async (_meshFolderUrl) => {
         setMeshFolderUrl(_meshFolderUrl);
         dispatch(setLoader(true));
         try {
@@ -371,7 +371,7 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         }
     }
 
-    function updateVizualizationValues() {
+    const updateVizualizationValues = () => {
         const colorMap = "solidColor";
         const selectValue = "non";
         const useMaxMinVisibleValue = true;
@@ -389,7 +389,7 @@ function MeshScene({ boundingBox, sendParameters, cameraProp, orbitControlProp }
         }
     }
 
-    function init_mesh_components() {
+    const init_mesh_components = () => {
         lut.current = new Lut();
         lut.current.addColorMap("solidColor", [[0.0, 0x4488CC], [1.0, 0x4488CC]])
     }

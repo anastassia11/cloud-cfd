@@ -9,11 +9,12 @@ import * as THREE from "three"
 import GeometryScene from './GeometryScene'
 import MeshScene from './MeshScene'
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
-import MeshForm from '../tree-panel/MeshForm'
+import MeshForm from '../tree-panel/forms/MeshForm'
 import StateBar from './StateBar'
 import ClipForm from './ClipForm'
-import { setMeshes } from '@/store/slices/meshSlice'
+import { setLayerGroups, setMeshes, setPoint, setSettings, setSettingsMesh } from '@/store/slices/meshSlice'
 import PrimitiveForm from './PrimitiveForm'
+import getSettingsMesh from '@/api/get_settings_mesh'
 
 export default function Workbench() {
     const dispatch = useDispatch()
@@ -64,6 +65,10 @@ export default function Workbench() {
         geometrySceneRef.current.changePrimitiveData(primitiveData)
     }, [primitiveData])
 
+    useEffect(() => {
+        getMeshData()
+    }, [geoms.length])
+
         ; (function init() {
             geometryScene.current = new THREE.Scene()
             meshScene.current = new THREE.Scene()
@@ -79,45 +84,45 @@ export default function Workbench() {
             camera.current.lookAt(new THREE.Vector3(0, 0, 0));
         })()
 
-    function callHidePartObject(model) {
+    const callHidePartObject = (model) => {
         geometrySceneRef.current.hidePartObject(model)
     }
 
-    function callPositionChange(newPosition) {
+    const callPositionChange = (newPosition) => {
         geometrySceneRef.current.handlePositionChange(newPosition)
     }
 
-    function callCloseForm(formName) {
+    const callCloseForm = (formName) => {
         geometrySceneRef.current.handleCloseForm(formName)
     }
 
-    function callComputeBoundingBox() {
+    const callComputeBoundingBox = () => {
         const boundingBox = geometrySceneRef.current.computeBoundingBox()
         return boundingBox
     }
 
-    function addClipPlane() {
+    const addClipPlane = () => {
         meshSceneRef.current.addClipPlane()
         setClipPlane(prev => ({ ...prev, visible: true }))
     }
 
-    function closeClipPlane() {
+    const closeClipPlane = () => {
         meshSceneRef.current.deleteClipPlane()
         setClipPlane(prev => ({ ...prev, visible: false }))
     }
 
-    function changeClipPlane(params) {
+    const changeClipPlane = (params) => {
         meshSceneRef.current.changeClipPlane(params)
     }
 
-    function addPrimitivePattern(newData) {
+    const addPrimitivePattern = (newData) => {
         geometrySceneRef.current.removeFromGeomScene(primitiveData.mesh)
         geometrySceneRef.current.addToGeomScene(newData.mesh)
         geometrySceneRef.current.addTransformControl(newData.mesh)
         setPrimitiveData(newData)
     }
 
-    function addPrimitive() {
+    const addPrimitive = () => {
         const material = new THREE.MeshPhongMaterial({
             color: 0xa0a0a0,
             specular: 0x494949,
@@ -136,20 +141,66 @@ export default function Workbench() {
         dispatch(setMeshes({ meshes: [] }))
     }
 
-    function changeTransformData(newData) {
+    const changeTransformData = (newData) => {
         setTransformFormData((prevData) => {
             return { ...prevData, ...newData }
         })
     }
 
-    function changePrimitiveData(newData) {
+    const changePrimitiveData = (newData) => {
         setPrimitiveData((prevData) => {
             return { ...prevData, ...newData }
         })
     }
 
-    function copyParams(params) {
+    const copyParams = (params) => {
 
+    }
+
+    const setLayers = (data) => {
+        const result = data.StlGeomertrys.reduce((acc, cur) => {
+            cur.Regions.forEach(region => {
+                if (region.GroupName !== "") {
+                    let groupIndex = acc.findIndex(item => item.GroupName === region.GroupName);
+                    if (groupIndex > -1) {
+                        acc[groupIndex].faces.push({ uid: region.uid, name: region.MeshPathName });
+                    } else {
+                        acc.push({
+                            GroupName: region.GroupName,
+                            NSurfaceLayers: region.BoundaryLayer.NSurfaceLayers,
+                            ExpansionRatio: region.BoundaryLayer.ExpansionRatio,
+                            FirstLayerThickness: region.BoundaryLayer.FirstLayerThickness,
+                            Min: region.RefinementSettings.Min,
+                            Max: region.RefinementSettings.Max,
+                            faces: [{ uid: region.uid, name: region.MeshPathName }]
+                        });
+                    }
+                }
+            });
+            return acc;
+        }, []);
+        dispatch(setLayerGroups(result))
+    }
+
+    const getMeshData = async () => {
+        const result = await getSettingsMesh(projectId)
+        if (result.success) {
+            if (result.status === 200) {
+                dispatch(setSettingsMesh(result.data))
+                dispatch(setPoint({
+                    position: {
+                        x: result.data.InsidePoint?.X,
+                        y: result.data.InsidePoint?.Y,
+                        z: result.data.InsidePoint?.Z,
+                    }
+                }));
+                setLayers(result.data)
+            } else if (result.status === 204) {
+                dispatch(setSettingsMesh({}))
+            }
+        } else {
+            alert(result.message)
+        }
     }
 
     return (
@@ -169,7 +220,6 @@ export default function Workbench() {
             </div>
 
             <div className='flex flex-row justify-between w-full m-2 '>
-
                 <div className='flex flex-row'>
                     <div className='flex flex-col '>
                         <div className='min-w-0 w-[300px] mr-[12px] h-fit relative'>

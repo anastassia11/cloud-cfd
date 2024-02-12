@@ -1,12 +1,12 @@
 import { memo, useRef, useState } from "react"
-import SvgSelector from "../SvgSelector"
+import SvgSelector from "../../SvgSelector"
 import addGeometry from '@/api/set_geometry'
 import { useDispatch, useSelector } from 'react-redux'
 import getGeometries from '@/api/get_geometries'
 import { setGeometries } from '@/store/slices/projectSlice'
 import { resetSetting } from '@/store/slices/settingSlice'
-import Modal from '../Modal'
-import GeometryRow from './GeometryRow'
+import Modal from '../../Modal'
+import GeometryRow from '../GeometryRow'
 import { setMeshes } from '@/store/slices/meshSlice'
 
 const GeometryForm = memo(({ }) => {
@@ -48,7 +48,7 @@ const GeometryForm = memo(({ }) => {
         meshes.length ? setModal(true) : handleLoadClick()
     }
 
-    async function loadGeoms() {
+    const loadGeoms = async () => {
         const result = await getGeometries(projectId)
         if (result.success && result.status === 200) {
             dispatch(setGeometries({ geometries: result.data.geometryDataList }))
@@ -57,7 +57,7 @@ const GeometryForm = memo(({ }) => {
         }
     }
 
-    async function handleSetGeometry(geometryData, index) {
+    const handleSetGeometry = async (geometryData, index) => {
         const result = await addGeometry(geometryData)
         if (result.success) {
             setLoading((prevLoading) => ({ ...prevLoading, [index]: false }));
@@ -67,13 +67,13 @@ const GeometryForm = memo(({ }) => {
         }
     }
 
-    function handleChange(e) {
+    const handleChange = (e) => {
         e.preventDefault()
         newFiles.current = Array.from(e.target.files)
         meshes.length ? setModal(true) : handleLoadClick()
     }
 
-    async function handleLoadClick() {
+    const handleLoadClick = async () => {
         setModal(false)
         setFiles((prevFiles) => [...prevFiles, ...newFiles.current])
         setLoading((prevLoading) => [...prevLoading, ...newFiles.current.map(() => true)])
@@ -131,7 +131,7 @@ const GeometryForm = memo(({ }) => {
         <>
             <form onSubmit={handleGeometrySubmit} className='flex flex-col bg-white p-3 shadow rounded-md h-fit'>
                 <div className='flex flex-row justify-between items-center border-b pb-2'>
-                    <p className='self-end font-medium text-day-350'>Geomerty</p>
+                    <p className='font-medium text-day-350'>Geomerty</p>
                     <div className='flex flex-row space-x-[6px]'>
                         <button type="submit" className="text-base font-medium text-white 
                             bg-orange-200 hover:bg-orange-100 active:bg-orange-150 duration-300 

@@ -26,10 +26,6 @@ export default function Header() {
         login.current = email.current?.split('@')[0]
     }, [router])
 
-    useEffect(() => {
-        console.log(email.current)
-    }, [email.current])
-
     return (
         <>
             {token ?
